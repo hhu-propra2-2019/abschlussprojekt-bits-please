@@ -1,0 +1,214 @@
+= Softwareentwicklung im Team: Vorbereitung auf das Projekt
+WS19/20
+:icons: font
+:icon-set: octicon
+:source-highlighter: rouge
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+== Gruppenbildung
+
+Für das Abschlussprojekt bilden Sie bitte eine Gruppe im GitHub Classroom, die
+aus 7 bis 9 Personen besteht und laden eine entsprechende `gruppe.yml` in AUAS
+hoch. Im Gegensatz zu den normalen Blättern haben Sie volle
+Administrationsrechte und alle Projekte sind öffentlich um den Austausch mit
+anderen Gruppen bei Integrationen zwischen Anwendungen einfacher zu gestalten.
+
+IMPORTANT: Bitte entfernen Sie nicht die Organisatoren aus Ihrem Projekt.
+
+NOTE: Sie finden neben dieser README eine
+link:gruppe.yml[Beispiel-Gruppe-YML-Datei]. Füllen Sie diese aus, checken Sie
+sie ein.
+
+IMPORTANT: Erstellen Sie direkt eine Abgabe in AUAS. Diese ist *essentiell* für
+die Teilnahme am Praktikum. Diesmal muss die Abgabe eine ZIP-Datei sein. Die
+ZIP-Datei soll die `gruppe.yml` und eine _optionale_ Beschreibung eines eigenen
+Systems für MOPS beinhalten. Sie können natürlich auch einfach die
+vorgeschlagenen Systeme wählen und müssen keine eigenen Systeme entwerfen.
+
+== Systeme
+
+*Die folgenden Beschreibungen sind keine Spezifikationen, die den Funktionsumfang der Projekte festlegen,* sondern nur ein "Braindump" von den Ideen, die mir zu dem entsprechenden System gekommen sind. Die Beschreibungen sollen Ihnen primär helfen, Systeme auszusuchen, die Sie umsetzen möchten. Wenn Sie einen eigenen Vorschlag für ein System haben, können Sie das auch gerne vorschlagen. Sie müssen dann zusammen mit der `gruppe.yml` Datei einen kurzen Pitch (in etwa wie in diesem Dokument) einreichen, damit wir uns vorstellen können, was Sie machen wollen und den Umfang begutachten.
+
+=== Online Modulhandbuch
+Im Modulhandbuch werden die Beschreibungen für Veranstaltungen angegeben. Die Beschreibungen werden von den Dozierenden angelegt und werden von einer Verantwortlichen geprüft und dann freigeschaltet.
+
+IMPORTANT: Für die automatische Bearbeitung von Klausurzulassungen muss sichergestellt werden, dass Änderungen an den Veranstaltungen nachvollziehbar bleiben. Wenn wir uns zum Beispiel entscheiden, die Veranstaltung "Foobar" in "Barfoo" umzubenennen, aber im Wesentlichen die Veranstaltung dieselbe ist, dann muss in der neuen Veranstaltung die Information erhalten bleiben, dass alle Zulassungen der alten Veranstaltungen in der neuen Veranstaltung gültig bleiben.
+
+Beschreibungen sollten wie im aktuellen Modulhandbuch strukturiert sein, aber auch zusätzliche Informationen darstellen können. Die einzelnen Informationsblöcke sollen separat befüllt werden und in der REST Schnittstelle (siehe unten) auch separat zugreifbar sein. Es soll _Markdown_ als Textformat für Freitexte verwendet werden.
+
+Das Modulhandbuch muss als PDF Dokument exportiert werden können.
+
+Für jedes Semester sollen Teile des Handbuchs auswählbar sein, die in dem Semester stattfinden.
+
+Eine HTML Variante des Modulhandbuchs soll zusammen mit der Information, welche Veranstaltungen in welchem Semester stattfinden eine Planungsmöglichkeit für Studierende mit einer Volltext-Such/Filterfunktion liefern.
+
+Das Handbuch soll für das Belegungssystem eine REST Schnittstelle anbieten, über die die Veranstaltungs-Stammdaten abgerufen werden können.
+
+=== Belegung
+Für ein Semester werden Veranstaltungen ausgesucht, die mit MOPS verwaltet werden sollen. Eine solche Veranstaltung ist von Studierenden innerhalb einer Frist selbständig belegbar. Außerhalb der Frist, sollen Organisatorinnen Studierende hinzufügen können.
+
+Für jede Veranstaltung soll für das entsprechende Semester eine Syllabus Seite erzeugt werden können. Diese Seite besteht aus beliebig vielen Textblöcken, die in Markdown Syntax befüllt werden. Textblöcke aus dem Modulhandbuch sollen eingefügt werden können.
+
+Die Syllabus-Seite soll schon vor der Belegung für Studierende lesbar sein. Bei der Belegung wird abgefragt, ob die Voraussetzungen erfüllt sind. Dabei wir der entsprechende Textblock den Studierenden angezeigt und die Studierenden müssen bestätigen, dass sie die Anforderungen erfüllen. Die Anforderungen werden nicht vom System geprüft, da die entsprechenden Daten nicht vorgehalten werden.
+
+Das System soll optional Belegung von Übungsgruppen möglich machen. Die Belegung soll mindestens nach folgenden Verfahren möglich sein:
+
+* "First come, First serve" mit eigenem Startdatum (d.h. Startdatum unabhängig von der Belegungsfrist)
+* Prioritätenverfahren mit Frist
+
+Das System soll die Belegungsdaten per REST Schnittstelle anbieten. Neben der Belegungsinformation zur Veranstaltung, werden auch die laufenden Daten zur Übungsgruppenbelegung benötigt (auch die Daten beim Prioritätsverfahren vor der Zuteilung damit ggf. Kapazitäten angepasst werden können)
+
+=== Gruppenbildung
+Diese Anwendung ermöglicht es Studierenden, eigenständig Lerngruppen zu organisieren. Die Lerngruppen sollen dazu dienen Fragen zur Vorlesung oder zu Übungsblättern bei Treffen gemeinsam zu klären. Es soll somit das Finden von Lern- und Abgabepartnerinnen vereinfacht werden. Gruppen sind immer mit einer Veranstaltung verknüpft. Die Organisatorinnen der Veranstaltung haben keinen Zugriff auf die interne Kommunikation, aber erhalten aggregierte statistische Daten über die Gruppen (Teilnehmeranzahl, Anzahl der Interaktionen, ...).
+
+Studierende können selbstständig Gruppen erstellen. Jede Gruppe hat einen Titel und eine Beschreibung. Gruppen können öffentlich oder privat sein. Öffentliche Gruppen können gesucht (Textsuche und Katalog) werden. Der Beitritt zu einer öffentlichen Gruppe erfolgt eigenständig. Privaten Gruppen kann nur beigetreten werden, wenn ein Beitrittslink bekannt ist. Gruppen können gemeinsame Übungsaufgaben einreichen, vorausgesetzt die Gruppe passt zu den Vorgaben für Abgaben (Größe der Gruppe und alle Teilnehmerinnen sind auch Teilnehmerinnen der Veranstaltung für die eine Abgabe eingereicht werden soll)
+
+=== Foren
+Organisatorinnen sollen für Veranstaltungen beliebig viele Diskussionsforen anlegen können. Für eine Gruppe soll es auch die Möglichkeit geben, ein Forum anzulegen. Ein Forum soll nur für angemeldete Teilnehmerinnen bzw. Gruppenmitglieder lesbar sein. Die Foren sollten sich an den üblichen Implementierungen im Netz orientieren (Bitte nicht unbedingt an der Art, wie Ilias Beiträge organisiert orientieren). Foren sollen entweder anonym sein, oder automatisch die Klarnamen der Teilnehmerinnen verwenden. Es soll die Möglichkeit geben, für Foren einen Moderationsmodus einzuschalten, bei dem alle Beiträge erst durch eine Moderatorin freigeschaltet werden. Teilehmerinnen sollen die Möglichkeit bekommen Benachrichtigungen für ganze Foren oder auch einzelne Diskussionsthreads ein- bzw. auszuschalten.  Das System muss eine Volltextsuche bereitstellen (Leseberechtigungen beachten!).
+
+IMPORTANT: Das Forum muss gegen Sicherheitslücken (z.B. Injection, XSS, ...) abgesichert werden!
+
+
+=== Nachrichtenzentrale
+
+Die Nachrichtenzentrale dient der Kommunikation zwischen Organisatorinnen (oder
+auch anderen Systemen) und Studierenden. Informationen aus den anderen
+Teilsystemen (z.B. eine neue Aufgabe oder Korrektur ist verfügbar, eine Frist
+läuft ab, neue Materialien wie Aufzeichnung, Übungsblatt, Vorlesungsslides,
+...) sollen übersichtlich dargestellt werden. Außerdem sollen Studierende
+einstellen können, wie sie bei welchen Nachrichten informiert werden wollen
+(z.B. per Mail) und ob die Benachrichtigungen einzeln oder gesammelt als Digest
+empfangen werden sollen.
+
+Es sollte eine Möglichkeit geben Studierende (einzeln, Gruppe, ganze
+Veranstaltung, nach anderen Kriterien(?)...) außerplanmäßig über Änderungen zu
+informieren.
+
+
+=== Einreichung
+Das System soll für Veranstaltungen die Abgabe von Übungsblättern übernehmen. Grundsätzlich besteht eine Abgabe aus einer ZIP-Datei pro Aufgabe eines Übungsblattes. Bei der Einrichtung eines Übungsblattes muss die Abgabestruktur (d.h. die Anzahl der Aufgaben), die Gruppengrößen (in den meisten Fällen 1) und die Abgabefrist festgelegt werden.
+Es muss eine Konfigurationsmöglichkeit für die maximale Größe einer Abgabe geben, diese wird global festgelegt.
+
+Die abgegebenen Dateien werden in einer Instanz von https://min.io/[MinIO] (eine Amazon S3 kompatibler Filestore) abgelegt und die Meta-Informationen (zugehörige Person/Gruppe, Einreichungsdatum, Versionen bestehend aus Originaldateiname und URL im Filestore) werden in einer Datenbank gespeichert.
+
+Nach Ende der Abgabefrist können Studierende keine Abgaben mehr einreichen. Organisatoren können immer Einreichung anlegen.
+
+Einzelne Einreichungen können nicht gelöscht werden, auch nicht von Organisatoren. Nach einer gewissen Frist muss es aber möglich sein die Einreichungen (z.B. die Informationen in der DB und die Dateien im Filestore) für einzelne Veranstaltungen vollständig vom Produktionsserver zu löschen. Es muss eine Backup Funktion geben, um die Daten vor der Löschung zu sichern (Es lohnt sich hier, über eine geeignete Struktur im Filestore nachzudenken).
+
+Das System muss Schnittstellen bereitstellen, über die das Korrektursystem die notwendigen Informationen erhält um die Abgaben zu verteilen.
+
+Die Benutzeroberfläche für Organisatoren soll die Historie für Einreichungen zugreifbar machen, d.h. nicht nur die letzte Version, sondern auch alle vorher eingereichten Versionen.
+
+Die Einreichung der Abgaben ist eine der kritischsten Komponenten von MOPS. Insbesondere wollen wir Studierenden die Möglichkeit geben nachzuweisen, dass sie eine Einreichung getätigt haben. Das System soll dazu ein kryptographisches Verfahren verwenden. Pro Datei der Einreichung wird ein sicherer kryptographischer Hashcode berechnet. Die Hashcodes werden zusammen mit dem Einreichdatum vom Server kryptographisch signiert und die so generierte Quittung den Studierenden übergeben. Sollte eine Einreichung verloren gehen, können die Studierenden mit den Originaldateien und der Quittung fälschungssicher nachweisen, dass sie die Einreichung getätigt haben.
+
+IMPORTANT: Es werden hier selbstverständlich keine eigene Implementierung von kryptographischen Algorithmen verwendet, sondern erprobte Bibliotheken benutzt.
+
+=== Korrekturverteilung
+Das System organisiert die Korrektur der Einreichungen und die Korrekturergebnisse. Es ist nicht die  Schnittstelle für Korrektorinnen, sondern dient den Organisatorinnen der Veranstaltung.
+
+Es sollen Visualisierungen (graphisch, tabellarisch, beides) erzeugt werden, die einen Überblick über den Korrekturstand erlauben:
+
+* Wieviele Abgaben haben die einzelnen Korrektorinnen?
+* Wieviele Abgaben sind schon korrigiert? (nur online)
+* Wie ist der aktuelle Stand der Korrektur über alle Korrektorinnen aggregiert?
+
+Die Informationen über den Korrekturstand müssen von dem System, in dem die Korrekturen vorgenommen werden bezogen werden.
+
+Die Information über den Gesamtstand kann, falls gewünscht, mit den Studierenden geteilt werden, d.h. es muss eine entsprechende Schnittstelle bereitgestellt werden, die von der Übersichtsseite eingebettet werden kann.
+
+==== Online Korrekturen
+Bei der Online Korrektur handelt es sich um Korrekturen von elektronische eingereichten Dateien (z.B. Programme, Textdateien, ...). Die zu begutachtenden Einreichungen werden vom Einreichungsserver über eine Schnittstelle bereitgestellt. Das Korrektursystem verteilt die Einreichungen auf die Korrektorinnen entsprechend eines spezifizierten Schlüssels (z.B. faire Verteilung nach Arbeitsstunden, es gibt aber auch noch andere Möglichkeiten, z.B. Verteilung auf Übungsgruppenleiter oder faire Verteilung nach Teilaufgabe).
+
+==== Offline Korrekturen
+Bei der Offline Korrektur handelt es sich um Abgaben, die auf Papier getätigt werden. Hier gibt es keine automatische Verteilung, sondern die Korrektorinnen bekommen einen Stapel Abgaben ausgehändigt. Im System wird die Anzahl der Aufgaben pro Blatt festgelegt (Voreinstellung: 1). Im System können, wenn es gewünscht ist, die Anzahlen der Korrekturen pro Korrektorin eingetragen werden um die Visualisierung der Verteilung zu ermöglichen.
+
+=== Korrekturschnittstelle
+Das System ist das Interface, über das Korrektorinnen Zugriff auf die Abgaben erhalten. Die Korrekturen für eine Korrektorin kommen über eine Schnittstelle des Korrekturverteilungssystems.
+
+==== Online Korrektur
+Korrektorinnen können die zugewiesenen Abgaben kommentieren und bewerten. Wichtig ist hier, dass der Umgang mit dem System möglichst effizient sein soll (nicht jede einzelnen Datei einzeln herunterladen, Korrektur auf dem Eigenen Rechner und Batch Upload der Kommentare). Es könnte auch überlegt werden für jede Korrektorin ein git Repository automatisch anzulegen.
+
+IMPORTANT: Wenn Dateiinhalte im Browser direkt angezeigt werden, muss auf mögliche Sicherheitslücken (Injection, XSS, ...) geachtet werden.
+
+==== Offline Korrektur
+Für manuelle Einreichungen benötigen Korrektorinnen eine Schnittstelle, wo sie die Punkte pro Aufgabe eintragen können. Dazu verwenden sie die Nutzerkennung, die die Studierenden auf die abgabe schreiben müssen. Es werden genauso viele Punktefelder angezeigt, wie im Korrekturverteilungssystem festgelegt wurden.
+
+=== Punkteübersicht
+Das System soll Organisatorinnen eine schnelle (buchstäblich!!!) Übersicht über die Situation im Übungsbetrieb geben. Dazu müssen die aktuellen Punktstände für Studierende angezeigt werden können (inklusive der Informationen, welche Punkte gesichert sind, d.h. wenn Punkte eingetragen, aber die Korrektur noch nicht abgeschlossen ist, sollen diese unsicheren Punkte unterscheidbar dargestellt werden).
+
+Hier brauchen wir auch Visualisierungen für aggregierte Daten durchschnittliche Punktzahl, Abweichungen, Punkte nach Blättern, Punkte nach Aufgaben etc. Hier sind Darstellungen gefragt, die uns Problem im Übungsbetrieb aufzeigen können gefragt.
+
+=== Terminfindung und Abstimmung
+Um einen gemeinsamen Termin mit mehreren Personen abzustimmen, kann man in diesem System ein Eintrag angelegt werden. Ein Eintrag besteht aus einem Titel, einem Ort, einer optionalen Beschreibung und  Vorschlägen für Termine. Die Terminvorschläge sollen sowohl über eine einfach zu bedienende graphische Oberfläche (hier könnte doodle.com oder auch terminplaner.dfn.de als Vorbild genommen werden) eingegeben, als auch über ein Textfile importiert werden können. Es soll auch die Option geben über Fragen abzustimmen. Auch Kommentare sollen abgegeben werden können.
+
+Terminfindung und Abstimmung können mit einer Gruppe verknüpft werden. Dann können nur Gruppenmitglieder teilnehmen. Alternativ kann der Zugang per Link erfolgen. Jede Person, die den Link kennt, kann dann abstimmen.
+
+Die Abstimmung kann unter dem Klarnamen oder Pseudonym erfolgen.
+
+Für alle Terminfindungs- und Abstimmungsprozesse soll ein Datum angegeben werden, an dem die den Prozess betreffenden Daten automatisch gelöscht werden.
+
+=== Java in der Praxis: Selfservice
+Für Veranstaltungen der rheinjug können Kreditpunkte erworben werden. Für je 0.5 CP werden drei normale Abendveranstaltungen oder eine Entwickelbar Veranstaltung besucht und pro Veranstaltung eine kurze Zusammenfassung geschrieben. Die Veranstaltungstermine können über die API von meetup.com abgerufen werden.
+
+Studierende sollen sich bei dem System für eine kommende Veranstaltung anmelden und nach dem Besuch innerhalb einer Woche die Zusammenfassung einreichen. Die Zusammenfassung wird unter einer CC Lizenz, die Autoren können aussuchen, ob sie namentlich bei einer Veröffentlichung genannt werden wollen oder nicht.
+
+Die Zusammenfassungen werden von einem Verantwortlichen akzeptiert. Nichtakzeptieren (z.B. weil es inhaltliche Mängel gibt) muss vom System nicht behandelt werden, das erfolgt durch den Verantwortlichen direkt per Mail.
+
+Studierende, die hinreichend viele Veranstaltungen besucht haben, können diese gegen einen Schein eintauschen. Das System stellt sicher, dass die Bedingungen für die Vergabe erfüllt sind und erzeugt ein PDF, das durch den Verantwortlichen gedruckt und unterschrieben wird. "Verbrauchte" Vorträge können nicht mehrfach benutzt werden und "unverbrauchte" Vorträge bleiben für einen späteren Zeitpunkt erhalten.
+
+IMPORTANT: Könnte man das vielleicht auch mit kryptographischen Quittungen lösen um die gespeicherten personenbezogenen Daten zu minimieren? Die Texte müssen auf jeden Fall gespeichert werden (inkl. Namen, falls gewünscht) und wir sollten auch Statistische Informationen haben (Wieviele Scheine werden ausgestellt? Wieviele und welche Vorträge werden zusammengefasst? ...). Es ist hier auch daran zu denken dass die Quittungen nur einmal verwendet werden können, d.h., wir müssen auf jeden Fall auch Statusinformationen speichern, die können aber frei von personenbezogenen Daten sein.
+
+=== Korrektorinnen Bewerbung
+In jedem Semester werden studentische Hilfskräfte für den Übungsbetrieb benötigt. In (zumindest) den Grundlagenveranstaltungen wird dazu ein gemeinsames Bewerbungsverfahren benutzt:
+
+* Bewerber füllen einen Fragebogen aus.
+* Nach Ablauf der Frist werden die Bewerberinnen, die potentiell für eine Stelle in Frage kommen gruppiert und den Verantwortlichen der Veranstaltung zur Verfügung gestellt. Bewerberinnen kommen in Frage, wenn sie eine Veranstaltung nicht ausgeschlossen haben.
+* Die Verantwortlichen geben für jede Bewerbung eine Priorität an.
+* Die Verteilung auf die einzelnen Veranstaltungen werden von einer verantwortlichen Person manuell durchgeführt, dazu wird aber eine hinreichend gute Darstellung der gesammelten Informationen gebraucht
+* Am Ende sollen automatisch die Einstellungsbögen für die Personalabteilung als PDF erzeugt werden
+
+=== Feedback
+Das System soll Feedback von Studierenden einsammeln. Als Einheit soll im Folgenden ein einzelner Vorlesungs- oder Übungstermin oder auch eine Aufgabe bezeichnet werden.
+Die Feedbackfunktion wird von den Lehrenden für Einheiten aktiviert. Die Aktivierung erfolgt entweder global nach bestimmten Kriterien (z.B. alle Vorlesungen oder alle Aufgaben) oder für einzelne Einheiten. Zu jedem Feedback gibt es einen Zeitraum, in dem das Feedback gesammelt wird.
+
+Das Feedback soll den Lehrenden angemessen angezeigt werden. Für bestimmtes Feedback (z.B. allgemeine Zufriedenheit) soll auch ein zeitlicher Verlauf dargestellt werden.
+
+Feedback kann den Studierenden zur Verfügung gestellt werden. Es kann notwendig sein, bestimmte Stellen vorher zu zensieren (z.B. bei beleidigenden Kommentare gegenüber studentischen Hilfskräften, etc.)
+
+*Besonderheit*: Feedback ist anonym! Es muss hier darauf geachtet werden, dass das Feedback zwar nur von berechtigten Personen kommt (d.h. Studierende müssen auch an der Veranstaltung teilnehmen). Es darf aber nicht nachvollziehbar sein (auch nicht im Logfile), wer ein Feedback abgegeben hat.
+
+=== Lernportfolios/Lerntagebücher/Lernwiki
+Ein Lernportfolio ist eine "Mappe", in der Arbeitsprozesse durch Studierende dokumentiert werden. Außerdem können in einem Portfolio auch Arbeitsergebnisse (Texte, Programmcode, Protokolle, ...) gespeichert werden. Das didaktische Ziel ist die Reflexion über die eigenen Lernprozesse und Entwicklung zu fördern. Es sollte durch die Lehrenden möglich sein, eine Strukturierung oder Beispiele vorzugeben. Portfolios sollten einer Veranstaltung zugeordnet sein und es sollte sowohl Einzel- als auch Gruppenportfolios geben.
+
+=== Klausurzulassung
+
+Das System soll für Veranstaltungen die Klausurzulassung verarbeiten und zusammen mit der Anmeldeliste eine Klausurliste erzeugen können.
+
+MOPS erhält folgende Daten:
+
+* Eine Liste von Personen, die die Zulassung im Semester erworben haben. Die Liste wird manuell erstellt oder falls die Zulassungskriterien automatisch geprüft werden können automatisch generiert.
+* Die Anmeldeliste für eine Klausur. Diese wird von der zuständigen Lehrkraft im Dozierendenportal heruntergeladen und in MOPS hochgeladen.
+* Zusätzlich verwaltet MOPS Altzulassungen, die von den Studierenden bis zu einem festgelegten Stichtag eingereicht werden müssen.
+
+In der Informatik gibt es die Übereinkunft, das Klausurzulassungen bestehen bleiben, wir nennen das eine Altzulassung. Da in den Grundlagenveranstaltungen die Dozierenden wechseln, ist es nicht ganz einfach die Altzulassungen im Blick zu behalten. Ein zentrales System, das die Informationen speichert, ist aus Datenschutzgründen nicht wünschenswert. MOPS soll am Ende des Semesters die Informationen bekommen, welche Studierenden neu zugelassen wurden und für jede dieser Personen eine kryptographisch abgesicherte Quittung erstellen und der Person zukommen lassen.
+
+Eine solche Quittung beinhaltet in maschinen- und menschenlesbarem Klartext die Information in welchem Semester die Zulassung für welche Veranstaltung erreicht wurde. Die Quittung kann von Studierenden verwendet werden, um eine bestehende Altzulassung nachzuweisen. Dazu reicht die Person die Quittung bei dem System fristgerecht die Quittung ein. Die Quittung wird geprüft, ob sie für die Veranstaltung gültig ist und ob die kryptographische Signatur gültig ist.
+
+Wenn die Informationen über die Zulassungen zusammengeführt sind, soll für die Lehrenden eine Zulassungsliste ein einem (mit MS Excel/Libre Office) bearbeitbaren Format generiert werden. Die Datei muss bearbeitet werden können, da in der Regel die Studierenden auf verschiedene Hörsäle verteilt werden und für jeden Saal eine eigene Liste gedruckt wird.
+
+Eine Prüfung einer Quittung muss auch manuell durch eine Organisatorin erfolgen können. Es müssen auch manuell Altzulassungen eingetragen werden können.
+
+IMPORTANT: Es werden hier selbstverständlich keine eigene Implementierung von kryptographischen Algorithmen verwendet, sondern erprobte Bibliotheken benutzt.
+
+=== Materialsammlung
+Die Materialsammlung soll Dokumente, die von Organisatorinnen für eine Veranstaltung bereitgestellt werden verwalten. Beispiele für Materialien sind Skripte, Übungsblätter, Vorlesungsslides, Videos, Artikel, Links, usw.
+
+Es wäre gut, wenn die Materialien mit Tags (inhaltlich und organisatorisch) versehen werden, so dass man verschiedene Sichten/Filter auf die Materialien bekommt, z.B. alles zum Thema Git, alle Vorlesungsslides, alles, was als klausurrelevant markiert wurde. Eine Volltextsuche für Standardinhalte (z.B. pdf) oder Metadatensuche (z.B. nach Datum) wäre auch hilfreich. Es sollte auch ein Veröffentlichungsdatum geben, zu dem eine Resource verfügbar ist.
+
+Es sollte https://min.io/[MinIO] verwendet werden, um die Dateien abzulegen.

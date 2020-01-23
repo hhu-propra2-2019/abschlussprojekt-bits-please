@@ -1,0 +1,15 @@
+# Bei "schicht" können Sie 'vormittags', 'nachmittags' oder 'egal' eintragen.
+
+gruppe: Unser cooler Name
+url: https://github.com/hhu-propra2/abschlussprojekt-orgas
+names:
+  - bendisposto
+  - n2o
+  - RutenkolkC
+  - ...
+notebook: true
+schicht: vormittags
+projektauswahl:
+  - projekt1
+  - projekt2
+  - projekt3
