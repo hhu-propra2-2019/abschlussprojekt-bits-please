@@ -1,15 +1,19 @@
 # Bei "schicht" können Sie 'vormittags', 'nachmittags' oder 'egal' eintragen.
 
-gruppe: Unser cooler Name
-url: https://github.com/hhu-propra2/abschlussprojekt-orgas
+gruppe: Bits-please
+url: https://github.com/hhu-propra2/abschlussprojekt-bits-please.git
 names:
-  - bendisposto
-  - n2o
-  - RutenkolkC
-  - ...
+  - tigeu
+  - Douglas-Bl 
+  - snami100
+  - cobizobi
+  - loalf100
+  - SCroize
+  - masie127
+
 notebook: true
 schicht: vormittags
 projektauswahl:
-  - projekt1
-  - projekt2
-  - projekt3
+  - Foren
+  - Einreichung
+  - Klausurzulassung
