@@ -20,9 +20,16 @@ configurations {
 
 repositories {
 	mavenCentral()
+	maven {
+		url="https://s3.cs.hhu.de/public/mops/"
+		metadataSources {
+			artifact()
+		}
+	}
 }
 
 dependencies {
+	implementation "mops:styleguide:2.0.0"
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
