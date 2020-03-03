@@ -19,4 +19,4 @@ jobs:
       with:
         java-version: 13
     - name: Run Check
-      run: ./zulassung2/gradlew check
+      run: ./zulassung2/gradlew test
