@@ -1,4 +1,4 @@
-package mops.zulassung2;
+package mops;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
