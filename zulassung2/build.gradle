@@ -2,6 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.2.5.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
 	id 'java'
+	id "com.github.spotbugs" version "4.0.0"
 }
 
 group = 'mops'
@@ -34,6 +35,7 @@ dependencies {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
 	testImplementation 'org.springframework.security:spring-security-test'
+
 }
 
 test {
