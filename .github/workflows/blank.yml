@@ -1,15 +1,21 @@
 name: CI
 
-on: [push]
+on: 
+  push:
+    branches: 
+      - master
+      - development
+  pul_request:
+      - development
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK
       uses: actions/setup-java@v1
       with:
         java-version: 13
+    - name: Run Check
+      run: ./zulassung2/gradlew check
