@@ -5,7 +5,7 @@ on:
     branches: 
       - master
       - development
-  pul_request:
+  pull_request:
     branches:
       - development
 
