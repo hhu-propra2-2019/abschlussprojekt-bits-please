@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{base :: html(content=~{:: mycontent})}">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+  <title>Orga</title>
+</head>
+
+<body>
+<div id="content" th:fragment="mycontent">
+  <h1 class="text-center">
+    Orga View
+  </h1>
+
+  <p class="lead text-center">
+    Look at things, only Orga-People should be able to see!
+  </p>
+
+  <div id="links" th:if="${entries}">
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Some Entry</th>
+        <th>Another Entry</th>
+        <th>Important Orga-Stuff</th>
+      </tr>
+      </thead>
+      <tbody th:remove="all-but-first">
+      <tr th:each="entry : ${entries}" th:object="${entry}">
+        <td>
+          <span th:text="*{attribute1}">
+            hhu
+          </span>
+        </td>
+        <td>
+          <span th:text="*{attribute2}">
+            https://hhu.de
+          </span>
+        </td>
+        <td>
+          <span th:text="*{attribute3}">
+            Propra2
+          </span>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{base :: html(content=~{:: mycontent})}">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+  <title>Index</title>
+</head>
+
+<body>
+<div id="content" th:fragment="mycontent">
+  <h1 class="text-center">
+    Spring Boot Keycloak Demo
+  </h1>
+  <div>
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Beschreibung</th>
+        <th>Link</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>
+          Explizit über Ant-Matcher (in SecurityConfig) freigegebene Route.
+        </td>
+        <td>
+          <a th:href="@{/actuator}">Monitoring Informationen</a>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Route exklusiv für User mit der Rolle "orga"
+        </td>
+        <td>
+          <a th:href="@{/orga}">Orga Route</a>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Route exklusiv für User mit der Rolle "studentin"
+        </td>
+        <td>
+          <a th:href="@{/studi}">StudentIn Route</a>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Route für User mit einer der angegeben Rollen. Hier sieht man persönliche Infos.
+        </td>
+        <td>
+          <a th:href="@{/personal}">Persönliche Infos</a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>

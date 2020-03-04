@@ -8,8 +8,8 @@ import java.util.Set;
 @Getter
 @AllArgsConstructor
 class Account {
-	private final String name;
-	private final String email;
-	private final String image;
-	private final Set<String> roles;
+  private final String name;
+  private final String email;
+  private final String image;
+  private final Set<String> roles;
 }
