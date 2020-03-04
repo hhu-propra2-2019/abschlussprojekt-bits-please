@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{base :: html(content=~{:: mycontent})}">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+  <title>Personal</title>
+</head>
+
+<body>
+<div id="content" th:fragment="mycontent">
+  <h1 class="text-center">
+    Personal View
+  </h1>
+
+  <p class="lead text-center">
+    Look at your things! Only you see this info!
+  </p>
+
+  <p class="text-center">
+    These are some of the Infos this Spring-Boot App knows about you!
+    Have a look at the source code to find out how this info is retrieved :)
+  </p>
+
+  <table class="table">
+    <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Value</th>
+    </tr>
+    </thead>
+    <tbody th:object="${account}">
+    <tr>
+      <td>
+        Name
+      </td>
+      <td th:text="*{name}">
+        Heinrich Heine
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Roles
+      </td>
+      <td th:text="*{roles}">
+        [bürger]
+      </td>
+    </tr>
+    <tr>
+      <td>
+        E-Mail
+      </td>
+      <td th:text="*{email}">
+        heinrich@heine.mail
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>
