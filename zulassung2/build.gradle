@@ -2,9 +2,26 @@ plugins {
     id 'org.springframework.boot' version '2.2.5.RELEASE'
     id 'io.spring.dependency-management' version '1.0.9.RELEASE'
     id 'java'
-    id "com.github.spotbugs" version "4.0.0"
+    id "com.github.spotbugs" version "3.0.0"
 }
 
+spotbugs {
+    ignoreFailures = true
+    effort = "max"
+    reportLevel = "high"
+    toolVersion = '4.0.0-RC1'
+}
+
+tasks.withType(com.github.spotbugs.SpotBugsTask) {
+    reports {
+        html {
+            enabled = true
+        }
+        xml {
+            enabled = false
+        }
+    }
+}
 group = 'mops'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '13'
@@ -60,7 +77,6 @@ checkstyleMain {
 checkstyleTest {
     source = 'src/test/java'
 }
-
 
 test {
     useJUnitPlatform()
