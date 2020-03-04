@@ -2,17 +2,18 @@
 ==	Einführung und Ziele
 
 === Zugrundeliegenden Geschäftsziele:
- - Aktuell werden die Klausurzulassungen in den jeweiligen Fachbereichen vollständig manuell verwaltet.
- - Dies soll durch ein System ersetzt werden bei dem die Studenten eine kryptographisch signierte Datei als Nachweis der bestandenen Klausurzulassung per Email erhalten.
- - Dieser Nachweis soll durch das System aus Kulanzgründen für eine begrenzte Zeit gespeichert werden. Danach wird die Datei endgültig gelöscht.
+
+* Aktuell werden die Klausurzulassungen in den jeweiligen Fachbereichen vollständig manuell verwaltet.
+* Dies soll durch ein System ersetzt werden bei dem die Studenten eine kryptographisch signierte Datei als Nachweis der bestandenen Klausurzulassung per Email erhalten.
+* Dieser Nachweis soll durch das System aus Kulanzgründen für eine begrenzte Zeit gespeichert werden. Danach wird die Datei endgültig gelöscht.
 
 
 === Aufgabenstellung und fachliche Anforderungen
 
- - Wir sollen asymmetrische Verschüsselung benutzen.
- - Das System generiert eine Datei als plain text (txt).
- - Der Inhalt der Datei wird gehasht.
- - Der Hash wird in die Datei geschrieben.
+* Wir sollen asymmetrische Verschüsselung benutzen. Die Vorgehensweise ist wie folgt:
+** Das System generiert eine Datei als plain text (txt).
+** Der Inhalt der Datei wird gehasht.
+** Der Hash wird in die Datei geschrieben.
  - Der gehashte Wert wird mit private key verschlüsselt --> wird verschickt
   - Student erhlät text und gehashten WErt --> public key kann
  - UNser System hat einen private - public key Schlüsselpärchen.
@@ -32,23 +33,6 @@
 |===
 
 === Stakeholder
-
-[role="arc42help"]
-.Inhalt
-Expliziter Überblick über die Stakeholder des Systems – über alle Personen, Rollen oder Organisationen –, die
-
-* die Architektur kennen sollten oder
-* von der Architektur überzeugt werden müssen,
-* mit der Architektur oder dem Code arbeiten (z.B. Schnittstellen nutzen),
-* die Dokumentation der Architektur für ihre eigene Arbeit benötigen,
-* Entscheidungen über das System und dessen Entwicklung treffen.
-
-.Motivation
-Sie sollten die Projektbeteiligten und -betroffenen kennen, sonst erleben Sie später im Entwicklungsprozess Überraschungen.
-Diese Stakeholder bestimmen unter anderem Umfang und Detaillierungsgrad der von Ihnen zu leistenden Arbeit und Ergebnisse.
-
-.Form
-Tabelle mit Rollen- oder Personennamen, sowie deren Erwartungshaltung bezüglich der Architektur und deren Dokumentation.
 
 [cols="1,1" options="header"]
 |===
