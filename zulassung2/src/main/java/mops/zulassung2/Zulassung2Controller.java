@@ -28,7 +28,7 @@ public class Zulassung2Controller {
    * Nimmt das Authentifizierungstoken von Keycloak und erzeugt ein AccountDTO für die Views.
    * *
    *
-   * @param token
+   * @param token mit den Rollen des Accounts
    * @return neuen Account der im Template verwendet wird
    */
 
@@ -36,15 +36,15 @@ public class Zulassung2Controller {
   private Account createAccountFromPrincipal(KeycloakAuthenticationToken token) {
     KeycloakPrincipal principal = (KeycloakPrincipal) token.getPrincipal();
     return new Account(
-        principal.getName(),
-        principal.getKeycloakSecurityContext().getIdToken().getEmail(),
-        null,
-        token.getAccount().getRoles());
+            principal.getName(),
+            principal.getKeycloakSecurityContext().getIdToken().getEmail(),
+            null,
+            token.getAccount().getRoles());
   }
 
   @GetMapping("/")
   public String index(KeycloakAuthenticationToken token, Model model) {
-    if(token != null) {
+    if (token != null) {
       model.addAttribute("account", createAccountFromPrincipal(token));
     }
     publicAccess.increment();
