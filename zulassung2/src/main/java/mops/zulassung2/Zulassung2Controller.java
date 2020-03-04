@@ -29,7 +29,7 @@ public class Zulassung2Controller {
    * *
    *
    * @param token mit den Rollen des Accounts
-   * @return neuen Account der im Template verwendet wird
+   * @return neuen Account, der im Template verwendet wird
    */
 
 
@@ -47,8 +47,8 @@ public class Zulassung2Controller {
    * *
    *
    * @param token mit den Rollen des Accounts
-   * @param model Objekt von Spring das als Container genutzt wird um die Variablen mitzuliefern
-   * @return gibt eine view zurück die gerendert werden kann
+   * @param model Objekt von Spring, das als Container genutzt wird, um die Variablen mitzuliefern
+   * @return gibt eine view zurück, die gerendert werden kann
    */
   @GetMapping("/")
   public String index(KeycloakAuthenticationToken token, Model model) {
@@ -64,8 +64,8 @@ public class Zulassung2Controller {
    * *
    *
    * @param token mit den Rollen des Accounts
-   * @param model Objekt von Spring das als Container genutzt wird um die Variablen mitzuliefern
-   * @return gibt eine view zurück die gerendert werden kann
+   * @param model Objekt von Spring, das als Container genutzt wird, um die Variablen mitzuliefern
+   * @return gibt eine view zurück, die gerendert werden kann
    */
   @GetMapping("/orga")
   @Secured("ROLE_orga")
@@ -81,8 +81,8 @@ public class Zulassung2Controller {
    * *
    *
    * @param token mit den Rollen des Accounts
-   * @param model Objekt von Spring das als Container genutzt wird um die Variablen mitzuliefern
-   * @return gibt eine view zurück die gerendert werden kann
+   * @param model Objekt von Spring, das als Container genutzt wird, um die Variablen mitzuliefern
+   * @return gibt eine view zurück, die gerendert werden kann
    */
   @GetMapping("/studi")
   @Secured("ROLE_studentin")
@@ -98,8 +98,8 @@ public class Zulassung2Controller {
    * *
    *
    * @param token mit den Rollen des Accounts
-   * @param model Objekt von Spring das als Container genutzt wird um die Variablen mitzuliefern
-   * @return gibt eine view zurück die gerendert werden kann
+   * @param model Objekt von Spring, das als Container genutzt wird, um die Variablen mitzuliefern
+   * @return gibt eine view zurück, die gerendert werden kann
    */
   @GetMapping("/personal")
   @RolesAllowed({"ROLE_orga", "ROLE_studentin"})
@@ -113,7 +113,7 @@ public class Zulassung2Controller {
    * Bei einem GET-Request auf /logout wird diese Funktion aufgerufen.
    * *
    *
-   * @return routet zurücl auf root
+   * @return routet zurück auf root
    */
   @GetMapping("/logout")
   public String logout(HttpServletRequest request) throws Exception {
