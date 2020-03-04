@@ -1,8 +1,6 @@
 [[section-introduction-and-goals]]
 ==	Einführung und Ziele
 
-[role="arc42help"]
-
 === Zugrundeliegenden Geschäftsziele:
  - Aktuell werden die Klausurzulassungen in den jeweiligen Fachbereichen vollständig manuell verwaltet.
  - Dies soll durch ein System ersetzt werden bei dem die Studenten eine kryptographisch signierte Datei als Nachweis der bestandenen Klausurzulassung per Email erhalten.
@@ -11,7 +9,6 @@
 
 === Aufgabenstellung und fachliche Anforderungen
 
-[role="arc42help"]
  - Wir sollen asymmetrische Verschüsselung benutzen.
  - Das System generiert eine Datei als plain text (txt).
  - Der Inhalt der Datei wird gehasht.
@@ -26,8 +23,6 @@
 
 === Qualitätsziele
 
-[role="arc42help"]
-
 [cols="1,1" options="header"]
 |===
 |Qualitätsziel | Motivation und Erläuterung
@@ -35,8 +30,6 @@
 | Sichere, stabile kryptographische Verschlüsselung der Datei. | Selbsterklärend.
 | Exzellente User Experience | Eine angenehme user exeprience ist ...
 |===
-
-* hallo
 
 === Stakeholder
 
