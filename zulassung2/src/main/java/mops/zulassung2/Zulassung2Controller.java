@@ -36,12 +36,20 @@ public class Zulassung2Controller {
   private Account createAccountFromPrincipal(KeycloakAuthenticationToken token) {
     KeycloakPrincipal principal = (KeycloakPrincipal) token.getPrincipal();
     return new Account(
-            principal.getName(),
-            principal.getKeycloakSecurityContext().getIdToken().getEmail(),
-            null,
-            token.getAccount().getRoles());
+        principal.getName(),
+        principal.getKeycloakSecurityContext().getIdToken().getEmail(),
+        null,
+        token.getAccount().getRoles());
   }
 
+  /**
+   * Bei einem GET-Request auf root wird diese Funktion aufgerufen.
+   * *
+   *
+   * @param token mit den Rollen des Accounts
+   * @param model Objekt von Spring das als Container genutzt wird um die Variablen mitzuliefern
+   * @return gibt eine view zurück die gerendert werden kann
+   */
   @GetMapping("/")
   public String index(KeycloakAuthenticationToken token, Model model) {
     if (token != null) {
@@ -51,6 +59,14 @@ public class Zulassung2Controller {
     return "index";
   }
 
+  /**
+   * Bei einem GET-Request auf /orga wird diese Funktion aufgerufen.
+   * *
+   *
+   * @param token mit den Rollen des Accounts
+   * @param model Objekt von Spring das als Container genutzt wird um die Variablen mitzuliefern
+   * @return gibt eine view zurück die gerendert werden kann
+   */
   @GetMapping("/orga")
   @Secured("ROLE_orga")
   public String orga(KeycloakAuthenticationToken token, Model model) {
@@ -60,6 +76,14 @@ public class Zulassung2Controller {
     return "orga";
   }
 
+  /**
+   * Bei einem GET-Request auf /studi wird diese Funktion aufgerufen.
+   * *
+   *
+   * @param token mit den Rollen des Accounts
+   * @param model Objekt von Spring das als Container genutzt wird um die Variablen mitzuliefern
+   * @return gibt eine view zurück die gerendert werden kann
+   */
   @GetMapping("/studi")
   @Secured("ROLE_studentin")
   public String studentin(KeycloakAuthenticationToken token, Model model) {
@@ -69,7 +93,14 @@ public class Zulassung2Controller {
     return "studentin";
   }
 
-
+  /**
+   * Bei einem GET-Request auf /personal wird diese Funktion aufgerufen.
+   * *
+   *
+   * @param token mit den Rollen des Accounts
+   * @param model Objekt von Spring das als Container genutzt wird um die Variablen mitzuliefern
+   * @return gibt eine view zurück die gerendert werden kann
+   */
   @GetMapping("/personal")
   @RolesAllowed({"ROLE_orga", "ROLE_studentin"})
   public String personal(KeycloakAuthenticationToken token, Model model) {
@@ -78,6 +109,12 @@ public class Zulassung2Controller {
     return "personal";
   }
 
+  /**
+   * Bei einem GET-Request auf /logout wird diese Funktion aufgerufen.
+   * *
+   *
+   * @return routet zurücl auf root
+   */
   @GetMapping("/logout")
   public String logout(HttpServletRequest request) throws Exception {
     request.logout();
