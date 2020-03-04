@@ -4,17 +4,14 @@
 [role="arc42help"]
 
 === Zugrundeliegenden Geschäftsziele:
-
-****
  - Aktuell werden die Klausurzulassungen in den jeweiligen Fachbereichen vollständig manuell verwaltet.
  - Dies soll durch ein System ersetzt werden bei dem die Studenten eine kryptographisch signierte Datei als Nachweis der bestandenen Klausurzulassung per Email erhalten.
  - Dieser Nachweis soll durch das System aus Kulanzgründen für eine begrenzte Zeit gespeichert werden. Danach wird die Datei endgültig gelöscht.
-****
+
 
 === Aufgabenstellung und fachliche Anforderungen
 
 [role="arc42help"]
-****
  - Wir sollen asymmetrische Verschüsselung benutzen.
  - Das System generiert eine Datei als plain text (txt).
  - Der Inhalt der Datei wird gehasht.
@@ -26,7 +23,6 @@
  - Der Input erfolgt als csv-Datei die die Namen der Studenten und den Status der Zulassung enthält.
  - Wir benötigen ein Interface zum Einlesen der csv-Datei.
  - Wir brauchen eine Schnittstelle zu einem Email-Client. Die Email soll als plain text verschickt werden. Die verschlüsselte Datei soll im txt-Format sein.
-****
 
 === Qualitätsziele
 
@@ -44,7 +40,6 @@
 === Stakeholder
 
 [role="arc42help"]
-****
 .Inhalt
 Expliziter Überblick über die Stakeholder des Systems – über alle Personen, Rollen oder Organisationen –, die
 
@@ -60,7 +55,6 @@ Diese Stakeholder bestimmen unter anderem Umfang und Detaillierungsgrad der von 
 
 .Form
 Tabelle mit Rollen- oder Personennamen, sowie deren Erwartungshaltung bezüglich der Architektur und deren Dokumentation.
-****
 
 [cols="1,1" options="header"]
 |===
