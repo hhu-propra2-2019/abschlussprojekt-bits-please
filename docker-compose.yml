@@ -1,0 +1,8 @@
+version: "3.7"
+services:
+  zulassung2:
+    image: alpine:latest
+  web:
+    build: .
+    ports:
+      - "8080:8080"
