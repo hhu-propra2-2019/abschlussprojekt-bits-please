@@ -27,55 +27,55 @@ import javax.servlet.http.HttpServletRequest;
 @ComponentScan(basePackageClasses = KeycloakSecurityComponents.class)
 class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) {
-        KeycloakAuthenticationProvider keycloakAuthenticationProvider
-                = keycloakAuthenticationProvider();
-        keycloakAuthenticationProvider.setGrantedAuthoritiesMapper(new SimpleAuthorityMapper());
-        auth.authenticationProvider(keycloakAuthenticationProvider);
-    }
+  @Autowired
+  public void configureGlobal(AuthenticationManagerBuilder auth) {
+    KeycloakAuthenticationProvider keycloakAuthenticationProvider
+            = keycloakAuthenticationProvider();
+    keycloakAuthenticationProvider.setGrantedAuthoritiesMapper(new SimpleAuthorityMapper());
+    auth.authenticationProvider(keycloakAuthenticationProvider);
+  }
 
-    @Bean
-    @Override
-    protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
-        return new RegisterSessionAuthenticationStrategy(
-                new SessionRegistryImpl());
-    }
+  @Bean
+  @Override
+  protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
+    return new RegisterSessionAuthenticationStrategy(
+            new SessionRegistryImpl());
+  }
 
-    @Bean
-    @Scope(scopeName = WebApplicationContext.SCOPE_REQUEST,
-            proxyMode = ScopedProxyMode.TARGET_CLASS)
-    public AccessToken getAccessToken() {
-        HttpServletRequest request =
-                ((ServletRequestAttributes) RequestContextHolder
-                        .currentRequestAttributes()).getRequest();
-        return ((KeycloakPrincipal) request.getUserPrincipal())
-                .getKeycloakSecurityContext().getToken();
-    }
+  @Bean
+  @Scope(scopeName = WebApplicationContext.SCOPE_REQUEST,
+          proxyMode = ScopedProxyMode.TARGET_CLASS)
+  public AccessToken getAccessToken() {
+    HttpServletRequest request =
+            ((ServletRequestAttributes) RequestContextHolder
+                    .currentRequestAttributes()).getRequest();
+    return ((KeycloakPrincipal) request.getUserPrincipal())
+            .getKeycloakSecurityContext().getToken();
+  }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        super.configure(http);
-        http.authorizeRequests()
-                .antMatchers("/actuator/**")
-                .hasRole("monitoring")
-                .anyRequest()
-                .permitAll();
-    }
+  @Override
+  protected void configure(HttpSecurity http) throws Exception {
+    super.configure(http);
+    http.authorizeRequests()
+            .antMatchers("/actuator/**")
+            .hasRole("monitoring")
+            .anyRequest()
+            .permitAll();
+  }
 
-    /*
-     * Declaring this class enables us to use the Spring specific
-     * {@link org.springframework.security.access.annotation.Secured} annotation
-     * or the JSR-250 Java Standard
-     * {@link javax.annotation.security.RolesAllowed} annotation
-     * for Role-based authorization
-     */
-    @Configuration
-    @EnableGlobalMethodSecurity(
-            prePostEnabled = true,
-            securedEnabled = true,
-            jsr250Enabled = true)
-    public static class MethodSecurityConfig
-            extends GlobalMethodSecurityConfiguration {
-    }
+  /*
+   * Declaring this class enables us to use the Spring specific
+   * {@link org.springframework.security.access.annotation.Secured} annotation
+   * or the JSR-250 Java Standard
+   * {@link javax.annotation.security.RolesAllowed} annotation
+   * for Role-based authorization
+   */
+  @Configuration
+  @EnableGlobalMethodSecurity(
+          prePostEnabled = true,
+          securedEnabled = true,
+          jsr250Enabled = true)
+  public static class MethodSecurityConfig
+          extends GlobalMethodSecurityConfiguration {
+  }
 }
