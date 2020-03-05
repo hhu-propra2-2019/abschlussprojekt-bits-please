@@ -6,6 +6,7 @@ import mops.zulassung2.model.Account;
 import mops.zulassung2.model.Entry;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +20,13 @@ public class Zulassung2Controller {
 
   private final Counter authenticatedAccess;
   private final Counter publicAccess;
+
+  @Value("${dev_private_key}")
+  private String devPrivateKey;
+
+  @Value("${dev_public_key}")
+  private String devPublicKey;
+
 
   public Zulassung2Controller(MeterRegistry registry) {
     authenticatedAccess = registry.counter("access.authenticated");
@@ -38,10 +46,10 @@ public class Zulassung2Controller {
   private Account createAccountFromPrincipal(KeycloakAuthenticationToken token) {
     KeycloakPrincipal principal = (KeycloakPrincipal) token.getPrincipal();
     return new Account(
-            principal.getName(),
-            principal.getKeycloakSecurityContext().getIdToken().getEmail(),
-            null,
-            token.getAccount().getRoles());
+        principal.getName(),
+        principal.getKeycloakSecurityContext().getIdToken().getEmail(),
+        null,
+        token.getAccount().getRoles());
   }
 
   /**
