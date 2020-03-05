@@ -7,7 +7,7 @@ public class SignaturService {
     HasherInterface hasherInterface = new Hasher();
     String hashed = hasherInterface.getHash(toSign);
     EncryptionInterface encryptionInterface = new Encryption();
-    byte[] signed = encryptionInterface.encrypt(toSign);
+    byte[] signed = encryptionInterface.encrypt(hashed);
 
     String readytodeliver = new String(signed);
     return toSign + readytodeliver;
