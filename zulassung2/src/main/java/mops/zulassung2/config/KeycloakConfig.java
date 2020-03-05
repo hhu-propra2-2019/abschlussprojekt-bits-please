@@ -1,4 +1,4 @@
-package mops.zulassung2;
+package mops.zulassung2.config;
 
 import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
 import org.springframework.context.annotation.Bean;

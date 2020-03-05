@@ -1,4 +1,4 @@
-package mops.zulassung2;
+package mops.zulassung2.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import java.util.Set;
 
 @Getter
 @AllArgsConstructor
-class Account {
+public class Account {
   private final String name;
   private final String email;
   private final String image;

@@ -1,4 +1,4 @@
-package mops.zulassung2;
+package mops.zulassung2.config;
 
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.adapters.springsecurity.KeycloakSecurityComponents;

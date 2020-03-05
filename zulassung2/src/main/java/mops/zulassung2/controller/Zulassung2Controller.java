@@ -1,7 +1,9 @@
-package mops.zulassung2;
+package mops.zulassung2.controller;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
+import mops.zulassung2.model.Account;
+import mops.zulassung2.model.Entry;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.access.annotation.Secured;
@@ -36,10 +38,10 @@ public class Zulassung2Controller {
   private Account createAccountFromPrincipal(KeycloakAuthenticationToken token) {
     KeycloakPrincipal principal = (KeycloakPrincipal) token.getPrincipal();
     return new Account(
-        principal.getName(),
-        principal.getKeycloakSecurityContext().getIdToken().getEmail(),
-        null,
-        token.getAccount().getRoles());
+            principal.getName(),
+            principal.getKeycloakSecurityContext().getIdToken().getEmail(),
+            null,
+            token.getAccount().getRoles());
   }
 
   /**
