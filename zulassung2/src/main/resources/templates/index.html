@@ -23,17 +23,6 @@
       </tr>
       </thead>
       <tbody>
-      <!--Workaround-->
-      <tr sec:authorize="isAnonymous()">
-        <td>
-          Bitte einloggen!
-        </td>
-        <td>
-          <a th:href="@{/login}">Login</a>
-        </td>
-      </tr>
-      <!--Workaround Ende-->
-      <tr>
       <tr>
         <td>
           Explizit über Ant-Matcher (in SecurityConfig) freigegebene Route.
@@ -56,14 +45,6 @@
         </td>
         <td>
           <a th:href="@{/studi}">StudentIn Route</a>
-        </td>
-      </tr>
-      <tr sec:authorize="isAuthenticated()">
-        <td>
-          Route für User mit einer der angegeben Rollen. Hier sieht man persönliche Infos.
-        </td>
-        <td>
-          <a th:href="@{/personal}">Persönliche Infos</a>
         </td>
       </tr>
       </tbody>

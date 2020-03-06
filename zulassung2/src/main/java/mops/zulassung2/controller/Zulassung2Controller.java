@@ -39,6 +39,7 @@ public class Zulassung2Controller {
    * @return gibt eine view zurück, die gerendert werden kann
    */
   @GetMapping("/")
+  @RolesAllowed({"ROLE_orga","ROLE_studentin","ROLE_actuator"})
   public String index(KeycloakAuthenticationToken token, Model model) {
     if (token != null) {
       model.addAttribute("account", accountCreator.createFromPrincipal(token));
@@ -46,18 +47,6 @@ public class Zulassung2Controller {
     publicAccess.increment();
     return "index";
   }
-
-  //Workaround
-  @GetMapping("/login")
-  @RolesAllowed({"ROLE_orga","ROLE_studentin","ROLE_actuator"})
-  public String login(KeycloakAuthenticationToken token, Model model) {
-    if (token != null) {
-      model.addAttribute("account", accountCreator.createFromPrincipal(token));
-    }
-    publicAccess.increment();
-    return "index";
-  }
-  //Workaround Ende
 
   /**
    * Bei einem GET-Request auf /logout wird diese Funktion aufgerufen.
