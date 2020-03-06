@@ -1,11 +1,10 @@
-package mops.zulassung2.crypto;
+package mops.zulassung2.model.crypto;
 
 import mops.Zulassung2Application;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 

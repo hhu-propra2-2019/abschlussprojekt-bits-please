@@ -1,4 +1,4 @@
-package mops.zulassung2.crypto;
+package mops.zulassung2.model.crypto;
 
 import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
 

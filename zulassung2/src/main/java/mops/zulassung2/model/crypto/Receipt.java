@@ -1,4 +1,4 @@
-package mops.zulassung2.crypto;
+package mops.zulassung2.model.crypto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

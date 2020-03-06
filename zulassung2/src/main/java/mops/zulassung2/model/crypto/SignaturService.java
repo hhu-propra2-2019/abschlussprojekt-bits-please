@@ -1,4 +1,4 @@
-package mops.zulassung2.crypto;
+package mops.zulassung2.model.crypto;
 
 public class SignaturService {
 
