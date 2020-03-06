@@ -1,30 +1,26 @@
 package mops.zulassung2;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Value;
 
-import javax.crypto.SecretKey;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.spec.InvalidKeySpecException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class KeyConverterTest {
 
-  @Value("${dev_private_key}")
-  String privateKeyAsString;
-
   @Test
-  void testThatPublicKeyIsConvertedCorrectlyFromString() {
+  void testThatPrivateKeyIsConvertedCorrectlyFromString() throws InvalidKeySpecException, NoSuchAlgorithmException {
     // Arrange
+    String privateKeyAsString = "MIIEogIBAAKCAQEAm+xc6IffT1knB2APhojU2pnZK9zpNcSLcty91GqWXde3WAT1zwuoC63AMBr6SawFT0vSKzpnLm1xylq9TkFduMDVFC+4uL3yTRxiJ1Mv/RtYSwFdk79NvkOOTIgUOFhheD/7aUpSaSoWbnaxO8a0ZxoOAt/+xTIgLJnC0m701OMp6c+/3IJu9lO2tmRB97poPo0gZIlJyh5JTKRZHqltcFcCnyXckTgJu8rMowrceBlcj8j1CIMWhT1v1HtlEy1J7xYcK17nD6xtqVoWfr+e52S0w7+EEUxmzYmMrSeBaVn47dAJ6Ef6481o3yypUUk4XjDwvPqCokuh+R+MElPVuwIDAQABAoIBAE7KcOR8DGcPWP6MFyxXpp/UUH6uwhYOfJ0NWMunFNbU8+wBjakTbdaA9XYZm9Jwn7pDSS/Y8lzupyqnEbQiqdZ7cvEhcEnCildW+W5/xecz0zkLtpq7d/CmOJkJxpX2a0KVqli5Ws2TnAQz7DmVnoHfE6d2Q0qomsOO63jk4slUO2WYSzm309ovCJs6zsAtLf+Jd/8+cqrQs1Pgf0rJSGclAe90bZ44GWMHw7aoJyccaNGKzbZztnl+utmWWdYQr+i7LgoF0WEyXsneF9dXdE/9GXd7CLF5DJSzlmTO2MVSp4lMfA9acXBerwvXX+zyP6pVVvl6ETIPmO0MdIiNSFkCgYEAyAOCXcXRYzHBQRF0qGMmA6WOXVARK381hq/LFjnLfmNXXF2wM1lrXz/I2xz2ZN51sJlDVMW0wz+6JxKaKN9+OP2EpNbKOq0Kx6KQC2WSQiQ+hInulD8+NrGz+2e2r2+SGD0IojpbQNvBxOVoHwo/XEenaaqBOmq7SaEOSzBnS6UCgYEAx5FxYE+EAW66vjqA90UpEtxr/DVHxE2+TBrQKV3mxpCIMcwRA35c1i6ar5MNXVixoA8TbxpT12DmNFrfr5RErRMIDHeLoD+xaRR87e/RidFqdydEglt/89C6BDNJ1R7d6OZ87AtY/z23D8Da39kVT6RO+B6cG+oZ9yPO+mwGXd8CgYA0pg/T5TVnufoXyaN+i5K/FP4ze9b5LyQEzxNTR2VUYIvnaVXvPlNwIBcb7jTBenlaQg2iK+SYHJdAn7nqlmHgWINo7I0RAum6gQUPqu3j8SxvsOsXJMqYlRA+Vh+VcHXxYWd7ZIcOvIn17TkKKqVhAg+EVfhsSxn/mKBtlFEsbQKBgH7dqNNu+R3oBHL1whJvNuM0mLkmLc9PFNBQo1AIz7IfI1V0wsQTynSl/9Ppia9zuMdljhctB2t9wBo8QsLdYKMd3BoAzRQ8KU4BpkGkGPKh3CqPHfA4tqiKYhZVfHQtQSjTjUqJFDR+SSeMlBeFaxTMAR+eZeMg+QyxCN0NWybFAoGAJVnDfTyHKmcGkHPvSSJKkAcoGZxx9RwTpaR0XuzzCdDE2xyyStKIgU+mcEkQCBMpHyzKEO6/MWKDz29v6/UoBtIzslkZ3D5j4Sf+maHJ0upAILAwdJJkbQbyR5klPanMDI11oPh0vSiewDLuCm00pXKckUQSCs1xGp6ptPST1F0=";
     KeyConverter keyConverter = new KeyConverter();
 
     // Act
-    SecretKey privateKey = keyConverter.getPrivateKey(privateKeyAsString);
+    PrivateKey privateKey = keyConverter.getPrivateKey(privateKeyAsString);
 
     // Assert
-    String test = privateKey.
-        getFormat();
-
-    assertThat(privateKeyAsString).isEqualTo(privateKey.toString());
+    assertThat(privateKeyAsString).isEqualTo(privateKey.getEncoded());
 
 
   }
