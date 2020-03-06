@@ -1,17 +1,22 @@
 package mops.zulassung2.controller;
 
 import mops.zulassung2.model.AccountCreator;
+import mops.zulassung2.model.CSVParser;
 import mops.zulassung2.model.Entry;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 public class OrganisatorController {
 
   private AccountCreator accountCreator;
+
 
   public OrganisatorController() {
     accountCreator = new AccountCreator();
@@ -30,7 +35,16 @@ public class OrganisatorController {
   public String orga(KeycloakAuthenticationToken token, Model model) {
     model.addAttribute("account", accountCreator.createFromPrincipal(token));
     model.addAttribute("entries", Entry.generate(10));
-    //authenticatedAccess.increment();
+
     return "orga";
+  }
+
+  @PostMapping("/orga")
+  @Secured("ROLE_orga")
+  public String submit(@RequestParam("file") MultipartFile file, Model model) {
+    CSVParser csvParser = new CSVParser(",");
+    csvParser.processCSV(file);
+
+    return "redirect:/orga";
   }
 }
