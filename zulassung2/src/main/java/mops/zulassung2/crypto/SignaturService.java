@@ -2,7 +2,7 @@ package mops.zulassung2.crypto;
 
 public class SignaturService {
 
-  public Token sign(String toSign) {
+  public Receipt sign(String toSign) {
 
     HasherInterface hasherInterface = new Hasher();
     String hashed = hasherInterface.getHash(toSign);
@@ -10,10 +10,10 @@ public class SignaturService {
     EncryptionInterface encryptionInterface = new Encryption();
     byte[] signed = encryptionInterface.encrypt(hashed);
 
-    return new Token(toSign, new String(signed));
+    return new Receipt(toSign, new String(signed));
   }
 
-  public boolean verify(Token toVerify){
+  public boolean verify(Receipt toVerify){
 
     HasherInterface hasherInterface = new Hasher();
     EncryptionInterface encryptionInterface = new Encryption();

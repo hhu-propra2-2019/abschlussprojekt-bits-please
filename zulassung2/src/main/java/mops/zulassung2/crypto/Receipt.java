@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class Token {
+public class Receipt {
 
   private String data;
   private String signature;
