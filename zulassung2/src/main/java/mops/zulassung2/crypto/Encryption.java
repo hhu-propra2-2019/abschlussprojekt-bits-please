@@ -6,10 +6,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 
-class Encryption implements EncryptionInterface{
+class Encryption implements EncryptionInterface {
 
+  //String -> PrivateKey/PublicKey misses
   @Value("${dev_private_key}")
   private static PrivateKey privKey;
   @Value("${dev_public_key}")
@@ -23,10 +25,10 @@ class Encryption implements EncryptionInterface{
       SecureRandom secureRandom = new SecureRandom();
       Signature signature = Signature.getInstance("SHA256WithDSA");
       signature.initSign(privKey, secureRandom);
-      byte[] data = toEncrypt.getBytes("UTF-8");
+      byte[] data = toEncrypt.getBytes(StandardCharsets.UTF_8);
       signature.update(data);
       return signature.sign();
-    } catch (NoSuchAlgorithmException | InvalidKeyException | UnsupportedEncodingException | SignatureException e) {
+    } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
       logger.error(e.getMessage());
       return null;
     }
@@ -38,13 +40,13 @@ class Encryption implements EncryptionInterface{
       Signature signature = Signature.getInstance("SHA256WithDSA");
       signature.initVerify(publKey);
 
-      byte[] data = toDecrypt.getBytes("UTF-8");
+      byte[] data = toDecrypt.getBytes(StandardCharsets.UTF_8);
       signature.update(data);
 
-      byte[] digitalSignature = toVerify.getBytes("UTF-8");
+      byte[] digitalSignature = toVerify.getBytes(StandardCharsets.UTF_8);
 
       return signature.verify(digitalSignature);
-    } catch (NoSuchAlgorithmException | InvalidKeyException | UnsupportedEncodingException | SignatureException e) {
+    } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
       logger.error(e.getMessage());
       return false;
     }
