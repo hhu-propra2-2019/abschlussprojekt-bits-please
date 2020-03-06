@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{mopslayout :: html(name='Keycloak Demo', headcontent=~{:: headcontent}, navigation=~{:: navigation}, bodycontent=~{:: bodycontent})}">
+      th:replace="~{mopslayout :: html(name='Klausurzulassung', headcontent=~{:: headcontent}, navigation=~{:: navigation}, bodycontent=~{:: bodycontent})}"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 
 <head>
   <!-- Required meta tags -->
@@ -25,19 +26,14 @@
           Startseite
         </a>
       </li>
-      <li>
+      <li sec:authorize="hasRole('orga')">
         <a th:href="@{/orga}">
           Orgaseite
         </a>
       </li>
-      <li>
+      <li sec:authorize="hasRole('studentin')">
         <a th:href="@{/studi}">
           Studiseite
-        </a>
-      </li>
-      <li>
-        <a th:href="@{/personal}">
-          Persönliche Ansicht
         </a>
       </li>
     </ul>

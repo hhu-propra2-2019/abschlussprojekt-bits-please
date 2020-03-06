@@ -39,28 +39,13 @@ public class Zulassung2Controller {
    * @return gibt eine view zurück, die gerendert werden kann
    */
   @GetMapping("/")
+  @RolesAllowed({"ROLE_orga","ROLE_studentin","ROLE_actuator"})
   public String index(KeycloakAuthenticationToken token, Model model) {
     if (token != null) {
       model.addAttribute("account", accountCreator.createFromPrincipal(token));
     }
     publicAccess.increment();
     return "index";
-  }
-
-  /**
-   * Bei einem GET-Request auf /personal wird diese Funktion aufgerufen.
-   * *
-   *
-   * @param token mit den Rollen des Accounts
-   * @param model Objekt von Spring, das als Container genutzt wird, um die Variablen mitzuliefern
-   * @return gibt eine view zurück, die gerendert werden kann
-   */
-  @GetMapping("/personal")
-  @RolesAllowed({"ROLE_orga", "ROLE_studentin"})
-  public String personal(KeycloakAuthenticationToken token, Model model) {
-    model.addAttribute("account", accountCreator.createFromPrincipal(token));
-    authenticatedAccess.increment();
-    return "personal";
   }
 
   /**
