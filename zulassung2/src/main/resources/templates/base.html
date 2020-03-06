@@ -22,17 +22,17 @@
   <nav class="navigation navigation-secondary" is="mops-navigation" th:fragment="navigation">
     <ul>
       <li>
-        <a th:href="@{/}">
+        <a th:href="@{/zulassung2}">
           Startseite
         </a>
       </li>
       <li sec:authorize="hasRole('orga')">
-        <a th:href="@{/orga}">
+        <a th:href="@{/zulassung2/orga}">
           Orgaseite
         </a>
       </li>
       <li sec:authorize="hasRole('studentin')">
-        <a th:href="@{/studi}">
+        <a th:href="@{/zulassung2/studi}">
           Studiseite
         </a>
       </li>

@@ -38,7 +38,7 @@ public class Zulassung2Controller {
    * @param model Objekt von Spring, das als Container genutzt wird, um die Variablen mitzuliefern
    * @return gibt eine view zurück, die gerendert werden kann
    */
-  @GetMapping("/")
+  @GetMapping("/zulassung2")
   @RolesAllowed({"ROLE_orga","ROLE_studentin","ROLE_actuator"})
   public String index(KeycloakAuthenticationToken token, Model model) {
     if (token != null) {
@@ -57,6 +57,6 @@ public class Zulassung2Controller {
   @GetMapping("/logout")
   public String logout(HttpServletRequest request) throws Exception {
     request.logout();
-    return "redirect:/";
+    return "redirect:/zulassung2/";
   }
 }
