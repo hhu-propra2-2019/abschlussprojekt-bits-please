@@ -19,6 +19,7 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -33,6 +34,11 @@ class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
             = keycloakAuthenticationProvider();
     keycloakAuthenticationProvider.setGrantedAuthoritiesMapper(new SimpleAuthorityMapper());
     auth.authenticationProvider(keycloakAuthenticationProvider);
+  }
+
+  @Bean
+  public SpringSecurityDialect securityDialect() {
+    return new SpringSecurityDialect();
   }
 
   @Bean
