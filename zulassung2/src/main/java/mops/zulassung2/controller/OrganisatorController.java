@@ -55,6 +55,6 @@ public class OrganisatorController {
     CSVParser csvParser = new CSVParser(",");
     csvParser.processCSV(file);
 
-    return "redirect:/orga";
+    return "redirect:/zulassung2/orga";
   }
 }
