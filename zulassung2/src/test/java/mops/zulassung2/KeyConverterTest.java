@@ -7,7 +7,6 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import java.io.UnsupportedEncodingException;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 
@@ -16,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class KeyConverterTest {
 
   @Test
-  void testEncryptionAndDecryption() throws InvalidKeySpecException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, UnsupportedEncodingException, BadPaddingException, IllegalBlockSizeException {
+  void testEncryptionAndDecryption() throws InvalidKeySpecException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
     //Arrange
     KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
     keyGen.initialize(1024);
@@ -24,7 +23,7 @@ class KeyConverterTest {
     String testPrivateKeyAsString = Base64.encodeBase64String(keyPair.getPrivate().getEncoded());
     String testPublicKeyAsString = Base64.encodeBase64String(keyPair.getPublic().getEncoded());
 
-    KeyConverter keyConverter = new KeyConverter();
+    KeyConverterInterface keyConverter = new KeyConverter();
     String message = "Das ist ein Test.";
 
     // Act

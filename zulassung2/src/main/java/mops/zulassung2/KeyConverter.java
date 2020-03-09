@@ -10,17 +10,26 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
-public class KeyConverter {
+public class KeyConverter implements KeyConverterInterface {
 
-  public PrivateKey getPrivateKey(String privateKeyAsString) throws NoSuchAlgorithmException, InvalidKeySpecException {
+  /**
+   * Methode die einen String in ein PrivateKey Objekt umwandelt.
+   * Parameter: @param privateKeyAsString
+   */
+  public PrivateKey getPrivateKey(String privateKeyAsString)
+      throws NoSuchAlgorithmException, InvalidKeySpecException {
     KeyFactory keyFactory = KeyFactory.getInstance("RSA");
     byte[] decodedPrivateKey = Base64.getDecoder().decode(privateKeyAsString);
     EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(decodedPrivateKey);
-    PrivateKey privateKey = keyFactory.generatePrivate(keySpec);
-    return privateKey;
+    return keyFactory.generatePrivate(keySpec);
   }
 
-  public PublicKey getPublicKey(String publicKeyAsString) throws NoSuchAlgorithmException, InvalidKeySpecException {
+  /**
+   * Methode die einen String in ein PublicKey Objekt umwandelt.
+   * Parameter: @param privateKeyAsString
+   */
+  public PublicKey getPublicKey(String publicKeyAsString)
+      throws NoSuchAlgorithmException, InvalidKeySpecException {
     KeyFactory keyFactory = KeyFactory.getInstance("RSA");
     byte[] decodedPublicKey = Base64.getDecoder().decode(publicKeyAsString);
     EncodedKeySpec keySpec = new X509EncodedKeySpec(decodedPublicKey);
