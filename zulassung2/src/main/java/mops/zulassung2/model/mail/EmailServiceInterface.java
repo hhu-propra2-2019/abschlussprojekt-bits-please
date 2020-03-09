@@ -6,5 +6,5 @@ public interface EmailServiceInterface {
 
   public void sendSimpleMessage(String to, String subject, String text);
 
-  public void sendMessageWithAttachment(String to, String subject, String text, File attachment, String filename);
+  public void sendMessage(String to, String subject, String text, File attach, String filename);
 }

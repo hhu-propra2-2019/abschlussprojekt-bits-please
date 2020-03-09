@@ -9,9 +9,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.io.File;
 
 @Service
 public class EmailService implements EmailServiceInterface {
@@ -39,13 +39,13 @@ public class EmailService implements EmailServiceInterface {
   /**
    * Sends an email with attachment (File).
    *
-   * @param to         receiver of the mail
-   * @param subject    subject of the mail
-   * @param text       content of the mail
-   * @param attachment file to be attached
-   * @param filename   name of the attached file
+   * @param to       receiver of the mail
+   * @param subject  subject of the mail
+   * @param text     content of the mail
+   * @param attach   file to be attached
+   * @param filename name of the attached file
    */
-  public void sendMessageWithAttachment(String to, String subject, String text, File attachment, String filename) {
+  public void sendMessage(String to, String subject, String text, File attach, String filename) {
 
     try {
       MimeMessage message = emailSender.createMimeMessage();
@@ -54,7 +54,7 @@ public class EmailService implements EmailServiceInterface {
       helper.setTo(to);
       helper.setSubject(subject);
       helper.setText(text);
-      helper.addAttachment(filename, attachment);
+      helper.addAttachment(filename, attach);
 
       emailSender.send(message);
 
