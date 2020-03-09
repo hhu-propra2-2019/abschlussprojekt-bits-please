@@ -3,8 +3,8 @@ package mops.zulassung2.model;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +33,8 @@ public class CSVParser {
 
     Scanner scanner = null;
     try {
-      scanner = new Scanner(studentinFile);
-    } catch (FileNotFoundException e) {
+      scanner = new Scanner(studentinFile, StandardCharsets.UTF_8);
+    } catch (IOException e) {
       e.printStackTrace();
     }
     scanner.useDelimiter(delimiter);
