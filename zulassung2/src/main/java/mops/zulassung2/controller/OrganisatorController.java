@@ -39,9 +39,17 @@ public class OrganisatorController {
     return "orga";
   }
 
+  /**
+   * Bei einem POST-Request auf /orga wird diese Funktion aufgerufen.
+   * *
+   *
+   * @param file ist das File, welches hochgeladen wurde.
+   * @return gibt die view orga zurück.
+   */
+
   @PostMapping("/orga")
   @Secured("ROLE_orga")
-  public String submit(@RequestParam("file") MultipartFile file, Model model) {
+  public String submit(@RequestParam("file") MultipartFile file) {
     CSVParser csvParser = new CSVParser(",");
     csvParser.processCSV(file);
 

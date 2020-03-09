@@ -18,6 +18,15 @@ public class CSVParser {
     this.delimiter = delimiter;
   }
 
+  /**
+   * Diese Methode wird vom OrganisatorController aufgerufen, nachdem eine File hochgeladen wurde.
+   * Das File wird eingelesen und die enthaltenden Studenten zunächst erzeugt
+   * und anschließend in einer ArrayList gespeichert.
+   * *
+   *
+   * @return gibt eine ArrayList zurück, welche die erzeugten Studenten enthält.
+   */
+
   public List<Studentin> processCSV(MultipartFile file) {
     List<Studentin> studentinList = new ArrayList<>();
     File studentinFile = saveFile(file);
