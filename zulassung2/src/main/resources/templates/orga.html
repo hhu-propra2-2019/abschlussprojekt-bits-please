@@ -10,29 +10,39 @@
 </head>
 
 <body>
-<div id="content" th:fragment="mycontent">
-    <h1 class="text-center">
-        Orga View
+<<div id="content" th:fragment="mycontent">
+    <h1 class="text-center" >
+        <a href="#" class="text-success"> Orga View </a>
     </h1>
 
-    <p class="lead text-center">
+    <p class="lead text-lg-center">
         Look at things, only Orga-People should be able to see!
     </p>
 
 
-    <div id="upload-csv">
+    <div id="mops-upload-csv">
         <form action="/zulassung2/orga" enctype="multipart/form-data" method="POST">
             <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
 
 
-            <td>Wählen Sie eine Textdatei aus</td>
-            <td><input name="file" type="file"/></td>
-            <td><input accept=".csv" type="submit" value="Hochladen"/></td>
+            <p><td>Wählen Sie eine Textdatei aus</td>
+            <td><input name="file" type="file"/></td></p>
+            <p><td>Laden Sie bitte Ihre Datei hoch</td>
+            <td><input accept=".csv" type="submit" value="Hochladen"/></td></p>
+            <td>Email verschicken</td>
+            <td><input accept=".email" type="submit" value="Send"/></td>
 
 
         </form>
     </div>
+    <div>
+        <h1 class="text-center">
+            <a href="#" class="text-danger">Zulassung verschicken</a>
+        </h1>
+        <p><td>Prüfen Sie Ihr Signatur</td>
+        <td><input accept=".csv" type="submit" value="Signatur prüfen"/></td></p>
 
+    </div>
 </div>
 </body>
 </html>
