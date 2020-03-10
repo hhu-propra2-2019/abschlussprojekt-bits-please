@@ -3,7 +3,7 @@ package mops.zulassung2;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import mops.zulassung2.model.FileParser;
-import mops.zulassung2.model.Studentin;
+import mops.zulassung2.model.Student;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
 
@@ -16,9 +16,9 @@ class ParseFileTests {
   @Test
   public void testParsingStudentsFromCSV() {
     // Arrange
-    List<Studentin> students = new ArrayList<>();
-    Studentin tim = new Studentin("2727912", "tigeu100@hhu.de", "geuer", "tim");
-    Studentin markus = new Studentin("2757144", "masie@hhu.de", "siewert", "markus");
+    List<Student> students = new ArrayList<>();
+    Student tim = new Student("2727912", "tigeu100@hhu.de", "geuer", "tim");
+    Student markus = new Student("2757144", "masie@hhu.de", "siewert", "markus");
     students.add(tim);
     students.add(markus);
 
@@ -30,7 +30,7 @@ class ParseFileTests {
     MockMultipartFile csvFile = new MockMultipartFile(name, fileName, "text/csv", bytes);
 
     // Act
-    List<Studentin> parsedStudents = parser.processCSV(csvFile);
+    List<Student> parsedStudents = parser.processCSV(csvFile);
 
     // Assert
     assertThat(parsedStudents).isEqualTo(students);

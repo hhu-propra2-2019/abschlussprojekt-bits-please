@@ -7,12 +7,12 @@ import java.util.Objects;
 
 @AllArgsConstructor
 @Getter
-public class Studentin {
+public class Student {
 
-  private String matrikelnummer;
+  private String matriculationNumber;
   private String email;
   private String name;
-  private String vorname;
+  private String foreName;
 
   @Override
   public boolean equals(Object o) {
@@ -23,15 +23,15 @@ public class Studentin {
       return false;
     }
 
-    Studentin studentin = (Studentin) o;
-    return Objects.equals(matrikelnummer, studentin.matrikelnummer)
+    Student studentin = (Student) o;
+    return Objects.equals(matriculationNumber, studentin.matriculationNumber)
             && Objects.equals(email, studentin.email)
             && Objects.equals(name, studentin.name)
-            && Objects.equals(vorname, studentin.vorname);
+            && Objects.equals(foreName, studentin.foreName);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(matrikelnummer, email, name, vorname);
+    return Objects.hash(matriculationNumber, email, name, foreName);
   }
 }

@@ -28,8 +28,8 @@ public class FileParser {
    *
    * @return gibt eine ArrayList zurück, welche die erzeugten Studenten enthält.
    */
-  public List<Studentin> processCSV(MultipartFile file) {
-    List<Studentin> studentList = new ArrayList<>();
+  public List<Student> processCSV(MultipartFile file) {
+    List<Student> studentList = new ArrayList<>();
     File studentFile = saveFile(file);
     Reader reader = null;
     CSVParser csvParser = null;
@@ -47,7 +47,7 @@ public class FileParser {
       String name = csvRecord.get(2);
       String forename = csvRecord.get(3);
 
-      Studentin currentStudent = new Studentin(matrNr, email, name, forename);
+      Student currentStudent = new Student(matrNr, email, name, forename);
       studentList.add(currentStudent);
     }
 
@@ -55,16 +55,16 @@ public class FileParser {
   }
 
   private File saveFile(MultipartFile file) {
-    File studentinFile = new File(dir + file.getName());
+    File studentFile = new File(dir + file.getName());
     try {
-      file.transferTo(studentinFile);
-      if (!studentinFile.exists()) {
-        Files.createFile(studentinFile.toPath());
+      file.transferTo(studentFile);
+      if (!studentFile.exists()) {
+        Files.createFile(studentFile.toPath());
       }
     } catch (IOException e) {
       e.printStackTrace();
     }
 
-    return studentinFile;
+    return studentFile;
   }
 }

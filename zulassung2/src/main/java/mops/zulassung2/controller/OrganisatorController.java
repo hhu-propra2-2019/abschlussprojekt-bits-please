@@ -3,7 +3,7 @@ package mops.zulassung2.controller;
 import mops.zulassung2.model.AccountCreator;
 import mops.zulassung2.model.Entry;
 import mops.zulassung2.model.FileParser;
-import mops.zulassung2.model.Studentin;
+import mops.zulassung2.model.Student;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.annotation.Secured;
@@ -59,7 +59,7 @@ public class OrganisatorController {
   @Secured("ROLE_orga")
   public String submit(@RequestParam("file") MultipartFile file) {
     FileParser csvParser = new FileParser(zulassungslisteDir);
-    List<Studentin> students = csvParser.processCSV(file);
+    List<Student> students = csvParser.processCSV(file);
 
     return "redirect:/zulassung2/orga";
   }
