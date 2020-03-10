@@ -13,14 +13,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.context.annotation.SessionScope;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
+@SessionScope
 @RequestMapping("/zulassung2")
 @Controller
 public class OrganisatorController {
 
+  public List<Student> students = new ArrayList<>();
   private AccountCreator accountCreator;
 
   @Value("${zulassungsliste_dir}")
@@ -43,6 +47,7 @@ public class OrganisatorController {
   public String orga(KeycloakAuthenticationToken token, Model model) {
     model.addAttribute("account", accountCreator.createFromPrincipal(token));
     model.addAttribute("entries", Entry.generate(10));
+    model.addAttribute("students", students);
 
     return "orga";
   }
@@ -59,8 +64,7 @@ public class OrganisatorController {
   @Secured("ROLE_orga")
   public String submit(@RequestParam("file") MultipartFile file) {
     FileParser csvParser = new FileParser(zulassungslisteDir);
-    List<Student> students = csvParser.processCSV(file);
-
+    students.addAll(csvParser.processCSV(file));
     return "redirect:/zulassung2/orga";
   }
 }
