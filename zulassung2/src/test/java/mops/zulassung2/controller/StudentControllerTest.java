@@ -25,18 +25,18 @@ class StudentControllerTest {
 
   @Test
   @WithMockKeycloackAuth("studentin")
-  void studiAsStudent() throws Exception {
+  void studiAsStudentIsOk() throws Exception {
     mvc.perform(get("/zulassung2/studi")).andExpect(status().isOk());
   }
 
   @Test
   @WithMockKeycloackAuth("orga")
-  void studiAsOrga() throws Exception {
+  void studiAsOrgaIsForbidden() throws Exception {
     mvc.perform(get("/zulassung2/studi")).andExpect(status().isForbidden());
   }
 
   @Test
-  void studiAsUnauthorized() throws Exception {
+  void studiAsUnauthorizedIsRedirected() throws Exception {
     mvc.perform(get("/zulassung2/studi")).andExpect(status().is(302));
   }
 }
