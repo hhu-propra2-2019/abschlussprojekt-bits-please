@@ -5,7 +5,6 @@ import mops.zulassung2.model.Entry;
 import mops.zulassung2.model.FileParser;
 import mops.zulassung2.model.Student;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,9 +25,6 @@ public class OrganisatorController {
 
   public List<Student> students = new ArrayList<>();
   private AccountCreator accountCreator;
-
-  @Value("${zulassungsliste_dir}")
-  private String zulassungslisteDir;
 
   public OrganisatorController() {
     accountCreator = new AccountCreator();
@@ -63,7 +59,7 @@ public class OrganisatorController {
   @PostMapping("/orga")
   @Secured("ROLE_orga")
   public String submit(@RequestParam("file") MultipartFile file) {
-    FileParser csvParser = new FileParser(zulassungslisteDir);
+    FileParser csvParser = new FileParser();
     students.addAll(csvParser.processCSV(file));
     return "redirect:/zulassung2/orga";
   }

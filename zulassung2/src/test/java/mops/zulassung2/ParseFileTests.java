@@ -28,7 +28,7 @@ class ParseFileTests {
     students.add(markus);
 
     String data = header + student1Data + student2Data;
-    FileParser parser = new FileParser("");
+    FileParser parser = new FileParser();
     byte[] bytes = data.getBytes(StandardCharsets.UTF_8);
     String name = "testFile.csv";
     String fileName = "test_students.csv";
@@ -45,7 +45,7 @@ class ParseFileTests {
   public void testParsingInvalidCSVFile() {
     // Arrange
     String data = student1Data + student2Data;
-    FileParser parser = new FileParser("");
+    FileParser parser = new FileParser();
     byte[] bytes = data.getBytes(StandardCharsets.UTF_8);
     String name = "testFile.csv";
     String fileName = "test_students.csv";
@@ -63,7 +63,7 @@ class ParseFileTests {
     // Arrange
     String wrongNamedCollumnsHeader = "matricl,mail,nam,fornam\n";
     String data = wrongNamedCollumnsHeader + student1Data + student2Data;
-    FileParser parser = new FileParser("");
+    FileParser parser = new FileParser();
     byte[] bytes = data.getBytes(StandardCharsets.UTF_8);
     String name = "testFile.csv";
     String fileName = "test_students.csv";
@@ -81,7 +81,7 @@ class ParseFileTests {
     // Arrange
     String incorrectSequenceHeader = "forname,name,email,matriculationnumber\n";
     String data = incorrectSequenceHeader + student1Data + student2Data;
-    FileParser parser = new FileParser("");
+    FileParser parser = new FileParser();
     byte[] bytes = data.getBytes(StandardCharsets.UTF_8);
     String name = "testFile.csv";
     String fileName = "test_students.csv";
