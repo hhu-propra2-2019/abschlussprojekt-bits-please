@@ -47,8 +47,9 @@ public class CSVParser {
     File studentinFile = new File(file.getName());
     try {
       file.transferTo(studentinFile);
-      if (!studentinFile.exists())
+      if (!studentinFile.exists()) {
         Files.createFile(studentinFile.toPath());
+      }
     } catch (IOException e) {
       e.printStackTrace();
     }
