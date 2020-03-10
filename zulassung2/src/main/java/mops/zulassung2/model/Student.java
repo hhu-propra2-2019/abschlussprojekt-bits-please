@@ -7,8 +7,8 @@ import lombok.Getter;
 @Getter
 public class Student {
 
-  private String matrikelnummer;
+  private String matriculationNumber;
   private String email;
   private String name;
-  private String vorname;
+  private String firstName;
 }

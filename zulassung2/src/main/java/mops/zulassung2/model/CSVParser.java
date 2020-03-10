@@ -57,12 +57,12 @@ public class CSVParser {
     return studentFile;
   }
 
-  private void parseLine(List<Student> studentinList, Scanner scanner) {
+  private void parseLine(List<Student> studentList, Scanner scanner) {
     while (scanner.hasNextLine()) {
       String[] values = scanner.nextLine().split(delimiter);
       if (values.length == 4) {
-        Student studentin = new Student(values[0], values[1], values[2], values[3]);
-        studentinList.add(studentin);
+        Student student = new Student(values[0], values[1], values[2], values[3]);
+        studentList.add(student);
       }
     }
   }
