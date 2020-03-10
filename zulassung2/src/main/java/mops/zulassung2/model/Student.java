@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class Studentin {
+public class Student {
 
   private String matrikelnummer;
   private String email;

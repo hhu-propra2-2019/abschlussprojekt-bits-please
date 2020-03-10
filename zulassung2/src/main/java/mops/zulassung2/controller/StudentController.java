@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @RequestMapping("/zulassung2")
 @Controller
-public class StudentinController {
+public class StudentController {
 
   private AccountCreator accountCreator;
 
-  public StudentinController() {
+  public StudentController() {
     accountCreator = new AccountCreator();
   }
 
@@ -28,11 +28,11 @@ public class StudentinController {
    * @return gibt eine view zurück, die gerendert werden kann
    */
   @GetMapping("/studi")
-  @Secured("ROLE_studentin")
-  public String studentin(KeycloakAuthenticationToken token, Model model) {
+  @Secured("ROLE_student")
+  public String student(KeycloakAuthenticationToken token, Model model) {
     model.addAttribute("account", accountCreator.createFromPrincipal(token));
     model.addAttribute("entries", Entry.generate(10));
     // authenticatedAccess.increment();
-    return "studentin";
+    return "student";
   }
 }
