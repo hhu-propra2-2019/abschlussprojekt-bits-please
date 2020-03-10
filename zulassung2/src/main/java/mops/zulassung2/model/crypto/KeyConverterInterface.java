@@ -1,4 +1,4 @@
-package mops.zulassung2;
+package mops.zulassung2.model.crypto;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
