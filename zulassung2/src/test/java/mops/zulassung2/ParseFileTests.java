@@ -13,6 +13,10 @@ import java.util.List;
 
 class ParseFileTests {
 
+  private String header = "matriculationnumber,email,name,forname\n";
+  private String student1Data = "2727912,tigeu100@hhu.de,geuer,tim\n";
+  private String student2Data = "2757144,masie@hhu.de,siewert,markus\n";
+
   @Test
   public void testParsingStudentsFromCSV() {
     // Arrange
@@ -22,7 +26,7 @@ class ParseFileTests {
     students.add(tim);
     students.add(markus);
 
-    String data = "2727912,tigeu100@hhu.de,geuer,tim\n2757144,masie@hhu.de,siewert,markus\n";
+    String data = header + student1Data + student2Data;
     FileParser parser = new FileParser("");
     byte[] bytes = data.getBytes(StandardCharsets.UTF_8);
     String name = "testFile.csv";
