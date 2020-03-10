@@ -1,17 +1,17 @@
-package mops.zulassung2;
-
-import static org.assertj.core.api.Assertions.assertThat;
+package mops.zulassung2.model.crypto;
 
 import org.apache.commons.codec.binary.Base64;
 import org.junit.jupiter.api.Test;
 
-import java.io.UnsupportedEncodingException;
-import java.security.*;
-import java.security.spec.InvalidKeySpecException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import java.io.UnsupportedEncodingException;
+import java.security.*;
+import java.security.spec.InvalidKeySpecException;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 class KeyConverterTest {

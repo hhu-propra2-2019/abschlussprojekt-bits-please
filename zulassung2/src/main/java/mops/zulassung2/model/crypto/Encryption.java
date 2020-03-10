@@ -1,32 +1,28 @@
 package mops.zulassung2.model.crypto;
 
 import mops.Zulassung2Application;
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 
-import java.nio.charset.StandardCharsets;
 import java.security.*;
 
 class Encryption implements EncryptionInterface {
 
-  //String -> PrivateKey/PublicKey misses
-  @Value("${dev_private_key}")
-  private static PrivateKey privKey;
-  @Value("${dev_public_key}")
-  private static PublicKey publKey;
-
   private static final Logger logger = LoggerFactory.getLogger(Zulassung2Application.class);
 
-  public byte[] encrypt(String toEncrypt) {
-
+  public byte[] encrypt(String toEncrypt, PrivateKey privateKey) {
     try {
       SecureRandom secureRandom = new SecureRandom();
-      Signature signature = Signature.getInstance("SHA256WithDSA");
-      signature.initSign(privKey, secureRandom);
-      byte[] data = toEncrypt.getBytes(StandardCharsets.UTF_8);
+      Signature signature = Signature.getInstance("SHA256WithRSA");
+
+      signature.initSign(privateKey, secureRandom);
+
+      byte[] data = Base64.decodeBase64(toEncrypt);
       signature.update(data);
+
       return signature.sign();
+
     } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
       logger.error(e.getMessage());
       return null;
@@ -34,17 +30,18 @@ class Encryption implements EncryptionInterface {
 
   }
 
-  public boolean decrypt(String toDecrypt, String toVerify) {
+  public boolean decrypt(String toDecrypt, String toVerify, PublicKey publicKey) {
     try {
-      Signature signature = Signature.getInstance("SHA256WithDSA");
-      signature.initVerify(publKey);
+      Signature signature = Signature.getInstance("SHA256WithRSA");
 
-      byte[] data = toDecrypt.getBytes(StandardCharsets.UTF_8);
+      signature.initVerify(publicKey);
+
+      byte[] data = Base64.decodeBase64(toDecrypt);
       signature.update(data);
 
-      byte[] digitalSignature = toVerify.getBytes(StandardCharsets.UTF_8);
-
+      byte[] digitalSignature = Base64.decodeBase64(toVerify);
       return signature.verify(digitalSignature);
+
     } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
       logger.error(e.getMessage());
       return false;

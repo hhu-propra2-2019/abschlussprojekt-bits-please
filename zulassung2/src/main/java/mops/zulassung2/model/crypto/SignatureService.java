@@ -1,11 +1,24 @@
 package mops.zulassung2.model.crypto;
 
-import java.nio.charset.StandardCharsets;
+import org.apache.commons.codec.binary.Base64;
+import org.springframework.stereotype.Service;
 
-public class SignaturService {
+import java.security.PrivateKey;
+import java.security.PublicKey;
+
+@Service
+public class SignatureService {
+
+  PrivateKey privateKey;
+  PublicKey publicKey;
+
+  public SignatureService(PrivateKey privateKey, PublicKey publicKey) {
+    this.privateKey = privateKey;
+    this.publicKey = publicKey;
+  }
 
   /**
-   *  Creates a signature for a given String.
+   * Creates a signature for a given String.
    *
    * @param toSign data to be signed
    * @return Receipt which contains data and signature
@@ -16,13 +29,13 @@ public class SignaturService {
     String hashed = hasherInterface.getHash(toSign);
 
     EncryptionInterface encryptionInterface = new Encryption();
-    byte[] signed = encryptionInterface.encrypt(hashed);
+    byte[] signed = encryptionInterface.encrypt(hashed, privateKey);
 
-    return new Receipt(toSign, new String(signed, StandardCharsets.UTF_8));
+    return new Receipt(toSign, Base64.encodeBase64String(signed));
   }
 
   /**
-   *  Verifies the signature and validity for a given Receipt.
+   * Verifies the signature and validity for a given Receipt.
    *
    * @param toVerify Receipt to be verified
    * @return true, if valid; false, if invalid
@@ -35,7 +48,7 @@ public class SignaturService {
     String data = toVerify.getData();
     String signature = toVerify.getSignature();
 
-    return encryptionInterface.decrypt(hasherInterface.getHash(data), signature);
+    return encryptionInterface.decrypt(hasherInterface.getHash(data), signature, publicKey);
   }
 
 }
