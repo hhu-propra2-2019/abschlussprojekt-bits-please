@@ -12,8 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class Zulassung2Controller {
 
-  //private final Counter authenticatedAccess;
-  //private final Counter publicAccess;
   private AccountCreator accountCreator;
 
   /**
@@ -22,8 +20,6 @@ public class Zulassung2Controller {
    */
 
   public Zulassung2Controller() { //MeterRegistry registry) {
-    //authenticatedAccess = registry.counter("access.authenticated");
-    //publicAccess = registry.counter("access.public");
     accountCreator = new AccountCreator();
   }
 
@@ -42,7 +38,6 @@ public class Zulassung2Controller {
     if (token != null) {
       model.addAttribute("account", accountCreator.createFromPrincipal(token));
     }
-    //publicAccess.increment();
     return "index";
   }
 
