@@ -17,12 +17,6 @@ import java.util.Map;
 
 public class FileParser {
 
-  private String dir;
-
-  public FileParser(String dir) {
-    this.dir = dir;
-  }
-
   /**
    * Diese Methode wird vom OrganisatorController aufgerufen, nachdem eine File hochgeladen wurde.
    * Das File wird eingelesen und die enthaltenden Studenten zunächst erzeugt
