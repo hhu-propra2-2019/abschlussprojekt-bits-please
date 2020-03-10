@@ -12,26 +12,39 @@
 <body>
 <div id="content" th:fragment="mycontent">
     <h1 class="text-center">
-        Orga View
+        Organisatoren
     </h1>
 
     <p class="lead text-center">
-        Look at things, only Orga-People should be able to see!
+        Hier können Sie die entsprechenden Dateien hochladen
     </p>
-
 
     <div id="upload-csv">
         <form action="/zulassung2/orga" enctype="multipart/form-data" method="POST">
             <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
-
-
-            <td>Wählen Sie eine Textdatei aus</td>
-            <td><input name="file" type="file"/></td>
-            <td><input accept=".csv" type="submit" value="Hochladen"/></td>
-
+            <p>Wählen Sie eine Textdatei aus
+                <input name="file" type="file"/>
+                <input accept=".csv" type="submit" value="Hochladen"/>
+            </p>
 
         </form>
     </div>
+
+
+    <div style="width:50em;height:30ex;overflow:auto;border:thick solid rgba(0,0,0,0.96)">
+        <p style="width:90%;height:auto;overflow:hidden;text-align:right">
+        <ul th:each="student : ${students}" th:remove="all-but-first">
+            <li>
+                <span th:text="${student.matriculationNumber}">1234</span>
+                <span th:text="${student.email}">Peter</span>
+                <span th:text="${student.name}">Peter</span>
+                <span th:text="${student.foreName}">Peter</span>
+                </a></li>
+        </ul>
+        </p>
+    </div>
+</div>
+
 
 </div>
 </body>
