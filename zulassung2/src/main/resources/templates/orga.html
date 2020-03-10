@@ -10,6 +10,7 @@
 </head>
 
 <body>
+<
 <div id="content" th:fragment="mycontent">
     <h1 class="text-center">
         Organisatoren
@@ -19,14 +20,33 @@
         Hier können Sie die entsprechenden Dateien hochladen
     </p>
 
-    <div id="upload-csv">
+    <div id="mops-upload-csv">
         <form action="/zulassung2/orga" enctype="multipart/form-data" method="POST">
             <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
             <p>Wählen Sie eine Textdatei aus
                 <input name="file" type="file"/>
                 <input accept=".csv" type="submit" value="Hochladen"/>
             </p>
-
+            <p>
+                Wählen Sie eine Textdatei aus
+                <input name="file" type="file"/>
+            </p>
+            <p>
+                Laden Sie bitte Ihre Datei hoch
+                <input accept=".csv" type="submit" value="Hochladen"/>
+            </p>
+            Email verschicken
+            <input accept=".email" type="submit" value="Send"/>
+        </form>
+    </div>
+    <div>
+        <h1 class="text-center">
+            Quittung validieren
+        </h1>
+        <p>
+        <td>Prüfen Sie Ihr Signatur</td>
+        <td><input accept=".csv" type="submit" value="Signatur prüfen"/></td>
+        </p>
         </form>
     </div>
 
@@ -39,13 +59,13 @@
                 <span th:text="${student.email}">Peter</span>
                 <span th:text="${student.name}">Peter</span>
                 <span th:text="${student.foreName}">Peter</span>
-                </a></li>
+            </li>
         </ul>
         </p>
     </div>
 </div>
 
-
+</div>
 </div>
 </body>
 </html>
