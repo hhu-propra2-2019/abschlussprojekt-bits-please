@@ -25,24 +25,24 @@ class Zulassung2ControllerTest {
 
   @Test
   @WithMockKeycloackAuth("studentin")
-  void indexAsStudent() throws Exception {
+  void indexAsStudentIsOk() throws Exception {
     mvc.perform(get("/zulassung2")).andExpect(status().isOk());
   }
 
   @Test
   @WithMockKeycloackAuth("orga")
-  void indexAsOrga() throws Exception {
+  void indexAsOrgaIsOk() throws Exception {
     mvc.perform(get("/zulassung2")).andExpect(status().isOk());
   }
 
   @Test
   @WithMockKeycloackAuth("actuator")
-  void indexAsActuator() throws Exception {
+  void indexAsActuatorIsOk() throws Exception {
     mvc.perform(get("/zulassung2")).andExpect(status().isOk());
   }
 
   @Test
-  void indexAsUnauthorized() throws Exception {
+  void indexAsUnauthorizedIsRedirected() throws Exception {
     mvc.perform(get("/zulassung2")).andExpect(status().is(302));
   }
 }
