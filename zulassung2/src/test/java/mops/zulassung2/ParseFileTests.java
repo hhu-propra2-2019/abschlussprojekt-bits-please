@@ -1,5 +1,7 @@
 package mops.zulassung2;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import mops.zulassung2.model.FileParser;
 import mops.zulassung2.model.Studentin;
 import org.junit.jupiter.api.Test;
@@ -8,8 +10,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class ParseFileTests {
 
@@ -25,7 +25,9 @@ class ParseFileTests {
     String data = "2727912,tigeu100@hhu.de,geuer,tim\n2757144,masie@hhu.de,siewert,markus\n";
     FileParser parser = new FileParser("");
     byte[] bytes = data.getBytes(StandardCharsets.UTF_8);
-    MockMultipartFile csvFile = new MockMultipartFile("testFile.csv", "test_students.csv", "text/csv", bytes);
+    String name = "testFile.csv";
+    String fileName = "test_students.csv";
+    MockMultipartFile csvFile = new MockMultipartFile(name, fileName, "text/csv", bytes);
 
     // Act
     List<Studentin> parsedStudents = parser.processCSV(csvFile);
