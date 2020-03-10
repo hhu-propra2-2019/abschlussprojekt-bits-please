@@ -28,7 +28,7 @@ public class StudentController {
    * @return gibt eine view zurück, die gerendert werden kann
    */
   @GetMapping("/studi")
-  @Secured("ROLE_student")
+  @Secured("ROLE_studentin")
   public String student(KeycloakAuthenticationToken token, Model model) {
     model.addAttribute("account", accountCreator.createFromPrincipal(token));
     model.addAttribute("entries", Entry.generate(10));
