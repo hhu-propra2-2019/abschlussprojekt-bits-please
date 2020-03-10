@@ -25,18 +25,18 @@ class OrganisatorControllerTest {
 
   @Test
   @WithMockKeycloackAuth("studentin")
-  void orgaAsStudent() throws Exception {
+  void orgaAsStudentIsRefused() throws Exception {
     mvc.perform(get("/zulassung2/orga")).andExpect(status().isForbidden());
   }
 
   @Test
   @WithMockKeycloackAuth("orga")
-  void orgaAsOrga() throws Exception {
+  void orgaAsOrgaIsOk() throws Exception {
     mvc.perform(get("/zulassung2/orga")).andExpect(status().isOk());
   }
 
   @Test
-  void orgaAsUnauthorized() throws Exception {
+  void orgaAsUnauthorizedIsRedirected() throws Exception {
     mvc.perform(get("/zulassung2/orga")).andExpect(status().is(302));
   }
 }
