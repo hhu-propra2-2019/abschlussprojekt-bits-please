@@ -39,7 +39,7 @@ public class Zulassung2Controller {
    * @return gibt eine view zurück, die gerendert werden kann
    */
   @GetMapping("/zulassung2")
-  @RolesAllowed({"ROLE_orga","ROLE_studentin","ROLE_actuator"})
+  @RolesAllowed({"ROLE_orga","ROLE_student","ROLE_actuator"})
   public String index(KeycloakAuthenticationToken token, Model model) {
     if (token != null) {
       model.addAttribute("account", accountCreator.createFromPrincipal(token));
