@@ -26,7 +26,6 @@ public class CSVParser {
    *
    * @return gibt eine ArrayList zurück, welche die erzeugten Studenten enthält.
    */
-
   public List<Studentin> processCSV(MultipartFile file) {
     List<Studentin> studentinList = new ArrayList<>();
     File studentinFile = saveFile(file);
@@ -48,7 +47,9 @@ public class CSVParser {
     File studentinFile = new File(file.getName());
     try {
       file.transferTo(studentinFile);
-      Files.createFile(studentinFile.toPath());
+      if (!studentinFile.exists()) {
+        Files.createFile(studentinFile.toPath());
+      }
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -58,7 +59,7 @@ public class CSVParser {
 
   private void parseLine(List<Studentin> studentinList, Scanner scanner) {
     while (scanner.hasNextLine()) {
-      String[] values = scanner.next().split(delimiter);
+      String[] values = scanner.nextLine().split(delimiter);
       if (values.length == 4) {
         Studentin studentin = new Studentin(values[0], values[1], values[2], values[3]);
         studentinList.add(studentin);
