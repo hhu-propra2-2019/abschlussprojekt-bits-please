@@ -238,7 +238,9 @@
         </module>
         <module name="OverloadMethodsDeclarationOrder"/>
         <module name="VariableDeclarationUsageDistance"/>
-        <!--<module name="CustomImportOrder">
+        <!-- We deactivated this import order because we use the default import order provided
+        by IDEA and automatically saved by SaveActions Plugins
+        <module name="CustomImportOrder">
             <property name="sortImportsInGroupAlphabetically" value="true"/>
             <property name="separateLineBetweenGroups" value="false"/>
             <property name="customImportOrderRules"
