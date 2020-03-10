@@ -1,7 +1,5 @@
 package mops.zulassung2.controller;
 
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.MeterRegistry;
 import mops.zulassung2.model.AccountCreator;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.stereotype.Controller;
@@ -14,8 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class Zulassung2Controller {
 
-  private final Counter authenticatedAccess;
-  private final Counter publicAccess;
   private AccountCreator accountCreator;
 
   /**
@@ -23,9 +19,7 @@ public class Zulassung2Controller {
    * Parameter: @param registry
    */
 
-  public Zulassung2Controller(MeterRegistry registry) {
-    authenticatedAccess = registry.counter("access.authenticated");
-    publicAccess = registry.counter("access.public");
+  public Zulassung2Controller() { //MeterRegistry registry) {
     accountCreator = new AccountCreator();
   }
 
@@ -39,12 +33,11 @@ public class Zulassung2Controller {
    * @return gibt eine view zurück, die gerendert werden kann
    */
   @GetMapping("/zulassung2")
-  @RolesAllowed({"ROLE_orga","ROLE_studentin","ROLE_actuator"})
+  @RolesAllowed({"ROLE_orga", "ROLE_studentin", "ROLE_actuator"})
   public String index(KeycloakAuthenticationToken token, Model model) {
     if (token != null) {
       model.addAttribute("account", accountCreator.createFromPrincipal(token));
     }
-    publicAccess.increment();
     return "index";
   }
 
