@@ -1,9 +1,11 @@
 package mops.zulassung2.controller;
 
 import mops.zulassung2.model.AccountCreator;
-import mops.zulassung2.model.CSVParser;
 import mops.zulassung2.model.Entry;
+import mops.zulassung2.model.FileParser;
+import mops.zulassung2.model.Studentin;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,12 +15,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RequestMapping("/zulassung2")
 @Controller
 public class OrganisatorController {
 
   private AccountCreator accountCreator;
 
+  @Value("${zulassungsliste_dir}")
+  private String zulassungslisteDir;
 
   public OrganisatorController() {
     accountCreator = new AccountCreator();
@@ -52,9 +58,9 @@ public class OrganisatorController {
   @PostMapping("/orga")
   @Secured("ROLE_orga")
   public String submit(@RequestParam("file") MultipartFile file) {
-    CSVParser csvParser = new CSVParser(",");
-    csvParser.processCSV(file);
+    FileParser csvParser = new FileParser(zulassungslisteDir);
+    List<Studentin> students = csvParser.processCSV(file);
 
-    return "redirect:/orga";
+    return "redirect:/zulassung2/orga";
   }
 }

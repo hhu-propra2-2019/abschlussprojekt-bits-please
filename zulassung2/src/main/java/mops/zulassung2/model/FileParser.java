@@ -1,21 +1,23 @@
 package mops.zulassung2.model;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.io.Reader;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
-public class CSVParser {
+public class FileParser {
 
-  private String delimiter;
+  private String dir;
 
-  public CSVParser(String delimiter) {
-    this.delimiter = delimiter;
+  public FileParser(String dir) {
+    this.dir = dir;
   }
 
   /**
@@ -27,24 +29,33 @@ public class CSVParser {
    * @return gibt eine ArrayList zurück, welche die erzeugten Studenten enthält.
    */
   public List<Studentin> processCSV(MultipartFile file) {
-    List<Studentin> studentinList = new ArrayList<>();
-    File studentinFile = saveFile(file);
+    List<Studentin> studentList = new ArrayList<>();
+    File studentFile = saveFile(file);
+    Reader reader = null;
+    CSVParser csvParser = null;
 
-    Scanner scanner = null;
     try {
-      scanner = new Scanner(studentinFile, StandardCharsets.UTF_8);
+      reader = Files.newBufferedReader(studentFile.toPath());
+      csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
     } catch (IOException e) {
       e.printStackTrace();
     }
-    scanner.useDelimiter(delimiter);
-    parseLine(studentinList, scanner);
-    scanner.close();
 
-    return studentinList;
+    for (CSVRecord csvRecord : csvParser) {
+      String matrNr = csvRecord.get(0);
+      String email = csvRecord.get(1);
+      String name = csvRecord.get(2);
+      String forename = csvRecord.get(3);
+
+      Studentin currentStudent = new Studentin(matrNr, email, name, forename);
+      studentList.add(currentStudent);
+    }
+
+    return studentList;
   }
 
   private File saveFile(MultipartFile file) {
-    File studentinFile = new File(file.getName());
+    File studentinFile = new File(dir + file.getName());
     try {
       file.transferTo(studentinFile);
       if (!studentinFile.exists()) {
@@ -55,15 +66,5 @@ public class CSVParser {
     }
 
     return studentinFile;
-  }
-
-  private void parseLine(List<Studentin> studentinList, Scanner scanner) {
-    while (scanner.hasNextLine()) {
-      String[] values = scanner.nextLine().split(delimiter);
-      if (values.length == 4) {
-        Studentin studentin = new Studentin(values[0], values[1], values[2], values[3]);
-        studentinList.add(studentin);
-      }
-    }
   }
 }

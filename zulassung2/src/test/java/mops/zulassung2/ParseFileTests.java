@@ -1,6 +1,6 @@
 package mops.zulassung2;
 
-import mops.zulassung2.model.CSVParser;
+import mops.zulassung2.model.FileParser;
 import mops.zulassung2.model.Studentin;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
@@ -23,8 +23,9 @@ class ParseFileTests {
     students.add(markus);
 
     String data = "2727912,tigeu100@hhu.de,geuer,tim\n2757144,masie@hhu.de,siewert,markus\n";
-    CSVParser parser = new CSVParser(",");
-    MockMultipartFile csvFile = new MockMultipartFile("testFile,csv", "test_students.csv", "text/csv", data.getBytes(StandardCharsets.UTF_8));
+    FileParser parser = new FileParser("");
+    byte[] bytes = data.getBytes(StandardCharsets.UTF_8);
+    MockMultipartFile csvFile = new MockMultipartFile("testFile.csv", "test_students.csv", "text/csv", bytes);
 
     // Act
     List<Studentin> parsedStudents = parser.processCSV(csvFile);
