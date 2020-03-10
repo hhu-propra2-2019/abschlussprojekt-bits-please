@@ -6,6 +6,7 @@ import org.apache.commons.csv.CSVRecord;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
@@ -55,16 +56,16 @@ public class FileParser {
   }
 
   private File saveFile(MultipartFile file) {
-    File studentFile = new File(dir + file.getName());
+    File convFile = null;
     try {
-      file.transferTo(studentFile);
-      if (!studentFile.exists()) {
-        Files.createFile(studentFile.toPath());
-      }
+      convFile = new File(dir + file.getOriginalFilename());
+      convFile.createNewFile();
+      FileOutputStream fos = new FileOutputStream(convFile);
+      fos.write(file.getBytes());
+      fos.close();
     } catch (IOException e) {
       e.printStackTrace();
     }
-
-    return studentFile;
+    return convFile;
   }
 }
