@@ -10,8 +10,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class FileParser {
 
@@ -36,10 +38,29 @@ public class FileParser {
     CSVParser csvParser = null;
 
     try {
+      Path test = studentFile.toPath();
       reader = Files.newBufferedReader(studentFile.toPath());
-      csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
+      csvParser = new CSVParser(reader, CSVFormat.DEFAULT.withHeader());
     } catch (IOException e) {
       e.printStackTrace();
+    }
+
+    if (csvParser == null) {
+      return null;
+    }
+    Map<String, Integer> headerMap = csvParser.getHeaderMap();
+    if (headerMap.size() != 4) {
+      return null;
+    }
+
+    for (String key : headerMap.keySet()) {
+      Integer index = headerMap.get(key);
+      if ((index == 0 && !key.equals("matriculationnumber"))
+              || (index == 1 && !key.equals("email"))
+              || (index == 2 && !key.equals("name"))
+              || (index == 3 && !key.equals("forname"))) {
+        return null;
+      }
     }
 
     for (CSVRecord csvRecord : csvParser) {
@@ -52,20 +73,31 @@ public class FileParser {
       studentList.add(currentStudent);
     }
 
+    deleteFile(studentFile);
+
     return studentList;
   }
 
   private File saveFile(MultipartFile file) {
     File convFile = null;
     try {
-      convFile = new File(dir + file.getOriginalFilename());
-      convFile.createNewFile();
+      String fileName = file.getOriginalFilename();
+      convFile = new File(fileName);
       FileOutputStream fos = new FileOutputStream(convFile);
       fos.write(file.getBytes());
       fos.close();
     } catch (IOException e) {
       e.printStackTrace();
     }
+
     return convFile;
+  }
+
+  private void deleteFile(File file) {
+    try {
+      Files.deleteIfExists(file.toPath());
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 }
