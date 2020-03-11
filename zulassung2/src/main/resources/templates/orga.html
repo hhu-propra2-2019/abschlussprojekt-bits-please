@@ -11,14 +11,14 @@
 
 <body>
 <
-<div id="content" th:fragment="mycontent">
-    <h1 class="text-center">
+
+
+<div id="content" class="jumbotron text-center" th:fragment="mycontent">
+    <h1>
         Organisatoren
     </h1>
+    <p>Hier können Sie die entsprechenden Dateien hochladen!</p>
 
-    <p class="lead text-center">
-        Hier können Sie die entsprechenden Dateien hochladen
-    </p>
 
     <div id="mops-upload-csv">
         <form action="/zulassung2/orga" enctype="multipart/form-data" method="POST">
