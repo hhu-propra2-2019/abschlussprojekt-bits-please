@@ -30,8 +30,7 @@
         </form>
     </div>
 
-    <div class="border""
-         th:if="${not students.isEmpty()}">
+    <div class="border" th:if="${not students.isEmpty()}">
         <form action="/zulassung2/orga/" method="POST">
             <p class="scrollbar">
             <ul th:each="student : ${students}" th:remove="all-but-first">
