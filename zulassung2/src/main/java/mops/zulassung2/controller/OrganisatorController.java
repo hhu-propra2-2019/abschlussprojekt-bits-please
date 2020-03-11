@@ -5,13 +5,8 @@ import mops.zulassung2.model.Entry;
 import mops.zulassung2.model.Student;
 import mops.zulassung2.model.crypto.Receipt;
 import mops.zulassung2.model.crypto.SignatureService;
-import mops.zulassung2.model.fileparsing.CustomCSVLineParser;
-import mops.zulassung2.model.fileparsing.CustomValidator;
-import mops.zulassung2.model.fileparsing.FileParser;
-import mops.zulassung2.model.Student;
 import mops.zulassung2.services.OrganisatorService;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,7 +30,8 @@ public class OrganisatorController {
   public List<Student> students = new ArrayList<>();
   private AccountCreator accountCreator;
 
-  public OrganisatorController(OrganisatorService organisatorService, SignatureService signatureService) {
+  public OrganisatorController(OrganisatorService organisatorService,
+                               SignatureService signatureService) {
     accountCreator = new AccountCreator();
     this.organisatorService = organisatorService;
     this.signatureService = signatureService;
@@ -89,8 +85,7 @@ public class OrganisatorController {
       //setMessages("Die übergebene Quittung ist leer!", null);
     }
 
-    FileParser txtParser = new FileParser(new CustomValidator());
-    List<String> lines = txtParser.processTXT(receipt);
+    List<String> lines = organisatorService.processTXTUpload(receipt);
 
     boolean valid = signatureService.verify(new Receipt(lines.get(0), lines.get(1)));
 
