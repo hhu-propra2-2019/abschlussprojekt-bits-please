@@ -2,11 +2,14 @@ package mops.zulassung2.controller;
 
 import mops.zulassung2.model.AccountCreator;
 import mops.zulassung2.model.Entry;
+import mops.zulassung2.model.Student;
+import mops.zulassung2.model.crypto.Receipt;
+import mops.zulassung2.model.crypto.SignatureService;
 import mops.zulassung2.model.fileparsing.CustomCSVLineParser;
 import mops.zulassung2.model.fileparsing.CustomValidator;
 import mops.zulassung2.model.fileparsing.FileParser;
-import mops.zulassung2.model.Student;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,7 +29,10 @@ import java.util.List;
 public class OrganisatorController {
 
   public List<Student> students = new ArrayList<>();
+  @Autowired
+  private SignatureService signatureService;
   private AccountCreator accountCreator;
+
 
   public OrganisatorController() {
     accountCreator = new AccountCreator();
@@ -63,6 +69,31 @@ public class OrganisatorController {
   public String submit(@RequestParam("file") MultipartFile file) {
     FileParser csvParser = new FileParser(new CustomValidator(), new CustomCSVLineParser());
     students.addAll(csvParser.processCSV(file));
+    return "redirect:/zulassung2/orga";
+  }
+
+  /**
+   * @param receipt Textfile provided by user
+   * @return Returns view depending on the validity of the receipt.
+   */
+  @PostMapping("/orga/validate-receipt")
+  @Secured("ROLE_orga")
+  public String uploadReceipt(@RequestParam("receipt") MultipartFile receipt) {
+
+    if (receipt.isEmpty()) {
+      //setMessages("Die übergebene Quittung ist leer!", null);
+    }
+
+    FileParser txtParser = new FileParser(new CustomValidator());
+    List<String> lines = txtParser.processTXT(receipt);
+
+    boolean valid = signatureService.verify(new Receipt(lines.get(0), lines.get(1)));
+
+    if (valid) {
+      //setMessages(null, "Die Quittung ist gültig!");
+    } else {
+      //setMessages("Die übergebene Quittung ist ungültig!", null);
+    }
     return "redirect:/zulassung2/orga";
   }
 }
