@@ -9,7 +9,6 @@ import mops.zulassung2.model.fileparsing.CustomCSVLineParser;
 import mops.zulassung2.model.fileparsing.CustomValidator;
 import mops.zulassung2.model.fileparsing.FileParser;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,13 +27,13 @@ import java.util.List;
 @Controller
 public class OrganisatorController {
 
+  private final SignatureService signatureService;
   public List<Student> students = new ArrayList<>();
-  @Autowired
-  private SignatureService signatureService;
   private AccountCreator accountCreator;
 
 
-  public OrganisatorController() {
+  public OrganisatorController(SignatureService signatureService) {
+    this.signatureService = signatureService;
     accountCreator = new AccountCreator();
   }
 
@@ -73,6 +72,8 @@ public class OrganisatorController {
   }
 
   /**
+   * Uploads receipt.
+   *
    * @param receipt Textfile provided by user
    * @return Returns view depending on the validity of the receipt.
    */

@@ -74,6 +74,12 @@ public class FileParser {
     return studentList;
   }
 
+  /**
+   * Diese Methode wird vom OrganisatorController aufgerufen, nachdem eine TXT-File hochgeladen wurde.
+   * Das File wird eingelesen und die enthaltenen Daten ausgelesen. Außerdem wird die Gültigkeit verifiziert.
+   *
+   * @return gibt eine ArrayList zurück, welche die erzeugten Studenten enthält.
+   */
   public List<String> processTXT(MultipartFile file) {
     try {
       File receipt = saveFile(file);
