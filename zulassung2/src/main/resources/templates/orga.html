@@ -49,7 +49,7 @@
         <h1 class="text-center">Quittung validieren</h1>
         <form enctype="multipart/form-data" method="post" th:action="@{/zulassung2/orga/validate-receipt}">
             <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
-            <p>Laden Sie die zu prüfene Quittung hoch</p>
+            <p>Laden Sie die zu prüfende Quittung hoch</p>
             <div class="form-group">
                 <input accept=".txt" class="form-control-file" name="receipt" type="file">
             </div>
