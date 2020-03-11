@@ -16,7 +16,7 @@ public class OrganisatorService {
   /**
    * Extracts list of students from given CSV file.
    *
-   * @param file
+   * @param file CSV File that contains the students
    * @return List of students
    */
   public List<Student> processCSVUpload(MultipartFile file) {
