@@ -1,4 +1,4 @@
-= Softwareentwicklung im Team: Zulassung2 Bits_please
+= Softwareentwicklung im Team: Klausurzulassung (Team: Bits_please)
 WS19/20
 :icons: font
 :icon-set: octicon
@@ -11,7 +11,7 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 
-=== Ursprüngliche Beschreibung der Aufgabestellung durch den Kunden
+=== Ursprüngliche Beschreibung des Systems durch den Kunden
 
 Das System soll für Veranstaltungen die Klausurzulassung verarbeiten und zusammen mit der Anmeldeliste eine Klausurliste erzeugen können.
 
@@ -47,7 +47,7 @@ IMPORTANT: Es werden hier selbstverständlich keine eigene Implementierung von k
 
 * Must have features:
 ** Die Organisatoren sollen in einer Maske eine Datei (im .csv-Format) mit Namen und Emailadressen von Studenten hochladen können. Der Name der Veranstaltung soll manuell eingetippt werden.
-** Das System soll signierte Dateien im .txt-Format als Nachweis für diese Veranstaltung erstellen.
+** Das System soll signierte Dateien im .txt-Format als Nachweis für diese Veranstaltung erstellen. Dabei soll eine etablierte Library zur Verschlüsselung genutzt werden (Asymmetrische Verschlüsselung)
 ** Ein Button soll dann Emails mit den Nachweisen im Anhang an die Studenten versenden.
 ** Die Organisatoren sollen einen Nachweis in einer Maske hochladen können.
 ** Eine Nachricht auf dem Bildschirm soll dem Organisator mitteilen ob der Nachweis echt ist.
@@ -56,10 +56,13 @@ IMPORTANT: Es werden hier selbstverständlich keine eigene Implementierung von k
 ** Die Organisatoren sollen eine Liste von angemeldeten Studenten (aus einem anderen System z.B. Studierendenportal) hochladen können.
 ** Das System soll selbstständig suchen ob ein Nachweis gespeichert ist und den Status des Studenten auf "zugelassen" ändern.
 ** Falls nicht sollen die Studierenden per Email darüber informiert werden, dass sie einen Nachweis erbringen müssen.
-** Die Studerienden sollen dann selbst den Nachweis in der o.g. Maske hochladen. Der Status des Studenten soll dann auf "zugelassen" geändert werden.
+** Die Studierenden sollen dann selbst den Nachweis in der o.g. Maske hochladen. Der Status des Studenten soll dann auf "zugelassen" geändert werden.
+** Eine Schnittstelle zum Modulhandbuch wäre sinnvoll, damit der Organisator den Namen der Veranstaltung aus einer Liste heraussuchen kann.
 
 ==== Dokumentation
-- Eine Liste mit Hinweisen, wo welche Dokumentation zu finden ist.
 
 Eine Dokumentation im ARC42-Format ist im Repository unter /dokumentation zu finden.
 
+==== Visualisierung der Prozesse
+
+image::dokumentation/images/process_flowchart_anmeldungen2.jpg[]
