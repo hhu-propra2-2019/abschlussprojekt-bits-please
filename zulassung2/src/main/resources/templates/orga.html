@@ -20,33 +20,46 @@
         Hier können Sie die entsprechenden Dateien hochladen
     </p>
 
-    <div id="upload-csv">
+    <div id="mops-upload-csv">
         <form action="/zulassung2/orga" enctype="multipart/form-data" method="POST">
             <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
             <p>Wählen Sie eine Textdatei aus
                 <input name="file" type="file"/>
                 <input accept=".csv" type="submit" value="Hochladen"/>
             </p>
-
         </form>
     </div>
 
-
-    <div class="border">
-        <p class="scrollbar">
-        <ul th:each="student : ${students}" th:remove="all-but-first">
-            <li>
-                <span th:text="${student.matriculationNumber}">1234</span>
-                <span th:text="${student.email}">Peter</span>
-                <span th:text="${student.name}">Peter</span>
-                <span th:text="${student.foreName}">Peter</span>
-                </a></li>
-        </ul>
-        </p>
+    <div class="border""
+         th:if="${not students.isEmpty()}">
+        <form action="/zulassung2/orga/" method="POST">
+            <p class="scrollbar">
+            <ul th:each="student : ${students}" th:remove="all-but-first">
+                <li>
+                    <span th:text="${student.matriculationNumber}">1234</span>
+                    <span th:text="${student.email}">Peter</span>
+                    <span th:text="${student.name}">Peter</span>
+                    <span th:text="${student.foreName}">Peter</span>
+                </li>
+            </ul>
+            </p>
+            <button class="btn btn-primary" type="submit">E-Mails versenden</button>
+        </form>
+    </div>
+    <div>
+        <h1 class="text-center">Quittung validieren</h1>
+        <form enctype="multipart/form-data" method="post" th:action="@{/zulassung2/orga/validate-receipt}">
+            <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
+            <p>Laden Sie die zu prüfende Quittung hoch</p>
+            <div class="form-group">
+                <input accept=".txt" class="form-control-file" name="receipt" type="file">
+            </div>
+            <button class="btn btn-primary" type="submit">Quittung hochladen</button>
+        </form>
     </div>
 </div>
 
-
+</div>
 </div>
 </body>
 </html>
