@@ -40,10 +40,12 @@ public class FileParser {
     }
 
     if (csvParser == null) {
+      deleteFile(studentFile);
       return null;
     }
     Map<String, Integer> headerMap = csvParser.getHeaderMap();
     if (headerMap.size() != 4) {
+      deleteFile(studentFile);
       return null;
     }
 
@@ -53,6 +55,7 @@ public class FileParser {
               || (index == 1 && !key.equals("email"))
               || (index == 2 && !key.equals("name"))
               || (index == 3 && !key.equals("forname"))) {
+        deleteFile(studentFile);
         return null;
       }
     }
@@ -65,6 +68,11 @@ public class FileParser {
 
       Student currentStudent = new Student(matrNr, email, name, forename);
       studentList.add(currentStudent);
+    }
+
+    if (studentList.size() <= 0) {
+      deleteFile(studentFile);
+      return null;
     }
 
     deleteFile(studentFile);
