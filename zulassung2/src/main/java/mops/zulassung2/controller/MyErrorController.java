@@ -17,6 +17,13 @@ public class MyErrorController implements ErrorController {
     return "/error";
   }
 
+  /**
+   * Bei einer Request die einen Error verursacht wird diese Funktion aufgerufen.
+   * *
+   *
+   * @param request Art der Htttp Request
+   * @return gibt eine entsprechende error view zurück
+   */
   @RequestMapping("/error")
   public String handleError(HttpServletRequest request) {
     Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
