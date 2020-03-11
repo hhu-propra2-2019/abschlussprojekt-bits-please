@@ -19,46 +19,43 @@
     <p>Hier können Sie die entsprechenden Dateien hochladen!</p>
 
 
-    <div id="mops-upload-csv">
+    <div class="form-group" id="mops-upload-csv">
         <form action="/zulassung2/orga" enctype="multipart/form-data" method="POST">
             <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
             <p>Wählen Sie eine Textdatei aus
-                <input name="file" type="file"/>
-                <input accept=".csv" type="submit" value="Hochladen"/>
             </p>
+
+                <input accept=".csv" name="file" type="file">
+                <input accept=".csv" type="submit" value="Hochladen"/>
+            <form action="/zulassung2/orga/" method="POST">
+                <button class="btn btn-primary" type="submit">E-Mails versenden</button>
+            </form>
+
         </form>
     </div>
     <div class="table-responsive" th:if="${not students.isEmpty()}">
-        <form action="/zulassung2/orga/" method="POST">
-            <p>
 
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Matrikelnummer</th>
-                    <th>E-Mail</th>
-                    <th>Nachname</th>
-                    <th>Vorname</th>
-                </tr>
-                </thead>
-            </p>
-            </table>
-            <p>
-            <ul th:each="student : ${students}" th:remove="all-but-first">
-                <table class="table">
-                    <tbody>
-                    <tr>
-                        <td th:text=" ${student.matriculationNumber}"></td>
-                        <td th:text="${student.email}"></td>
-                        <td th:text="${student.name}"></td>
-                        <td th:text="${student.foreName}"></td>
-                    </tr>
-                    </tbody>
-                </table>
-            </p>
-            <button class="btn btn-primary" type="submit">E-Mails versenden</button>
-        </form>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Matrikelnummer</th>
+                <th>E-Mail</th>
+                <th>Nachname</th>
+                <th>Vorname</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="student : ${students}">
+                <td th:text=" ${student.matriculationNumber}"></td>
+                <td th:text="${student.email}"></td>
+                <td th:text="${student.name}"></td>
+                <td th:text="${student.foreName}"></td>
+            </tr>
+            </tbody>
+        </table>
     </div>
+
     <div>
         <h1>Quittung validieren</h1>
         <form enctype="multipart/form-data" method="post" th:action="@{/zulassung2/orga/validate-receipt}">
@@ -66,8 +63,8 @@
             <p>Laden Sie die zu prüfende Quittung hoch</p>
             <div class="form-group">
                 <input accept=".txt" class="form-control-file" name="receipt" type="file">
+                <button class="btn btn-primary" type="submit">Quittung hochladen</button>
             </div>
-            <button class="btn btn-primary" type="submit">Quittung hochladen</button>
         </form>
     </div>
 </div>
