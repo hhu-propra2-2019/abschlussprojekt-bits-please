@@ -10,9 +10,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class FileParser {
 
@@ -70,6 +72,27 @@ public class FileParser {
     deleteFile(studentFile);
 
     return studentList;
+  }
+
+  public List<String> processTXT(MultipartFile file) {
+    try {
+      File receipt = saveFile(file);
+      String receiptContent = Files.readString(receipt.toPath(), StandardCharsets.UTF_8);
+      List<String> lines = receiptContent.lines().collect(Collectors.toList());
+
+      boolean txtIsValid = validator.validateTXT(lines);
+
+      if (!txtIsValid) {
+        deleteFile(receipt);
+        return null;
+      }
+
+      return lines;
+
+    } catch (IOException e) {
+      e.printStackTrace();
+      return null;
+    }
   }
 
   private File saveFile(MultipartFile file) {
