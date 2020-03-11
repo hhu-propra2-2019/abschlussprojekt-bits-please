@@ -100,7 +100,7 @@ class ParseFileTests {
   public void testSizeOfStudentList() {
     // Arrange
     String data = header;
-    FileParser parser = new FileParser();
+    FileParser parser = new FileParser(new CustomValidator(), new CustomCSVLineParser());
     byte[] bytes = data.getBytes(StandardCharsets.UTF_8);
     String name = "testFile.csv";
     String fileName = "test_students.csv";
