@@ -18,8 +18,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(OrganisatorController.class)
-@ComponentScan(
-        basePackageClasses = {KeycloakSecurityComponents.class, KeycloakSpringBootConfigResolver.class})
+@ComponentScan(basePackageClasses = {KeycloakSecurityComponents.class,
+        KeycloakSpringBootConfigResolver.class})
 class OrganisatorControllerTest {
 
   @Autowired
