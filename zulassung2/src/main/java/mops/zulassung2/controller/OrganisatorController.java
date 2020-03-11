@@ -2,7 +2,9 @@ package mops.zulassung2.controller;
 
 import mops.zulassung2.model.AccountCreator;
 import mops.zulassung2.model.Entry;
-import mops.zulassung2.model.FileParser;
+import mops.zulassung2.model.fileparsing.CustomCSVLineParser;
+import mops.zulassung2.model.fileparsing.CustomValidator;
+import mops.zulassung2.model.fileparsing.FileParser;
 import mops.zulassung2.model.Student;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.access.annotation.Secured;
@@ -59,7 +61,7 @@ public class OrganisatorController {
   @PostMapping("/orga")
   @Secured("ROLE_orga")
   public String submit(@RequestParam("file") MultipartFile file) {
-    FileParser csvParser = new FileParser();
+    FileParser csvParser = new FileParser(new CustomValidator(), new CustomCSVLineParser());
     students.addAll(csvParser.processCSV(file));
     return "redirect:/zulassung2/orga";
   }
