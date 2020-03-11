@@ -14,7 +14,7 @@ import java.util.List;
 public class OrganisatorService {
 
   /**
-   * Extracts list of students from given CSV file
+   * Extracts list of students from given CSV file.
    *
    * @param file
    * @return List of students
