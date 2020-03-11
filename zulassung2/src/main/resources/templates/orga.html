@@ -32,8 +32,8 @@
     </div>
 
 
-    <div class="scrollbar-div">
-        <p class="scrollbar-p">
+    <div class="border">
+        <p class="scrollbar">
         <ul th:each="student : ${students}" th:remove="all-but-first">
             <li>
                 <span th:text="${student.matriculationNumber}">1234</span>
