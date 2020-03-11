@@ -13,6 +13,12 @@ import java.util.List;
 @Service
 public class OrganisatorService {
 
+  /**
+   * Extracts list of students from given CSV file
+   *
+   * @param file
+   * @return List of students
+   */
   public List<Student> processCSVUpload(MultipartFile file) {
     FileParser csvParser = new FileParser(new CustomValidator(), new CustomCSVLineParser());
     List<Student> students = csvParser.processCSV(file);
