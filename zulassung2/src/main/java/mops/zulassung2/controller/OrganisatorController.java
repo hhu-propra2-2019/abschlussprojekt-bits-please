@@ -6,7 +6,9 @@ import mops.zulassung2.model.fileparsing.CustomCSVLineParser;
 import mops.zulassung2.model.fileparsing.CustomValidator;
 import mops.zulassung2.model.fileparsing.FileParser;
 import mops.zulassung2.model.Student;
+import mops.zulassung2.services.OrganisatorService;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,10 +27,12 @@ import java.util.List;
 @Controller
 public class OrganisatorController {
 
+  private final OrganisatorService organisatorService;
   public List<Student> students = new ArrayList<>();
   private AccountCreator accountCreator;
 
-  public OrganisatorController() {
+  public OrganisatorController(OrganisatorService organisatorService) {
+    this.organisatorService = organisatorService;
     accountCreator = new AccountCreator();
   }
 
@@ -61,8 +65,8 @@ public class OrganisatorController {
   @PostMapping("/orga")
   @Secured("ROLE_orga")
   public String submit(@RequestParam("file") MultipartFile file) {
-    FileParser csvParser = new FileParser(new CustomValidator(), new CustomCSVLineParser());
-    students.addAll(csvParser.processCSV(file));
+    students = organisatorService.processCSVUpload(file);
+
     return "redirect:/zulassung2/orga";
   }
 }
