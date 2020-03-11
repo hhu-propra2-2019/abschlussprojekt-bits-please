@@ -1,13 +1,13 @@
-body {
-    background-color: lightblue;
+.scrollbar-div {
+    width: 50em;
+    height: 30ex;
+    overflow: auto;
+    border: thick solid rgba(0, 0, 0, 0.96);
 }
 
-h1 {
-    color: white;
-    text-align: center;
-}
-
-p {
-    font-family: verdana;
-    font-size: 20px;
+.scrollbar-p {
+    width: 90%;
+    height: auto;
+    overflow: hidden;
+    text-align: right;
 }
