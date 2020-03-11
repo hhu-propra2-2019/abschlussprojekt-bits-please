@@ -32,8 +32,8 @@ public class OrganisatorController {
   private AccountCreator accountCreator;
 
   public OrganisatorController(OrganisatorService organisatorService) {
-    this.organisatorService = organisatorService;
     accountCreator = new AccountCreator();
+    this.organisatorService = organisatorService;
   }
 
   /**
