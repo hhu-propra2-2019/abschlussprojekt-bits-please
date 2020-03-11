@@ -96,4 +96,21 @@ class ParseFileTests {
     assertThat(parsedStudents).isEqualTo(null);
   }
 
+  @Test
+  public void testSizeOfStudentList() {
+    // Arrange
+    String data = header;
+    FileParser parser = new FileParser();
+    byte[] bytes = data.getBytes(StandardCharsets.UTF_8);
+    String name = "testFile.csv";
+    String fileName = "test_students.csv";
+    MockMultipartFile csvFile = new MockMultipartFile(name, fileName, "text/csv", bytes);
+
+    // Act
+    List<Student> parsedStudents = parser.processCSV(csvFile);
+
+    // Assert
+    assertThat(parsedStudents).isEqualTo(null);
+  }
+
 }
