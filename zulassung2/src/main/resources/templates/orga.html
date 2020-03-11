@@ -29,18 +29,28 @@
             </p>
         </form>
     </div>
-    <div style="width:50em;height:30ex;overflow:auto;border:thick solid rgba(0,0,0,0.96)"
-         th:if="${not students.isEmpty()}">
+    <div th:if="${not students.isEmpty()}">
         <form action="/zulassung2/orga/" method="POST">
-            <p style="width:90%;height:auto;overflow:hidden;text-align:right">
+            <p>
             <ul th:each="student : ${students}" th:remove="all-but-first">
-                <li>
-                    <span th:text="${student.matriculationNumber}">1234</span>
-                    <span th:text="${student.email}">Peter</span>
-                    <span th:text="${student.name}">Peter</span>
-                    <span th:text="${student.foreName}">Peter</span>
-                </li>
-            </ul>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Matrikelnummer</th>
+                        <th>E-Mail</th>
+                        <th>Nachname</th>
+                        <th>Vorname</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td th:text=" ${student.matriculationNumber}"></td>
+                        <td th:text="${student.email}"></td>
+                        <td th:text="${student.name}"></td>
+                        <td th:text="${student.foreName}"></td>
+                    </tr>
+                    </tbody>
+                </table>
             </p>
             <button class="btn btn-primary" type="submit">E-Mails versenden</button>
         </form>
