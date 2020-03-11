@@ -27,41 +27,34 @@
                 <input name="file" type="file"/>
                 <input accept=".csv" type="submit" value="Hochladen"/>
             </p>
-            <p>
-                Wählen Sie eine Textdatei aus
-                <input name="file" type="file"/>
+        </form>
+    </div>
+    <div style="width:50em;height:30ex;overflow:auto;border:thick solid rgba(0,0,0,0.96)"
+         th:if="${not students.isEmpty()}">
+        <form action="/zulassung2/orga/" method="POST">
+            <p style="width:90%;height:auto;overflow:hidden;text-align:right">
+            <ul th:each="student : ${students}" th:remove="all-but-first">
+                <li>
+                    <span th:text="${student.matriculationNumber}">1234</span>
+                    <span th:text="${student.email}">Peter</span>
+                    <span th:text="${student.name}">Peter</span>
+                    <span th:text="${student.foreName}">Peter</span>
+                </li>
+            </ul>
             </p>
-            <p>
-                Laden Sie bitte Ihre Datei hoch
-                <input accept=".csv" type="submit" value="Hochladen"/>
-            </p>
-            Email verschicken
-            <input accept=".email" type="submit" value="Send"/>
+            <button class="btn btn-primary" type="submit">E-Mails versenden</button>
         </form>
     </div>
     <div>
-        <h1 class="text-center">
-            Quittung validieren
-        </h1>
-        <p>
-        <td>Prüfen Sie Ihr Signatur</td>
-        <td><input accept=".csv" type="submit" value="Signatur prüfen"/></td>
-        </p>
+        <h1 class="text-center">Quittung validieren</h1>
+        <form enctype="multipart/form-data" method="post" th:action="@{/zulassung2/orga/validate-receipt}">
+            <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
+            <p>Laden Sie die zu prüfende Quittung hoch</p>
+            <div class="form-group">
+                <input accept=".txt" class="form-control-file" name="receipt" type="file">
+            </div>
+            <button class="btn btn-primary" type="submit">Quittung hochladen</button>
         </form>
-    </div>
-
-
-    <div style="width:50em;height:30ex;overflow:auto;border:thick solid rgba(0,0,0,0.96)">
-        <p style="width:90%;height:auto;overflow:hidden;text-align:right">
-        <ul th:each="student : ${students}" th:remove="all-but-first">
-            <li>
-                <span th:text="${student.matriculationNumber}">1234</span>
-                <span th:text="${student.email}">Peter</span>
-                <span th:text="${student.name}">Peter</span>
-                <span th:text="${student.foreName}">Peter</span>
-            </li>
-        </ul>
-        </p>
     </div>
 </div>
 
