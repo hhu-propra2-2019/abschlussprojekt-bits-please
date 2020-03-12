@@ -80,7 +80,7 @@ public class EmailService {
 
 
   public void createFileAndMail(Student student, ReceiptData receiptData, String currentSubject) {
-    File file = new File(System.getProperty("user.dir") + "token_" + student.getName() + ".txt");
+    File file = new File(System.getProperty("user.dir") + "token_" + currentSubject + "_" + student.getName() + ".txt");
     FileWriter writer;
     String data = receiptData.create(student, currentSubject);
     Receipt receipt = signatureService.sign(data);
