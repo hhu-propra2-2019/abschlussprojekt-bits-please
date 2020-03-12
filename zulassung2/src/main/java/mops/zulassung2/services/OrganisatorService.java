@@ -39,7 +39,7 @@ public class OrganisatorService {
     FileParser txtParser = new FileParser(new CustomValidator());
     List<String> lines = txtParser.processTXT(file);
     if (lines == null) {
-      lines = new ArrayList<>();
+      return null;
     }
 
     return lines;

@@ -12,10 +12,7 @@ import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.SessionScope;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,8 +28,11 @@ public class OrganisatorController {
   private final SignatureService signatureService;
   private final EmailService emailService;
   public List<Student> students = new ArrayList<>();
+  private List<String> lines = new ArrayList<>();
   public String currentSubject;
   private AccountCreator accountCreator;
+  private String errorMessage;
+  private String successMessage;
 
   /**
    * Constructs OrganisatorController by injecting Beans of
@@ -62,9 +62,11 @@ public class OrganisatorController {
   @GetMapping("/orga")
   @Secured("ROLE_orga")
   public String orga(KeycloakAuthenticationToken token, Model model) {
+    resetMessages();
     model.addAttribute("account", accountCreator.createFromPrincipal(token));
     model.addAttribute("entries", Entry.generate(10));
     model.addAttribute("students", students);
+    model.addAttribute("receiptContent", lines);
 
     return "orga";
   }
@@ -92,22 +94,39 @@ public class OrganisatorController {
    * @param receipt Textfile provided by user
    * @return Returns view depending on the validity of the receipt.
    */
-  @PostMapping("/orga/validate-receipt")
+  @PostMapping("/orga/upload-receipt")
   @Secured("ROLE_orga")
   public String uploadReceipt(@RequestParam("receipt") MultipartFile receipt) {
 
     if (receipt.isEmpty()) {
-      //setMessages("Die übergebene Quittung ist leer!", null);
+      setMessages("Die übergebene Quittung ist leer.", null);
+    } else if (lines == null) {
+      setMessages("Die übergebene Quittung hat das falsche Format.", null);
+    } else {
+      lines = organisatorService.processTXTUpload(receipt);
+      setMessages(null, "Quittung erfolgreich hochgeladen!");
     }
+    return "redirect:/zulassung2/orga";
+  }
 
-    List<String> lines = organisatorService.processTXTUpload(receipt);
+  /**
+   * Validates receipt.
+   *
+   * @return Returns view depending on the validity of the signature
+   */
+  @PostMapping("/orga/validate-receipt")
+  @Secured("ROLE_orga")
+  public String validateReceipt() {
 
     boolean valid = signatureService.verify(new Receipt(lines.get(0), lines.get(1)));
 
     if (valid) {
-      //setMessages(null, "Die Quittung ist gültig!");
+      //TODO: QUITTUNG GÜLTIG
+      //setMessages(null, "Quittung ist gültig!");
+
     } else {
-      //setMessages("Die übergebene Quittung ist ungültig!", null);
+      //TODO: QUITTUNG UNGÜLTIG
+      //setMessages("Die übergebene Quittung hat eine ungültige Signatur.", null);
     }
     return "redirect:/zulassung2/orga";
   }
@@ -128,5 +147,33 @@ public class OrganisatorController {
       emailService.createFileAndMail(student, new CustomReceiptData(), currentSubject);
     }
     return "redirect:/zulassung2/orga";
+  }
+
+  /**
+   * Set Error and Success Messages for the frontend.
+   *
+   * @param errorMessage   Describe error
+   * @param successMessage Send a joyful message to the user
+   */
+  private void setMessages(String errorMessage, String successMessage) {
+    this.errorMessage = errorMessage;
+    this.successMessage = successMessage;
+  }
+
+  /**
+   * Reset UI Messages.
+   */
+  private void resetMessages() {
+    setMessages(null, null);
+  }
+
+  @ModelAttribute("error")
+  String getError() {
+    return errorMessage;
+  }
+
+  @ModelAttribute("success")
+  String getSuccess() {
+    return successMessage;
   }
 }
