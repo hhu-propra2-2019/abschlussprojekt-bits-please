@@ -5,13 +5,12 @@ import mops.zulassung2.model.Student;
 public class CustomReceiptData implements ReceiptData {
 
   @Override
-  public String create(Student student) {
-    //TODO: Add module.
+  public String create(Student student, String currentSubject) {
     String data = "matriculationnumber:" + student.getMatriculationNumber()
         + " email:" + student.getEmail()
         + " name:" + student.getName()
         + " forname:" + student.getForeName()
-        + " module:"; // + module;
+        + " module:" + currentSubject;
     return data;
   }
 }

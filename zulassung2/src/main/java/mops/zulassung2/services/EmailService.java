@@ -79,10 +79,10 @@ public class EmailService {
    */
 
 
-  public void createFileAndMail(Student student, ReceiptData receiptData) {
+  public void createFileAndMail(Student student, ReceiptData receiptData, String currentSubject) {
     File file = new File(System.getProperty("user.dir") + "token_" + student.getName() + ".txt");
     FileWriter writer;
-    String data = receiptData.create(student);
+    String data = receiptData.create(student, currentSubject);
     Receipt receipt = signatureService.sign(data);
     try {
       writer = new FileWriter(file, StandardCharsets.UTF_8);
