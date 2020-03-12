@@ -11,3 +11,7 @@
     overflow: hidden;
     text-align: right;
 }
+
+.inline-form {
+    display: inline;
+}

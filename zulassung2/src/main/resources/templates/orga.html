@@ -16,13 +16,14 @@
     <h1>Organisatoren</h1>
     <div>Hier können Sie die entsprechenden Dateien hochladen!</div>
     <div class="form-group" id="mops-upload-csv">
-        <form action="/zulassung2/orga" enctype="multipart/form-data" method="POST">
+        <form class="inline-form" action="/zulassung2/orga" enctype="multipart/form-data" method="POST">
             <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
-            <div>Wählen Sie eine Textdatei aus</div>
+            <div>Wählen Sie eine CSV-Datei aus</div>
             <input accept=".csv" name="file" type="file">
-            <input type="submit" value="Hochladen"/>
+            <hr>
+            <button class="btn btn-primary" type="submit">Hochladen</button>
         </form>
-        <form action="/zulassung2/orga/sendmail" method="POST">
+        <form class="inline-form" action="/zulassung2/orga/sendmail" method="POST">
             <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
             <button class="btn btn-primary" type="submit">E-Mails versenden</button>
         </form>
@@ -49,11 +50,16 @@
     </div>
     <div>
         <h1>Quittung validieren</h1>
-        <form enctype="multipart/form-data" method="post" th:action="@{/zulassung2/orga/validate-receipt}">
+        <form class="inline-form" enctype="multipart/form-data" method="post" th:action="@{/zulassung2/orga/validate-receipt}">
             <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
             <div>Laden Sie die zu prüfende Quittung hoch</div>
             <input accept=".txt" class="form-control-file" name="receipt" type="file">
-            <button class="btn btn-primary" type="submit">Quittung hochladen</button>
+            <hr>
+            <button class="btn btn-primary" type="submit">Hochladen</button>
+        </form>
+        <form class="inline-form" action="/zulassung2/orga/validate-receipt" method="POST">
+            <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
+            <button class="btn btn-primary" type="submit">Quittung validieren</button>
         </form>
     </div>
 </body>
