@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.security.*;
 
-class Encryption implements EncryptionInterface {
+public class Encryption implements EncryptionInterface {
 
   private static final Logger logger = LoggerFactory.getLogger(Zulassung2Application.class);
 
