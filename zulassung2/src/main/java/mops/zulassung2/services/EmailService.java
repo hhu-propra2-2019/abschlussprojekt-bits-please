@@ -79,25 +79,16 @@ public class EmailService {
    */
 
 
-  public void createFileAndMail(Student student, String currentSubject) {
-    File file = new File(System.getProperty("user.dir") + "token_"
-            + currentSubject + "_" + student.getName() + ".txt");
+  public void createFileAndMail(Student student, ReceiptData receiptData, String currentSubject) {
+    File file = new File(System.getProperty("user.dir") + "token_" + currentSubject + "_" + student.getName() + ".txt");
     FileWriter writer;
+    String data = receiptData.create(student, currentSubject);
+    Receipt receipt = signatureService.sign(data);
     try {
-      //TODO: Add module.
-      String data = "matriculationnumber:" + student.getMatriculationNumber()
-              + " email:" + student.getEmail()
-              + " name:" + student.getName()
-              + " forname:" + student.getForeName()
-              + " module:" + currentSubject;
-
-      Receipt receipt = signatureService.sign(data);
-
       writer = new FileWriter(file, StandardCharsets.UTF_8);
       writer.write(data + "\n");
       writer.write(receipt.getSignature());
       writer.close();
-
     } catch (IOException e) {
       e.printStackTrace();
     }
