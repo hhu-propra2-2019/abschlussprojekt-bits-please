@@ -11,16 +11,11 @@
 
 <div class="jumbotron" id="content" th:fragment="mycontent">
     <link href="../static/css/stylesheet.css" rel="stylesheet" th:href="@{/css/stylesheet.css}">
-    <div class="justify-content-md-center">
-        <img src="../static/pictures/orga-picture.png" alt="Organisator"
-             th:src="@{/pictures/orga-picture.png}" width="10%">
-    </div>
+    <img src="../static/pictures/orga-picture.png" alt="Organisator"
+         th:src="@{/pictures/orga-picture.png}" width="10%" class="rounded float-right">
     <h1 class="display-3">Organisatoren</h1>
-
-
     <h1 class="display-4">Studentenliste</h1>
     <div class="lead">Hier können Sie die entsprechenden Dateien hochladen!</div>
-    <br>
     <div class="form-group" id="mops-upload-csv">
         <form class="inline-form" action="/zulassung2/orga" enctype="multipart/form-data" method="POST">
             <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
@@ -62,10 +57,9 @@
 
     <div>
         <div>
-             <img src="../static/pictures/White.png" alt="white"
-                  th:src="@{/pictures/white.png}" width="1590" height="20px">
+            <img src="../static/pictures/pen.png" alt="pen"
+                 th:src="@{/pictures/pen.png}" width="10%" class="rounded float-right"
         </div>
-
         <h1 class="display-4">Quittung validieren</h1>
         <form class="inline-form" enctype="multipart/form-data" method="post"
               th:action="@{/zulassung2/orga/upload-receipt}">
@@ -86,7 +80,6 @@
             Some success message
         </div>
     </div>
-
 </div>
 </body>
 </html>
