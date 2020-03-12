@@ -29,6 +29,15 @@
             </p>
         </form>
     </div>
+
+    <div id="mops-send-mail">
+        <form action="/zulassung2/orga/sendmail" method="POST">
+            <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
+            <button type="submit">Email versenden</button>
+        </form>
+    </div>
+
+
     <div style="width:50em;height:30ex;overflow:auto;border:thick solid rgba(0,0,0,0.96)"
          th:if="${not students.isEmpty()}">
         <form action="/zulassung2/orga/" method="POST">
@@ -42,7 +51,6 @@
                 </li>
             </ul>
             </p>
-            <button class="btn btn-primary" type="submit">E-Mails versenden</button>
         </form>
     </div>
     <div>
@@ -53,9 +61,9 @@
             <div class="form-group">
                 <input accept=".txt" class="form-control-file" name="receipt" type="file">
             </div>
-            <button class="btn btn-primary" type="submit">Quittung hochladen</button>
         </form>
     </div>
+
 </div>
 
 </div>
