@@ -20,8 +20,12 @@
         <form class="inline-form" action="/zulassung2/orga" enctype="multipart/form-data" method="POST">
             <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
             <div class="lead">Wählen Sie eine CSV-Datei aus</div>
-            <input class="form-control-file" accept=".csv" name="file" type="file">
-            <br>
+            <div class="input-group mb-3">
+                <div class="custom-file">
+                    <input class="custom-file-input" accept=".csv" name="file" type="file" id="csvhochladen" required>
+                    <label class="custom-file-label" for="csvhochladen">Wählen Sie ihre Datei aus</label>
+                </div>
+            </div>
             <label for="subjectControlInput" class="lead">Fach:</label>
             <input type="text" class="form-control form-control-sm" id="subjectControlInput" name="subject"
                    placeholder="Name des Fachs" required>
@@ -55,6 +59,7 @@
     </div>
 
 
+
     <div>
         <div>
             <img src="../static/pictures/pen.png" alt="pen"
@@ -65,7 +70,12 @@
               th:action="@{/zulassung2/orga/upload-receipt}">
             <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
             <p class="lead">Laden Sie die zu prüfende Quittung hoch</p>
-            <input accept=".txt" class="form-control-file" name="receipt" type="file" required>
+            <div class="input-group mb-3">
+                <div class="custom-file">
+                    <input class="custom-file-input"  name="receipt" type="file" id="quittunghochladen" accept=".txt" required>
+                    <label class="custom-file-label" for="quittunghochladen">Wählen Sie ihre Datei aus</label>
+                </div>
+            </div>
             <hr>
             <button class="btn btn-primary" type="submit">Hochladen</button>
         </form>
