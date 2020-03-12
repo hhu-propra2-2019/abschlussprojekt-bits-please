@@ -1,10 +1,9 @@
-package mops.zulassung2.model.mail;
+package mops.zulassung2.services;
 
 import mops.Zulassung2Application;
 import mops.zulassung2.model.Student;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -18,11 +17,14 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 @Service
-public class EmailService implements EmailServiceInterface {
+public class EmailService {
 
   private static final Logger logger = LoggerFactory.getLogger(Zulassung2Application.class);
-  @Autowired
-  public JavaMailSender emailSender;
+  private final JavaMailSender emailSender;
+
+  public EmailService(JavaMailSender emailSender) {
+    this.emailSender = emailSender;
+  }
 
   /**
    * Sends an email without any attachment.
@@ -85,8 +87,9 @@ public class EmailService implements EmailServiceInterface {
       String name = student.getName();
       String frname = student.getForeName();
 
-      writer.write("matriculationnumber: " + matricl + " email: " + mail);
-      writer.write(" name: " + name + " forname: " + frname + "\n");
+      //TODO: Save in one String, sign and then write to file.
+      writer.write("matriculationnumber:" + matricl + " email:" + mail);
+      writer.write(" name:" + name + " forname:" + frname + "\n");
       writer.write("Key");
       writer.close();
 
