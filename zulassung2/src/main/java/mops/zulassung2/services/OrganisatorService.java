@@ -28,4 +28,20 @@ public class OrganisatorService {
 
     return students;
   }
+
+  /**
+   * Extracts lines from given TXT File to List.
+   *
+   * @param file TXT File that contains the receipt
+   * @return List of lines
+   */
+  public List<String> processTXTUpload(MultipartFile file) {
+    FileParser txtParser = new FileParser(new CustomValidator());
+    List<String> lines = txtParser.processTXT(file);
+    if (lines == null) {
+      lines = new ArrayList<>();
+    }
+
+    return lines;
+  }
 }

@@ -1,5 +1,6 @@
-package mops.zulassung2.model.crypto;
+package mops.zulassung2.services;
 
+import mops.zulassung2.model.crypto.*;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.stereotype.Service;
 
@@ -9,8 +10,8 @@ import java.security.PublicKey;
 @Service
 public class SignatureService {
 
-  PrivateKey privateKey;
-  PublicKey publicKey;
+  private final PrivateKey privateKey;
+  private final PublicKey publicKey;
 
   public SignatureService(PrivateKey privateKey, PublicKey publicKey) {
     this.privateKey = privateKey;

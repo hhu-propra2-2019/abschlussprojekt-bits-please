@@ -1,8 +1,9 @@
 package mops.zulassung2.controller;
 
 import com.c4_soft.springaddons.test.security.context.support.WithMockKeycloackAuth;
-import mops.zulassung2.model.mail.EmailService;
+import mops.zulassung2.services.EmailService;
 import mops.zulassung2.services.OrganisatorService;
+import mops.zulassung2.services.SignatureService;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
@@ -20,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @WebMvcTest(OrganisatorController.class)
 @ComponentScan(basePackageClasses = {KeycloakSecurityComponents.class,
-        KeycloakSpringBootConfigResolver.class})
+    KeycloakSpringBootConfigResolver.class})
 class OrganisatorControllerTest {
 
   @Autowired
@@ -31,6 +32,8 @@ class OrganisatorControllerTest {
 
   @MockBean
   OrganisatorService organisatorService;
+  @MockBean
+  SignatureService signatureService;
 
   @Test
   @WithMockKeycloackAuth("studentin")
