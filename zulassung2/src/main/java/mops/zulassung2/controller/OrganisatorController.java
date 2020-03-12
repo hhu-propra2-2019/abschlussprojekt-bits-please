@@ -4,6 +4,7 @@ import mops.zulassung2.model.AccountCreator;
 import mops.zulassung2.model.Entry;
 import mops.zulassung2.model.Student;
 import mops.zulassung2.model.crypto.Receipt;
+import mops.zulassung2.services.CustomReceiptData;
 import mops.zulassung2.services.EmailService;
 import mops.zulassung2.services.OrganisatorService;
 import mops.zulassung2.services.SignatureService;
@@ -122,7 +123,7 @@ public class OrganisatorController {
   @Secured("ROLE_orga")
   public String sendMail() {
     for (Student student : students) {
-      emailService.createFileAndMail(student);
+      emailService.createFileAndMail(student, new CustomReceiptData());
     }
     return "redirect:/zulassung2/orga";
   }
