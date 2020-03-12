@@ -4,9 +4,9 @@ import mops.zulassung2.model.AccountCreator;
 import mops.zulassung2.model.Entry;
 import mops.zulassung2.model.Student;
 import mops.zulassung2.model.crypto.Receipt;
+import mops.zulassung2.services.EmailService;
 import mops.zulassung2.services.OrganisatorService;
 import mops.zulassung2.services.SignatureService;
-import mops.zulassung2.model.mail.EmailService;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
@@ -26,18 +26,27 @@ import java.util.List;
 @Controller
 public class OrganisatorController {
 
-  @Autowired
-  public EmailService emailService;
   private final OrganisatorService organisatorService;
   private final SignatureService signatureService;
+  private final EmailService emailService;
   public List<Student> students = new ArrayList<>();
   private AccountCreator accountCreator;
 
+  /**
+   * Constructs OrganisatorController by injecting Beans of
+   * OrganisatorService, SignatureService and Emailservice.
+   *
+   * @param organisatorService Service for parsing files
+   * @param signatureService   Service for signing files
+   * @param emailService       Service for sending emails
+   */
   public OrganisatorController(OrganisatorService organisatorService,
-                               SignatureService signatureService) {
+                               SignatureService signatureService,
+                               EmailService emailService) {
     accountCreator = new AccountCreator();
     this.organisatorService = organisatorService;
     this.signatureService = signatureService;
+    this.emailService = emailService;
   }
 
   /**
@@ -99,7 +108,7 @@ public class OrganisatorController {
     }
     return "redirect:/zulassung2/orga";
   }
-  
+
   /**
    * Bei einem POST-Request auf /orga/sendmail wird diese Funktion aufgerufen.
    * *
