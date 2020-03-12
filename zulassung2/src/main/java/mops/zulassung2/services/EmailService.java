@@ -2,6 +2,7 @@ package mops.zulassung2.services;
 
 import mops.Zulassung2Application;
 import mops.zulassung2.model.Student;
+import mops.zulassung2.model.crypto.Receipt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.SimpleMailMessage;
@@ -21,9 +22,11 @@ public class EmailService {
 
   private static final Logger logger = LoggerFactory.getLogger(Zulassung2Application.class);
   private final JavaMailSender emailSender;
+  private final SignatureService signatureService;
 
-  public EmailService(JavaMailSender emailSender) {
+  public EmailService(JavaMailSender emailSender, SignatureService signatureService) {
     this.emailSender = emailSender;
+    this.signatureService = signatureService;
   }
 
   /**
@@ -80,17 +83,18 @@ public class EmailService {
     File file = new File(System.getProperty("user.dir") + "token_" + student.getName() + ".txt");
     FileWriter writer;
     try {
+      //TODO: Add module.
+      String data = "matriculationnumber:" + student.getMatriculationNumber()
+          + " email:" + student.getEmail()
+          + " name:" + student.getName()
+          + " forname:" + student.getForeName()
+          + " module:"; // + module;
+
+      Receipt receipt = signatureService.sign(data);
+
       writer = new FileWriter(file, StandardCharsets.UTF_8);
-
-      String matricl = student.getMatriculationNumber();
-      String mail = student.getEmail();
-      String name = student.getName();
-      String frname = student.getForeName();
-
-      //TODO: Save in one String, sign and then write to file.
-      writer.write("matriculationnumber:" + matricl + " email:" + mail);
-      writer.write(" name:" + name + " forname:" + frname + "\n");
-      writer.write("Key");
+      writer.write(data + "\n");
+      writer.write(receipt.getSignature());
       writer.close();
 
     } catch (IOException e) {
@@ -98,7 +102,7 @@ public class EmailService {
     }
     String mail = student.getEmail();
     String text = "Unbedingt die angehängte Datei verwahren!";
-    sendMessage(mail, "Quittung", text, file, "file");
+    sendMessage(mail, "Quittung", text, file, file.getName());
     file.deleteOnExit();
   }
 }
