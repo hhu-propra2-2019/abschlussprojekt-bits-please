@@ -14,6 +14,7 @@
 <div class="jumbotron" id="content" th:fragment="mycontent">
     <link href="../static/css/stylesheet.css" rel="stylesheet" th:href="@{/css/stylesheet.css}">
     <h1>Organisatoren</h1>
+    <h2>Studentenliste</h2>
     <div>Hier können Sie die entsprechenden Dateien hochladen!</div>
     <div class="form-group" id="mops-upload-csv">
         <form class="inline-form" action="/zulassung2/orga" enctype="multipart/form-data" method="POST">
@@ -52,7 +53,7 @@
     </div>
     <div>
         <h1>Quittung validieren</h1>
-        <form class="inline-form" enctype="multipart/form-data" method="post" th:action="@{/zulassung2/orga/validate-receipt}">
+        <form class="inline-form" enctype="multipart/form-data" method="post" th:action="@{/zulassung2/orga/upload-receipt}">
             <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
             <div>Laden Sie die zu prüfende Quittung hoch</div>
             <input accept=".txt" class="form-control-file" name="receipt" type="file">
@@ -63,6 +64,12 @@
             <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
             <button class="btn btn-primary" type="submit">Quittung validieren</button>
         </form>
+        <div class="alert alert-warning" id="error-message" th:if="${error} != null" th:text="${error}">
+            Some error message
+        </div>
+        <div class="alert alert-success" id="success-message" th:if="${success} != null" th:text="${success}">
+            Some success message
+        </div>
     </div>
 </body>
 </html>
