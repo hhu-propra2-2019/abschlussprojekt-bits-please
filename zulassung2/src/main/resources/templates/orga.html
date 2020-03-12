@@ -10,17 +10,21 @@
 <body>
 
 <div class="jumbotron" id="content" th:fragment="mycontent">
-    <img src="../static/pictures/orga-picture.png" alt="Organisator" class="img-thumbnail"
-         th:src="@{/pictures/orga-picture.png}">
     <link href="../static/css/stylesheet.css" rel="stylesheet" th:href="@{/css/stylesheet.css}">
+    <div class="justify-content-md-center">
+        <img src="../static/pictures/orga-picture.png" alt="Organisator"
+             th:src="@{/pictures/orga-picture.png}" width="10%">
+    </div>
     <h1 class="display-3">Organisatoren</h1>
-    <br><br>
+
+
     <h1 class="display-4">Studentenliste</h1>
     <div class="lead">Hier können Sie die entsprechenden Dateien hochladen!</div>
+    <br>
     <div class="form-group" id="mops-upload-csv">
         <form class="inline-form" action="/zulassung2/orga" enctype="multipart/form-data" method="POST">
             <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
-            <div>Wählen Sie eine CSV-Datei aus</div>
+            <div class="lead">Wählen Sie eine CSV-Datei aus</div>
             <input class="form-control-file" accept=".csv" name="file" type="file">
             <br>
             <label for="subjectControlInput">Fach:</label>
