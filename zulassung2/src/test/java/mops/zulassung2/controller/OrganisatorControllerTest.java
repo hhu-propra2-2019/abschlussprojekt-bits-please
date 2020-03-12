@@ -1,6 +1,7 @@
 package mops.zulassung2.controller;
 
 import com.c4_soft.springaddons.test.security.context.support.WithMockKeycloackAuth;
+import mops.zulassung2.model.mail.EmailService;
 import mops.zulassung2.services.OrganisatorService;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -24,6 +25,9 @@ class OrganisatorControllerTest {
 
   @Autowired
   MockMvc mvc;
+  @MockBean
+  EmailService emailService;
+
 
   @MockBean
   OrganisatorService organisatorService;

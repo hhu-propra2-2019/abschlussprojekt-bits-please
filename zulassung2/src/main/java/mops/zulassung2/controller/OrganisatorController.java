@@ -2,9 +2,11 @@ package mops.zulassung2.controller;
 
 import mops.zulassung2.model.AccountCreator;
 import mops.zulassung2.model.Entry;
+import mops.zulassung2.model.Student;
 import mops.zulassung2.model.fileparsing.CustomCSVLineParser;
 import mops.zulassung2.model.fileparsing.CustomValidator;
 import mops.zulassung2.model.fileparsing.FileParser;
+import mops.zulassung2.model.mail.EmailService;
 import mops.zulassung2.model.Student;
 import mops.zulassung2.services.OrganisatorService;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
@@ -27,6 +29,8 @@ import java.util.List;
 @Controller
 public class OrganisatorController {
 
+  @Autowired
+  public EmailService emailService;
   private final OrganisatorService organisatorService;
   public List<Student> students = new ArrayList<>();
   private AccountCreator accountCreator;
@@ -67,6 +71,24 @@ public class OrganisatorController {
   public String submit(@RequestParam("file") MultipartFile file) {
     students = organisatorService.processCSVUpload(file);
 
+    return "redirect:/zulassung2/orga";
+  }
+
+  /**
+   * Bei einem POST-Request auf /orga/sendmail wird diese Funktion aufgerufen.
+   * *
+   * Diese Methode ruft "createFilesAndMails" im EmailService auf
+   * um Emails zu erstellen und dann zu verschicken.
+   *
+   * @return gibt die view orga zurück.
+   */
+
+  @PostMapping("/orga/sendmail")
+  @Secured("ROLE_orga")
+  public String sendMail() {
+    for (Student student : students) {
+      emailService.createFileAndMail(student);
+    }
     return "redirect:/zulassung2/orga";
   }
 }
