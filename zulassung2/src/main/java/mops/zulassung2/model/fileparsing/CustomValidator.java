@@ -32,7 +32,7 @@ public class CustomValidator implements Validator {
   @Override
   public boolean validateTXT(List<String> txtContent) {
 
-    if (txtContent.isEmpty()) {
+    if (txtContent.size() != 2) {
       return false;
     }
 
