@@ -1,6 +1,7 @@
 package mops.zulassung2.model.mail;
 
 import mops.Zulassung2Application;
+import mops.zulassung2.model.Student;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +10,12 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @Service
 public class EmailService implements EmailServiceInterface {
@@ -61,5 +65,37 @@ public class EmailService implements EmailServiceInterface {
     } catch (MessagingException e) {
       logger.error(e.getMessage());
     }
+  }
+
+  /**
+   * Diese Methode wird vom OrganisatorController (Methode: sendMail) aufgerufen.
+   * *
+   * Diese Methode erstellt benutzerdefinierte Files und ruft sendMessage auf.
+   */
+
+
+  public void createFileAndMail(Student student) {
+    File file = new File(System.getProperty("user.dir") + "token_" + student.getName() + ".txt");
+    FileWriter writer;
+    try {
+      writer = new FileWriter(file, StandardCharsets.UTF_8);
+
+      String matricl = student.getMatriculationNumber();
+      String mail = student.getEmail();
+      String name = student.getName();
+      String frname = student.getForeName();
+
+      writer.write("matriculationnumber: " + matricl + " email: " + mail);
+      writer.write(" name: " + name + " forname: " + frname + "\n");
+      writer.write("Key");
+      writer.close();
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    String mail = student.getEmail();
+    String text = "Unbedingt die angehängte Datei verwahren!";
+    sendMessage(mail, "Quittung", text, file, "file");
+    file.deleteOnExit();
   }
 }
