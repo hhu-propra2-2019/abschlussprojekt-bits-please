@@ -2,47 +2,31 @@
 <html lang="en"
       th:replace="~{base :: html(content=~{:: mycontent})}"
       xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
     <title>Organisation</title>
 </head>
-
-
-<div class="fixed-top">
-
-    <img src="images/orga-picture.jpg" alt="picture">
-
-</div>
-
-
 <body>
-<div id="content" class="jumbotron" th:fragment="mycontent">
-    <h1>
-        Organisatoren
-    </h1>
-    <p>Hier können Sie die entsprechenden Dateien hochladen!</p>
-<p>
+<div class="fixed-top">
+    <img alt="picture" src="images/orga-picture.jpg">
+</div>
+<div class="jumbotron" id="content" th:fragment="mycontent">
+    <link href="../static/css/stylesheet.css" rel="stylesheet" th:href="@{/css/stylesheet.css}">
+    <h1>Organisatoren</h1>
+    <div>Hier können Sie die entsprechenden Dateien hochladen!</div>
     <div class="form-group" id="mops-upload-csv">
         <form action="/zulassung2/orga" enctype="multipart/form-data" method="POST">
             <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
-
-            <p>Wählen Sie eine Textdatei aus</p>
-
+            <div>Wählen Sie eine Textdatei aus</div>
             <input accept=".csv" name="file" type="file">
-
-            <p >
-            <input accept=".csv" type="submit" value="Hochladen"/>
-            </p>
-            <form action="/zulassung2/orga/" method="POST">
-                <button class="btn btn-primary" type="submit">E-Mails versenden</button>
-            </form>
-
+            <input type="submit" value="Hochladen"/>
+        </form>
+        <form action="/zulassung2/orga/sendmail" method="POST">
+            <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
+            <button class="btn btn-primary" type="submit">E-Mails versenden</button>
         </form>
     </div>
-</p>
-
     <div class="table-responsive" th:if="${not students.isEmpty()}">
         <table class="table">
             <thead>
@@ -63,21 +47,14 @@
             </tbody>
         </table>
     </div>
-
     <div>
         <h1>Quittung validieren</h1>
         <form enctype="multipart/form-data" method="post" th:action="@{/zulassung2/orga/validate-receipt}">
             <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
-            <p>Laden Sie die zu prüfende Quittung hoch</p>
-
+            <div>Laden Sie die zu prüfende Quittung hoch</div>
             <input accept=".txt" class="form-control-file" name="receipt" type="file">
             <button class="btn btn-primary" type="submit">Quittung hochladen</button>
-
         </form>
     </div>
-</div>
-
-</div>
-</div>
 </body>
 </html>
