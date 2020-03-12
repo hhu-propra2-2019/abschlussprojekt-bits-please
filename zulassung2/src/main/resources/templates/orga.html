@@ -20,6 +20,8 @@
             <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
             <div>Wählen Sie eine CSV-Datei aus</div>
             <input accept=".csv" name="file" type="file">
+            <label>Fach:</label>
+            <input type="text" name="subject">
             <hr>
             <button class="btn btn-primary" type="submit">Hochladen</button>
         </form>

@@ -28,6 +28,7 @@ public class OrganisatorController {
   private final EmailService emailService;
   public List<Student> students = new ArrayList<>();
   private List<String> lines = new ArrayList<>();
+  public String currentSubject;
   private AccountCreator accountCreator;
   private String errorMessage;
   private String successMessage;
@@ -79,7 +80,8 @@ public class OrganisatorController {
 
   @PostMapping("/orga")
   @Secured("ROLE_orga")
-  public String submit(@RequestParam("file") MultipartFile file) {
+  public String submit(@RequestParam("file") MultipartFile file, String subject) {
+    currentSubject = subject;
     students = organisatorService.processCSVUpload(file);
 
     return "redirect:/zulassung2/orga";
@@ -141,7 +143,7 @@ public class OrganisatorController {
   @Secured("ROLE_orga")
   public String sendMail() {
     for (Student student : students) {
-      emailService.createFileAndMail(student);
+      emailService.createFileAndMail(student, currentSubject);
     }
     return "redirect:/zulassung2/orga";
   }
