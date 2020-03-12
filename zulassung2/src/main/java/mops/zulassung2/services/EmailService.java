@@ -80,7 +80,8 @@ public class EmailService {
 
 
   public void createFileAndMail(Student student, String currentSubject) {
-    File file = new File(System.getProperty("user.dir") + "token_" + student.getName() + ".txt");
+    File file = new File(System.getProperty("user.dir") + "token_"
+            + currentSubject + "_" + student.getName() + ".txt");
     FileWriter writer;
     try {
       //TODO: Add module.
