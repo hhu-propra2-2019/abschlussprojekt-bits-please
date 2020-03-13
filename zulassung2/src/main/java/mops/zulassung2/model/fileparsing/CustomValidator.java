@@ -21,7 +21,7 @@ public class CustomValidator implements Validator {
       if ((index == 0 && !key.equals("matriculationnumber"))
           || (index == 1 && !key.equals("email"))
           || (index == 2 && !key.equals("name"))
-          || (index == 3 && !key.equals("forname"))) {
+          || (index == 3 && !key.equals("forename"))) {
         return false;
       }
     }
@@ -42,7 +42,7 @@ public class CustomValidator implements Validator {
       if ((counter == 0 && !key.startsWith("matriculationnumber:"))
           || (counter == 1 && !key.startsWith("email:"))
           || (counter == 2 && !key.startsWith("name:"))
-          || (counter == 3 && !key.startsWith("forname:"))
+          || (counter == 3 && !key.startsWith("forename:"))
           || (counter == 4 && !key.startsWith("module:"))) {
         return false;
       }

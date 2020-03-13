@@ -37,11 +37,29 @@ public class OrganisatorService {
    */
   public List<String> processTXTUpload(MultipartFile file) {
     FileParser txtParser = new FileParser(new CustomValidator());
-    List<String> lines = txtParser.processTXT(file);
-    if (lines == null) {
-      return null;
-    }
+    return txtParser.processTXT(file);
+  }
 
-    return lines;
+  /**
+   * Reads the data from the data String of the receipt.
+   *
+   * @param receiptContent Data of the receipt
+   * @param signature      Signature of the receipt
+   * @return Object with the extracted data of the receipt
+   */
+  public ReceiptData readReceiptContent(String receiptContent, String signature) {
+
+    String[] dataObjects = receiptContent.split(" ");
+    Student student = new Student(
+        dataObjects[0].split(":")[1], // Matriculationnumber
+        dataObjects[1].split(":")[1], // Email
+        dataObjects[2].split(":")[1], // Name
+        dataObjects[3].split(":")[1]); // Forename
+
+    ReceiptData receiptData = new CustomReceiptData(student,
+        dataObjects[4].split(":")[1], // Module
+        signature);                         // Signature
+
+    return receiptData;
   }
 }

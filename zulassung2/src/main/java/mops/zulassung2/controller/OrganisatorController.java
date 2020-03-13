@@ -4,10 +4,7 @@ import mops.zulassung2.model.AccountCreator;
 import mops.zulassung2.model.Entry;
 import mops.zulassung2.model.Student;
 import mops.zulassung2.model.crypto.Receipt;
-import mops.zulassung2.services.CustomReceiptData;
-import mops.zulassung2.services.EmailService;
-import mops.zulassung2.services.OrganisatorService;
-import mops.zulassung2.services.SignatureService;
+import mops.zulassung2.services.*;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
@@ -28,9 +25,10 @@ public class OrganisatorController {
   private final SignatureService signatureService;
   private final EmailService emailService;
   public List<Student> students = new ArrayList<>();
-  private List<String> lines = new ArrayList<>();
   public String currentSubject;
+  private List<ReceiptData> verifiedReceipts = new ArrayList<>();
   private AccountCreator accountCreator;
+  private String dangerMessage;
   private String errorMessage;
   private String successMessage;
 
@@ -66,7 +64,7 @@ public class OrganisatorController {
     model.addAttribute("account", accountCreator.createFromPrincipal(token));
     model.addAttribute("entries", Entry.generate(10));
     model.addAttribute("students", students);
-    model.addAttribute("receiptContent", lines);
+    model.addAttribute("receipts", verifiedReceipts);
 
     return "orga";
   }
@@ -89,46 +87,75 @@ public class OrganisatorController {
   }
 
   /**
-   * Uploads receipt.
+   * Upload receipts.
    *
    * @param receipt Textfile provided by user
    * @return Returns view depending on the validity of the receipt.
    */
   @PostMapping("/orga/upload-receipt")
   @Secured("ROLE_orga")
-  public String uploadReceipt(@RequestParam("receipt") MultipartFile receipt) {
+  public String uploadReceipt(@RequestParam("receipt") MultipartFile... receipt) {
 
-    if (receipt.isEmpty()) {
-      setMessages("Die übergebene Quittung ist leer.", null);
-    } else if (lines == null) {
-      setMessages("Die übergebene Quittung hat das falsche Format.", null);
-    } else {
-      lines = organisatorService.processTXTUpload(receipt);
-      setMessages(null, "Quittung erfolgreich hochgeladen!");
+    List<ReceiptData> receipts = new ArrayList<>();
+
+    boolean firstError = true;
+    for (MultipartFile rec : receipt) {
+
+      List<String> receiptLines = organisatorService.processTXTUpload(rec);
+
+      if (rec.isEmpty() || receiptLines == null) {
+
+        if (firstError) {
+          setMessages("Folgende übergebene Quittungen haben ein falsches Format "
+              + "und konnten daher nicht geprüft werden: "
+              + rec.getOriginalFilename(), null, null);
+          firstError = false;
+        } else {
+          setDangerMessage(dangerMessage.concat(", " + rec.getOriginalFilename()));
+        }
+
+      } else {
+        receipts.add(organisatorService.readReceiptContent(
+            receiptLines.get(0),
+            receiptLines.get(1)));
+      }
     }
-    return "redirect:/zulassung2/orga";
-  }
 
-  /**
-   * Validates receipt.
-   *
-   * @return Returns view depending on the validity of the signature
-   */
-  @PostMapping("/orga/validate-receipt")
-  @Secured("ROLE_orga")
-  public String validateReceipt() {
+    boolean checkRun = false;
+    boolean allReceiptsValid = true;
+    for (ReceiptData data : receipts) {
 
-    boolean valid = signatureService.verify(new Receipt(lines.get(0), lines.get(1)));
-
-    if (valid) {
-      //TODO: QUITTUNG GÜLTIG
-      //setMessages(null, "Quittung ist gültig!");
-
-    } else {
-      //TODO: QUITTUNG UNGÜLTIG
-      //setMessages("Die übergebene Quittung hat eine ungültige Signatur.", null);
+      boolean valid = signatureService.verify(new Receipt(data.create(), data.getSignature()));
+      data.setValid(valid);
+      verifiedReceipts.add(data);
+      if (!valid) {
+        allReceiptsValid = false;
+      }
+      checkRun = true;
     }
-    return "redirect:/zulassung2/orga";
+
+    // Generating error messages
+    if (dangerMessage == null) {
+
+      if (allReceiptsValid) { // all files and signatures are valid
+        setSuccessMessage("Alle hochgeladenen Quittungen wurden geprüft und sind gültig.");
+      } else { // all files but not all signatures are valid
+        setErrorMessage("Alle hochgeladenen Quittungen wurden geprüft. "
+            + "Bitte überprüfen Sie die Gültigkeit anhand der Tabelle.");
+      }
+
+    } else if (checkRun) {
+
+      if (allReceiptsValid) { // not all files but all signatures are valid
+        setErrorMessage(" Quittungen im korrekten Format wurden geprüft.");
+        setSuccessMessage("Die korrekt formatierten Quittungen sind gültig.");
+      } else { // not all files and not all signatures are valid
+        setErrorMessage(" Quittungen im korrekten Format wurden geprüft. "
+            + "Bitte überprüfen Sie die Gültigkeit anhand der Tabelle.");
+      }
+
+    }
+    return "redirect:/zulassung2/orga/";
   }
 
   /**
@@ -144,7 +171,7 @@ public class OrganisatorController {
   @Secured("ROLE_orga")
   public String sendMail() {
     for (Student student : students) {
-      emailService.createFileAndMail(student, new CustomReceiptData(), currentSubject);
+      emailService.createFileAndMail(new CustomReceiptData(student, currentSubject));
     }
     return "redirect:/zulassung2/orga";
   }
@@ -155,8 +182,36 @@ public class OrganisatorController {
    * @param errorMessage   Describe error
    * @param successMessage Send a joyful message to the user
    */
-  private void setMessages(String errorMessage, String successMessage) {
+  private void setMessages(String dangerMessage, String errorMessage, String successMessage) {
+    this.dangerMessage = dangerMessage;
     this.errorMessage = errorMessage;
+    this.successMessage = successMessage;
+  }
+
+  /**
+   * Set Danger Message for the frontend.
+   *
+   * @param dangerMessage Describe danger
+   */
+  private void setDangerMessage(String dangerMessage) {
+    this.dangerMessage = dangerMessage;
+  }
+
+  /**
+   * Set Error Message for the frontend.
+   *
+   * @param errorMessage Describe error
+   */
+  private void setErrorMessage(String errorMessage) {
+    this.errorMessage = errorMessage;
+  }
+
+  /**
+   * Set Success Message for the frontend.
+   *
+   * @param successMessage Send a joyful message to the user
+   */
+  private void setSuccessMessage(String successMessage) {
     this.successMessage = successMessage;
   }
 
@@ -164,7 +219,12 @@ public class OrganisatorController {
    * Reset UI Messages.
    */
   private void resetMessages() {
-    setMessages(null, null);
+    setMessages(null, null, null);
+  }
+
+  @ModelAttribute("danger")
+  String getDanger() {
+    return dangerMessage;
   }
 
   @ModelAttribute("error")
