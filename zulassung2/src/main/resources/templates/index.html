@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{base :: html(content=~{:: mycontent})}">
+      th:replace="~{base :: html(content=~{:: mycontent})}" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 
 <head>
   <meta charset="utf-8">
@@ -12,7 +12,7 @@
 <body>
 <div id="content" th:fragment="mycontent">
   <h1 class="text-center">
-    Spring Boot Keycloak Demo
+    Klausurzulassung
   </h1>
   <div>
     <table class="table">
@@ -31,28 +31,20 @@
           <a th:href="@{/actuator}">Monitoring Informationen</a>
         </td>
       </tr>
-      <tr>
+      <tr sec:authorize="hasRole('orga')">
         <td>
           Route exklusiv für User mit der Rolle "orga"
         </td>
         <td>
-          <a th:href="@{/orga}">Orga Route</a>
+          <a th:href="@{/zulassung2/orga}">Orga Route</a>
         </td>
       </tr>
-      <tr>
+      <tr sec:authorize="hasRole('studentin')">
         <td>
           Route exklusiv für User mit der Rolle "studentin"
         </td>
         <td>
-          <a th:href="@{/studi}">StudentIn Route</a>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          Route für User mit einer der angegeben Rollen. Hier sieht man persönliche Infos.
-        </td>
-        <td>
-          <a th:href="@{/personal}">Persönliche Infos</a>
+          <a th:href="@{/zulassung2/studi}">StudentIn Route</a>
         </td>
       </tr>
       </tbody>

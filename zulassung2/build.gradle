@@ -47,12 +47,17 @@ repositories {
 }
 
 dependencies {
+    compile 'org.springframework.boot:spring-boot-starter-mail'
+    compile "org.thymeleaf:thymeleaf-spring4:3.0.1.RELEASE"
+    compile 'org.thymeleaf.extras:thymeleaf-extras-springsecurity4:3.0.4.RELEASE'
+    compile "org.apache.commons:commons-csv:1.5"
     testCompile group: 'org.assertj', name: 'assertj-core', version: '3.14.0'
+    implementation 'com.c4-soft.springaddons:spring-security-test-keycloack-addons:1.2.0'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'io.micrometer:micrometer-registry-prometheus'
     implementation 'org.keycloak:keycloak-spring-boot-starter:9.0.0'
     implementation 'org.keycloak.bom:keycloak-adapter-bom:3.3.0.Final'
-    implementation "mops:styleguide:2.1.0"
+    implementation "mops:styleguide:2.2.0"
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-web'

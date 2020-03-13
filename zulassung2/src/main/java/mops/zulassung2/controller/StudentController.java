@@ -1,19 +1,21 @@
 package mops.zulassung2.controller;
 
-import mops.zulassung2.model.AccountCreator;
-import mops.zulassung2.model.Entry;
+import mops.zulassung2.model.dataobjects.AccountCreator;
+import mops.zulassung2.model.dataobjects.Entry;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
+@RequestMapping("/zulassung2")
 @Controller
-public class StudentinController {
+public class StudentController {
 
   private AccountCreator accountCreator;
 
-  public StudentinController() {
+  public StudentController() {
     accountCreator = new AccountCreator();
   }
 
@@ -27,10 +29,10 @@ public class StudentinController {
    */
   @GetMapping("/studi")
   @Secured("ROLE_studentin")
-  public String studentin(KeycloakAuthenticationToken token, Model model) {
+  public String student(KeycloakAuthenticationToken token, Model model) {
     model.addAttribute("account", accountCreator.createFromPrincipal(token));
     model.addAttribute("entries", Entry.generate(10));
     // authenticatedAccess.increment();
-    return "studentin";
+    return "student";
   }
 }
