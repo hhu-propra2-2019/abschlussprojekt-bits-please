@@ -1,6 +1,7 @@
 package mops.zulassung2.services;
 
 import mops.Zulassung2Application;
+import mops.zulassung2.model.Student;
 import mops.zulassung2.model.crypto.Receipt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,12 +77,17 @@ public class EmailService {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    //Student erstellen
-    String customizedEmailBodyText = createCustomizedEmailBodyText(student, receiptData.getModule());
+
+    Student student = new Student(receiptData.getMatriculationNumber(),
+        receiptData.getEmail(),
+        receiptData.getName(),
+        receiptData.getForeName());
+    String customizedEmailBodyText =
+        createCustomizedEmailBodyText(student, receiptData.getModule());
     String mail = receiptData.getEmail();
     sendMessage(mail, "Ihr Zulassungsnachweis zum Fach " + receiptData.getModule(),
         customizedEmailBodyText, file, file.getName());
-    
+
     file.deleteOnExit();
   }
 
