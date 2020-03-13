@@ -5,11 +5,10 @@
     border: thick solid rgba(0, 0, 0, 0.96);
 }
 
-.scrollbar {
-    width: 90%;
-    height: auto;
-    overflow: hidden;
-    text-align: right;
+.scrollable {
+    height: 400px;
+    width:100%;
+    overflow: scroll;
 }
 
 .inline-form {
