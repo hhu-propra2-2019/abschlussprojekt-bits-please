@@ -1,7 +1,15 @@
 package mops.zulassung2.services;
 
-import mops.zulassung2.model.Student;
-
 public interface ReceiptData {
-  String create(Student student, String currentSubject);
+  String create();
+
+  String getEmail();
+
+  String getName();
+
+  String getModule();
+
+  String getSignature();
+
+  void setValid(boolean b);
 }

@@ -37,11 +37,22 @@ public class OrganisatorService {
    */
   public List<String> processTXTUpload(MultipartFile file) {
     FileParser txtParser = new FileParser(new CustomValidator());
-    List<String> lines = txtParser.processTXT(file);
-    if (lines == null) {
-      return null;
-    }
+    return txtParser.processTXT(file);
+  }
 
-    return lines;
+  public ReceiptData readReceiptContent(String receiptContent, String signature) {
+
+    String[] dataObjects = receiptContent.split(" ");
+    Student student = new Student(
+        dataObjects[0].split(":")[1], // Matriculationnumber
+        dataObjects[1].split(":")[1], // Email
+        dataObjects[2].split(":")[1], // Name
+        dataObjects[3].split(":")[1]); // Forename
+
+    ReceiptData receiptData = new CustomReceiptData(student,
+        dataObjects[4].split(":")[1], // Module
+        signature);                         // Signature
+
+    return receiptData;
   }
 }

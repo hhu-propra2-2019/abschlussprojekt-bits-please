@@ -1,7 +1,6 @@
 package mops.zulassung2.services;
 
 import mops.Zulassung2Application;
-import mops.zulassung2.model.Student;
 import mops.zulassung2.model.crypto.Receipt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,10 +78,12 @@ public class EmailService {
    */
 
 
-  public void createFileAndMail(Student student, ReceiptData receiptData, String currentSubject) {
-    File file = new File(System.getProperty("user.dir") + "token_" + currentSubject + "_" + student.getName() + ".txt");
+  public void createFileAndMail(ReceiptData receiptData) {
+    File file = new File(System.getProperty("user.dir")
+        + "token_" + receiptData.getModule()
+        + "_" + receiptData.getName() + ".txt");
     FileWriter writer;
-    String data = receiptData.create(student, currentSubject);
+    String data = receiptData.create();
     Receipt receipt = signatureService.sign(data);
     try {
       writer = new FileWriter(file, StandardCharsets.UTF_8);
@@ -92,7 +93,7 @@ public class EmailService {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    String mail = student.getEmail();
+    String mail = receiptData.getEmail();
     String text = "Unbedingt die angehängte Datei verwahren!";
     sendMessage(mail, "Quittung", text, file, file.getName());
     file.deleteOnExit();
