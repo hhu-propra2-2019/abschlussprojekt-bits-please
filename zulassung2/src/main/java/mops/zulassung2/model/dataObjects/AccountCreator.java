@@ -1,4 +1,4 @@
-package mops.zulassung2.model;
+package mops.zulassung2.model.dataObjects;
 
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
