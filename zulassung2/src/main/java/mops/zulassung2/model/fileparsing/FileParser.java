@@ -93,6 +93,7 @@ public class FileParser {
         return null;
       }
 
+      Files.deleteIfExists(receipt.toPath());
       return lines;
 
     } catch (IOException e) {
