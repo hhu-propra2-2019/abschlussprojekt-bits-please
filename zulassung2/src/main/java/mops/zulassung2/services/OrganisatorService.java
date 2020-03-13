@@ -40,6 +40,13 @@ public class OrganisatorService {
     return txtParser.processTXT(file);
   }
 
+  /**
+   * Reads the data from the data String of the receipt.
+   *
+   * @param receiptContent Data of the receipt
+   * @param signature      Signature of the receipt
+   * @return Object with the extracted data of the receipt
+   */
   public ReceiptData readReceiptContent(String receiptContent, String signature) {
 
     String[] dataObjects = receiptContent.split(" ");

@@ -107,14 +107,17 @@ public class OrganisatorController {
 
         if (firstError) {
           setMessages("Folgende übergebene Quittungen haben ein falsches Format "
-              + "und konnten daher nicht geprüft werden: " + rec.getOriginalFilename(), null, null);
+              + "und konnten daher nicht geprüft werden: "
+              + rec.getOriginalFilename(), null, null);
           firstError = false;
         } else {
           setDangerMessage(dangerMessage.concat(", " + rec.getOriginalFilename()));
         }
 
       } else {
-        receipts.add(organisatorService.readReceiptContent(receiptLines.get(0), receiptLines.get(1)));
+        receipts.add(organisatorService.readReceiptContent(
+            receiptLines.get(0),
+            receiptLines.get(1)));
       }
     }
 

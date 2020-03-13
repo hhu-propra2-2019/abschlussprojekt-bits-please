@@ -16,6 +16,12 @@ public class CustomReceiptData implements ReceiptData {
   @Setter
   private boolean valid;
 
+  /**
+   * Saves the data of the receipt.
+   *
+   * @param student        Contains the data of the student
+   * @param currentSubject Contains subject of the student
+   */
   public CustomReceiptData(Student student, String currentSubject) {
     this.matriculationNumber = student.getMatriculationNumber();
     this.email = student.getEmail();
@@ -24,6 +30,13 @@ public class CustomReceiptData implements ReceiptData {
     this.module = currentSubject;
   }
 
+  /**
+   * Saves the data of the receipt including the signature.
+   *
+   * @param student        Contains the data of the student
+   * @param currentSubject Contains subject of the student
+   * @param signature      Contains signature of the receipt
+   */
   public CustomReceiptData(Student student, String currentSubject, String signature) {
     this.matriculationNumber = student.getMatriculationNumber();
     this.email = student.getEmail();
