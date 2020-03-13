@@ -6,6 +6,7 @@
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
     <title>Organisation</title>
+
 </head>
 <body>
 
@@ -21,7 +22,7 @@
             <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
             <div class="lead">Wählen Sie eine CSV-Datei aus</div>
             <div class="input-group mb-3">
-                <div class="custom-file">
+                <div class="custom-file" id="custom-filecsv">
                     <input class="custom-file-input" accept=".csv" name="file" type="file" id="csvhochladen" required>
                     <label class="custom-file-label" for="csvhochladen">Wählen Sie ihre Datei aus</label>
                 </div>
@@ -38,32 +39,30 @@
         </form>
     </div>
     <div class="container">
-    <div class="row">
-        <div class="scrollable" th:if="${not students.isEmpty()}">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Matrikelnummer</th>
-                    <th>E-Mail</th>
-                    <th>Nachname</th>
-                    <th>Vorname</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="student : ${students}">
-                    <td th:text=" ${student.matriculationNumber}"></td>
-                    <td th:text="${student.email}"></td>
-                    <td th:text="${student.name}"></td>
-                    <td th:text="${student.foreName}"></td>
-                </tr>
-                </tbody>
-            </table>
+        <div class="row">
+            <div class="scrollable" th:if="${not students.isEmpty()}">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Matrikelnummer</th>
+                        <th>E-Mail</th>
+                        <th>Nachname</th>
+                        <th>Vorname</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="student : ${students}">
+                        <td th:text=" ${student.matriculationNumber}"></td>
+                        <td th:text="${student.email}"></td>
+                        <td th:text="${student.name}"></td>
+                        <td th:text="${student.foreName}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-    </div>
-</div>
 
-
-<div>
     <div>
         <img src="../static/pictures/pen.png" alt="pen"
              th:src="@{/pictures/pen.png}" width="10%" class="rounded float-right">
@@ -83,38 +82,43 @@
         <hr>
         <button class="btn btn-primary" type="submit">Quittungen überprüfen</button>
     </form>
-    <div class="table-responsive" th:if="${not receipts.isEmpty()}">
-        <table class="table">
-            <thead>
-            <tr>
-                <th>Matrikelnummer</th>
-                <th>E-Mail</th>
-                <th>Nachname</th>
-                <th>Vorname</th>
-                <th>Modul</th>
-                <th>Gültig</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="receipt : ${receipts}">
-                <td th:text=" ${receipt.matriculationNumber}"></td>
-                <td th:text="${receipt.email}"></td>
-                <td th:text="${receipt.name}"></td>
-                <td th:text="${receipt.foreName}"></td>
-                <td th:text="${receipt.module}"></td>
-                <td th:if="${receipt.valid}">&#10004;</td>
-                <td th:if="${not receipt.valid}">&#10060;</td>
-            </tr>
-            </tbody>
-        </table>
-        <div class="alert alert-danger" id="danger-message" th:if="${danger} != null" th:text="${danger}">
-            Some danger message
-        </div>
-        <div class="alert alert-warning" id="error-message" th:if="${error} != null" th:text="${error}">
-            Some error message
-        </div>
-        <div class="alert alert-success" id="success-message" th:if="${success} != null" th:text="${success}">
-            Some success message
+
+    <div class="container">
+        <div class="row">
+            <div class="scrollable" th:if="${not receipts.isEmpty()}">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Matrikelnummer</th>
+                        <th>E-Mail</th>
+                        <th>Nachname</th>
+                        <th>Vorname</th>
+                        <th>Modul</th>
+                        <th>Gültig</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="receipt : ${receipts}">
+                        <td th:text=" ${receipt.matriculationNumber}"></td>
+                        <td th:text="${receipt.email}"></td>
+                        <td th:text="${receipt.name}"></td>
+                        <td th:text="${receipt.foreName}"></td>
+                        <td th:text="${receipt.module}"></td>
+                        <td th:if="${receipt.valid}">&#10004;</td>
+                        <td th:if="${not receipt.valid}">&#10060;</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="alert alert-danger" id="danger-message" th:if="${danger} != null" th:text="${danger}">
+                    Some danger message
+                </div>
+                <div class="alert alert-warning" id="error-message" th:if="${error} != null" th:text="${error}">
+                    Some error message
+                </div>
+                <div class="alert alert-success" id="success-message" th:if="${success} != null" th:text="${success}">
+                    Some success message
+                </div>
+            </div>
         </div>
     </div>
 </div>
