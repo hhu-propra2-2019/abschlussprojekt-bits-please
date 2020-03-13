@@ -62,7 +62,7 @@
     <div>
         <div>
             <img src="../static/pictures/pen.png" alt="pen"
-                 th:src="@{/pictures/pen.png}" width="10%" class="rounded float-right"
+                 th:src="@{/pictures/pen.png}" width="10%" class="rounded float-right">
         </div>
         <h1 class="display-4">Quittung validieren</h1>
         <form class="inline-form" enctype="multipart/form-data" method="post"
@@ -77,11 +77,7 @@
                 </div>
             </div>
             <hr>
-            <button class="btn btn-primary" type="submit">Hochladen</button>
-        </form>
-        <form class="inline-form" action="/zulassung2/orga/validate-receipt" method="POST">
-            <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
-            <button class="btn btn-primary" type="submit">Quittungen validieren</button>
+            <button class="btn btn-primary" type="submit">Quittungen überprüfen</button>
         </form>
         <div class="table-responsive" th:if="${not receipts.isEmpty()}">
             <table class="table">
