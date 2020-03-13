@@ -1,5 +1,6 @@
 package mops.zulassung2;
 
+import mops.zulassung2.model.Student;
 import mops.zulassung2.model.fileparsing.CustomCSVLineParser;
 import mops.zulassung2.model.fileparsing.CustomValidator;
 import mops.zulassung2.model.fileparsing.FileParser;
@@ -17,7 +18,7 @@ class ParseFileTests {
 
   private Student tim = new Student("2727912", "tigeu100@hhu.de", "geuer", "tim");
   private Student markus = new Student("2757144", "masie@hhu.de", "siewert", "markus");
-  private String header = "matriculationnumber,email,name,forname\n";
+  private String header = "matriculationnumber,email,name,forename\n";
   private String student1Data = "2727912,tigeu100@hhu.de,geuer,tim\n";
   private String student2Data = "2757144,masie@hhu.de,siewert,markus\n";
 
