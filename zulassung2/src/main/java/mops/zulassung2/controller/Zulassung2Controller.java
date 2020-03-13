@@ -1,6 +1,6 @@
 package mops.zulassung2.controller;
 
-import mops.zulassung2.model.AccountCreator;
+import mops.zulassung2.model.dataObjects.AccountCreator;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

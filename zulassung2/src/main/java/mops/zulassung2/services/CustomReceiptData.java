@@ -1,6 +1,6 @@
 package mops.zulassung2.services;
 
-import mops.zulassung2.model.Student;
+import mops.zulassung2.model.dataObjects.Student;
 
 public class CustomReceiptData implements ReceiptData {
 

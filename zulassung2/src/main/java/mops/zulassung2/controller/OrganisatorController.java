@@ -1,8 +1,8 @@
 package mops.zulassung2.controller;
 
-import mops.zulassung2.model.AccountCreator;
-import mops.zulassung2.model.Entry;
-import mops.zulassung2.model.Student;
+import mops.zulassung2.model.dataObjects.AccountCreator;
+import mops.zulassung2.model.dataObjects.Entry;
+import mops.zulassung2.model.dataObjects.Student;
 import mops.zulassung2.model.crypto.Receipt;
 import mops.zulassung2.services.CustomReceiptData;
 import mops.zulassung2.services.EmailService;
