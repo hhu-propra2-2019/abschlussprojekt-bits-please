@@ -1,4 +1,4 @@
-package mops.zulassung2.model.dataObjects;
+package mops.zulassung2.model.dataobjects;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
