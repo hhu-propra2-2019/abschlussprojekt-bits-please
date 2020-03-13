@@ -138,7 +138,7 @@ public class OrganisatorController {
     if (dangerMessage == null) {
 
       if (allReceiptsValid) { // all files and signatures are valid
-        setSuccessMessage("Alle hochgeladenen Quittungen wurden geprüft und sind gültig.");
+        setSuccessMessage("Alle neu hochgeladenen Quittungen wurden geprüft und sind gültig.");
       } else { // all files but not all signatures are valid
         setErrorMessage("Alle hochgeladenen Quittungen wurden geprüft. "
             + "Bitte überprüfen Sie die Gültigkeit anhand der Tabelle.");
@@ -147,8 +147,8 @@ public class OrganisatorController {
     } else if (checkRun) {
 
       if (allReceiptsValid) { // not all files but all signatures are valid
-        setErrorMessage(" Quittungen im korrekten Format wurden geprüft.");
-        setSuccessMessage("Die korrekt formatierten Quittungen sind gültig.");
+        setSuccessMessage(" Quittungen im korrekten Format wurden geprüft. "
+            + "Die korrekt formatierten Quittungen sind gültig.");
       } else { // not all files and not all signatures are valid
         setErrorMessage(" Quittungen im korrekten Format wurden geprüft. "
             + "Bitte überprüfen Sie die Gültigkeit anhand der Tabelle.");
