@@ -2,8 +2,6 @@ package mops.zulassung2.controller;
 
 import mops.zulassung2.model.crypto.Receipt;
 import mops.zulassung2.model.dataobjects.AccountCreator;
-import mops.zulassung2.model.dataobjects.Student;
-import mops.zulassung2.services.EmailService;
 import mops.zulassung2.services.OrganisatorService;
 import mops.zulassung2.services.ReceiptData;
 import mops.zulassung2.services.SignatureService;
@@ -25,10 +23,6 @@ public class OrgaUploadReceiptController {
 
   private final OrganisatorService organisatorService;
   private final SignatureService signatureService;
-  private final EmailService emailService;
-  public List<Student> students = new ArrayList<>();
-  public String currentSubject;
-  public String currentSemester;
   private List<ReceiptData> verifiedReceipts = new ArrayList<>();
   private AccountCreator accountCreator;
   private String dangerMessage;
@@ -36,33 +30,29 @@ public class OrgaUploadReceiptController {
   private String successMessage;
 
   /**
-   * Constructs OrganisatorController by injecting Beans of
+   * Constructs Controller by injecting Beans of
    * OrganisatorService, SignatureService and Emailservice.
    *
    * @param organisatorService Service for parsing files
    * @param signatureService   Service for signing files
-   * @param emailService       Service for sending emails
    */
   public OrgaUploadReceiptController(OrganisatorService organisatorService,
-                                     SignatureService signatureService,
-                                     EmailService emailService) {
+                                     SignatureService signatureService) {
     accountCreator = new AccountCreator();
     this.organisatorService = organisatorService;
     this.signatureService = signatureService;
-    this.emailService = emailService;
   }
 
   /**
-   * Bei einem GET-Request auf /orga/upload-receipt wird diese Funktion aufgerufen.
-   * *
+   * This method is called for a GET request to /orga/upload-receipt.
    *
-   * @param token mit den Rollen des Accounts
-   * @param model Objekt von Spring, das als Container genutzt wird, um die Variablen mitzuliefern
-   * @return gibt eine view zurück, die gerendert werden kann
+   * @param token contains account data
+   * @param model Spring object that is used as a container to supply the variables
+   * @return Returns view orga-upload-receipt
    */
   @GetMapping("/upload-receipt")
   @Secured("ROLE_orga")
-  public String uploadReceipts(KeycloakAuthenticationToken token, Model model) {
+  public String redirectOrga(KeycloakAuthenticationToken token, Model model) {
     resetMessages();
     model.addAttribute("account", accountCreator.createFromPrincipal(token));
     model.addAttribute("receipts", verifiedReceipts);
@@ -71,7 +61,7 @@ public class OrgaUploadReceiptController {
   }
 
   /**
-   * Upload receipts.
+   * This method is called for a POST request to /orga/upload-receipt.
    *
    * @param receipt Textfile provided by user
    * @return Returns view depending on the validity of the receipt.

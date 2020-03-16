@@ -46,12 +46,23 @@ public class OrgaUploadCSVController {
   }
 
   /**
-   * Bei einem GET-Request auf /orga wird diese Funktion aufgerufen.
-   * *
+   * This method is called for a GET request to /orga.
    *
-   * @param token mit den Rollen des Accounts
-   * @param model Objekt von Spring, das als Container genutzt wird, um die Variablen mitzuliefern
-   * @return gibt eine view zurück, die gerendert werden kann
+   * @return Redirects to view orga-upload-csv
+   */
+  @GetMapping("")
+  @Secured("ROLE_orga")
+  public String redirectOrga() {
+
+    return "redirect:/zulassung2/orga/upload-csv";
+  }
+
+  /**
+   * This method is called for a GET request to /orga/upload-csv.
+   *
+   * @param token contains account data
+   * @param model Spring object that is used as a container to supply the variables
+   * @return Returns view orga-upload-csv
    */
   @GetMapping("/upload-csv")
   @Secured("ROLE_orga")
@@ -64,11 +75,10 @@ public class OrgaUploadCSVController {
   }
 
   /**
-   * Bei einem POST-Request auf /orga/upload-csv wird diese Funktion aufgerufen.
-   * *
+   * This method is called for a POST request to /orga/upload-csv.
    *
-   * @param file ist das File, welches hochgeladen wurde.
-   * @return gibt die view orga zurück.
+   * @param file File that was uploaded
+   * @return Redirects to view orga-upload-csv
    */
 
   @PostMapping("/upload-csv")
@@ -82,12 +92,10 @@ public class OrgaUploadCSVController {
   }
 
   /**
-   * Bei einem POST-Request auf /orga/sendmail wird diese Funktion aufgerufen.
-   * *
-   * Diese Methode ruft "createFilesAndMails" im EmailService auf
-   * um Emails zu erstellen und dann zu verschicken.
+   * This method is called for a POST request to /orga/sendmail.
+   * It calls "createFilesAndMails" in the EmailService to create emails and then send them.
    *
-   * @return gibt die view orga zurück.
+   * @return Redirects to view orga-upload-csv
    */
   @PostMapping("/sendmail")
   @Secured("ROLE_orga")
@@ -100,13 +108,11 @@ public class OrgaUploadCSVController {
   }
 
   /**
-   * Bei einem POST-Request auf /orga/sendmail/individual wird diese Funktion aufgerufen.
-   * *
-   * Diese Methode ruft "createFilesAndMails" im EmailService auf
-   * um Emails zu erstellen und dann zu verschicken. Hierbei nutzt sie den mitgegebenen
-   * Counter, um nur die gewünschte E-Mail individuell an den Studenten zu verschicken.
+   * This method is called for a POST request to /orga/sendmail/individual.
+   * It calls "createFilesAndMails" in the EmailService to create emails and then send them.
+   * In doing so, it uses the provided counter to get to the student from the list of students.
    *
-   * @return Leitet auf die View orga-upload-csv weiter.
+   * @return Redirects to view orga-upload-csv
    */
   @PostMapping("/sendmail/individual")
   @Secured("ROLE_orga")
