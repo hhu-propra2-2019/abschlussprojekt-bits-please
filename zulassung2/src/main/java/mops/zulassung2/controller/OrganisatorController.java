@@ -1,8 +1,8 @@
 package mops.zulassung2.controller;
 
-import mops.zulassung2.model.AccountCreator;
-import mops.zulassung2.model.Entry;
-import mops.zulassung2.model.Student;
+import mops.zulassung2.model.dataobjects.AccountCreator;
+import mops.zulassung2.model.dataobjects.Entry;
+import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.model.crypto.Receipt;
 import mops.zulassung2.services.*;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;

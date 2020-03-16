@@ -1,7 +1,7 @@
 package mops.zulassung2.services;
 
 import mops.Zulassung2Application;
-import mops.zulassung2.model.Student;
+import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.model.crypto.Receipt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
