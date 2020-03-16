@@ -1,7 +1,7 @@
 package mops.zulassung2.controller;
 
 import mops.zulassung2.model.CustomNameCreator;
-import mops.zulassung2.model.MinIOHelper;
+import mops.zulassung2.model.MinIoHelper;
 import mops.zulassung2.model.NameCreator;
 import mops.zulassung2.model.dataobjects.AccountCreator;
 import mops.zulassung2.model.dataobjects.Entry;
@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.SessionScope;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @SessionScope
@@ -32,7 +34,7 @@ public class OrganisatorController {
   private List<ReceiptData> verifiedReceipts = new ArrayList<>();
   private AccountCreator accountCreator;
   private NameCreator nameCreator;
-  private MinIOHelper minIOHelper;
+  private MinIoHelper minIoHelper;
   private String dangerMessage;
   private String errorMessage;
   private String successMessage;
@@ -50,7 +52,7 @@ public class OrganisatorController {
                                EmailService emailService) {
     accountCreator = new AccountCreator();
     nameCreator = new CustomNameCreator();
-    minIOHelper = new MinIOHelper();
+    minIoHelper = new MinIoHelper();
     this.organisatorService = organisatorService;
     this.signatureService = signatureService;
     this.emailService = emailService;
@@ -178,13 +180,16 @@ public class OrganisatorController {
   @Secured("ROLE_orga")
   public String sendMail() {
     for (Student student : students) {
-      emailService.createFileAndMail(new CustomReceiptData(student, currentSubject));
+      File file = emailService.createFile(student, currentSubject);
+      emailService.sendMail(student, currentSubject, file);
+
       String bucketName = nameCreator.createBucketName(student);
-      if (!minIOHelper.bucketExists(bucketName)) {
-        minIOHelper.makeBucket(bucketName);
+      if (!minIoHelper.bucketExists(bucketName)) {
+        minIoHelper.makeBucket(bucketName);
       }
 
-      minIOHelper.putObject(bucketName, "zulassung.txt", "zulassung.txt");
+      minIoHelper.putObject(bucketName, file.getName(), file.getPath(), file.length(),
+              new HashMap<String, String>(), ".txt");
     }
     return "redirect:/zulassung2/orga";
   }

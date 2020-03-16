@@ -1,8 +1,8 @@
 package mops.zulassung2.services;
 
 import mops.Zulassung2Application;
-import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.model.crypto.Receipt;
+import mops.zulassung2.model.dataobjects.Student;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -62,13 +62,16 @@ public class EmailService {
    * *
    * Diese Methode erstellt benutzerdefinierte Files und ruft sendMessage auf.
    */
-  public void createFileAndMail(ReceiptData receiptData) {
-    File file = new File(System.getProperty("user.dir")
-        + "token_" + receiptData.getModule()
-        + "_" + receiptData.getName() + ".txt");
-    FileWriter writer;
+
+  public File createFile(Student student, String currentSubject) {
+    ReceiptData receiptData = new CustomReceiptData(student, currentSubject);
     String data = receiptData.create();
     Receipt receipt = signatureService.sign(data);
+    File file = new File(System.getProperty("user.dir")
+            + "token_" + receiptData.getModule()
+            + "_" + receiptData.getName() + ".txt");
+    FileWriter writer;
+
     try {
       writer = new FileWriter(file, StandardCharsets.UTF_8);
       writer.write(data + "\n");
@@ -77,16 +80,20 @@ public class EmailService {
     } catch (IOException e) {
       e.printStackTrace();
     }
+    return file;
+  }
 
-    Student student = new Student(receiptData.getMatriculationNumber(),
-        receiptData.getEmail(),
-        receiptData.getName(),
-        receiptData.getForeName());
-    String customizedEmailBodyText =
-        createCustomizedEmailBodyText(student, receiptData.getModule());
-    String mail = receiptData.getEmail();
-    sendMessage(mail, "Ihr Zulassungsnachweis zum Fach " + receiptData.getModule(),
-        customizedEmailBodyText, file, file.getName());
+  /**
+   * Sendet eine E-Mail mit den Informationen.
+   *
+   * @param student        Gibt einen Student in die Methode hinein.
+   * @param currentSubject Gibt das Studienfach des Students mit in die Methode hinein.
+   */
+  public void sendMail(Student student, String currentSubject, File file) {
+    String emailText = createCustomizedEmailBodyText(student, currentSubject);
+    String mail = student.getEmail();
+    String subject = "Ihr Zulassungsnachweis zum Fach: ";
+    sendMessage(mail, subject + currentSubject, emailText, file, file.getName());
 
     file.deleteOnExit();
   }
