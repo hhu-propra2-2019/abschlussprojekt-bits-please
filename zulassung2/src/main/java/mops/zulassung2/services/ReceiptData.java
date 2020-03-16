@@ -13,6 +13,8 @@ public interface ReceiptData {
 
   String getModule();
 
+  String getSemester();
+
   String getSignature();
 
   void setValid(boolean b);
