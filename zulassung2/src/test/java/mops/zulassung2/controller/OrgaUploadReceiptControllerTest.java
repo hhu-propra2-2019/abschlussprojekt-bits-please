@@ -19,10 +19,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(OrganisatorController.class)
+@WebMvcTest(OrgaUploadReceiptController.class)
 @ComponentScan(basePackageClasses = {KeycloakSecurityComponents.class,
     KeycloakSpringBootConfigResolver.class})
-class OrganisatorControllerTest {
+class OrgaUploadReceiptControllerTest {
 
   @Autowired
   MockMvc mvc;
@@ -37,18 +37,18 @@ class OrganisatorControllerTest {
 
   @Test
   @WithMockKeycloackAuth("studentin")
-  void orgaAsStudentIsRefused() throws Exception {
-    mvc.perform(get("/zulassung2/orga")).andExpect(status().isForbidden());
+  void orgaReceiptAsStudentIsRefused() throws Exception {
+    mvc.perform(get("/zulassung2/orga/upload-receipt")).andExpect(status().isForbidden());
   }
 
   @Test
   @WithMockKeycloackAuth("orga")
-  void orgaAsOrgaIsOk() throws Exception {
-    mvc.perform(get("/zulassung2/orga")).andExpect(status().isOk());
+  void orgaReceiptAsOrgaIsOk() throws Exception {
+    mvc.perform(get("/zulassung2/orga/upload-receipt")).andExpect(status().isOk());
   }
 
   @Test
-  void orgaAsUnauthorizedIsRedirected() throws Exception {
-    mvc.perform(get("/zulassung2/orga")).andExpect(status().is(302));
+  void orgaReceiptAsUnauthorizedIsRedirected() throws Exception {
+    mvc.perform(get("/zulassung2/orga/upload-receipt")).andExpect(status().is(302));
   }
 }

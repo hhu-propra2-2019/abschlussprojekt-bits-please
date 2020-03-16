@@ -1,47 +1,48 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
+<html lang="en"
       th:replace="~{mopslayout :: html(name='Klausurzulassung', headcontent=~{:: headcontent}, navigation=~{:: navigation}, bodycontent=~{:: bodycontent})}"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      xmlns:th="http://www.thymeleaf.org">
 
 <head>
-  <!-- Required meta tags -->
-  <th:block th:fragment="headcontent">
+    <!-- Required meta tags -->
+    <th:block th:fragment="headcontent">
 
-    <meta charset="utf-8">
-    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+        <meta charset="utf-8">
+        <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
 
-    <link href="../static/node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet"
-          th:href="@{node_modules/bootstrap/dist/css/bootstrap.min.css}">
+        <link href="../static/node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet"
+              th:href="@{node_modules/bootstrap/dist/css/bootstrap.min.css}">
 
-  </th:block>
-  <title>Base Template</title>
+    </th:block>
+    <title>Base Template</title>
 </head>
 
 <body>
 <header>
-  <nav class="navigation navigation-secondary" is="mops-navigation" th:fragment="navigation">
-    <ul>
-      <li>
-        <a th:href="@{/zulassung2}">
-          Startseite
-        </a>
-      </li>
-      <li sec:authorize="hasRole('orga')">
-        <a th:href="@{/zulassung2/orga}">
-          Orgaseite
-        </a>
-      </li>
-      <li sec:authorize="hasRole('studentin')">
-        <a th:href="@{/zulassung2/studi}">
-          Studiseite
-        </a>
-      </li>
-    </ul>
-  </nav>
+    <nav class="navigation navigation-secondary" is="mops-navigation" th:fragment="navigation">
+        <ul>
+            <li sec:authorize="hasRole('orga')">
+                <a th:href="@{/zulassung2/orga/upload-csv}">
+                    Zulassungsliste hochladen
+                </a>
+            </li>
+            <li sec:authorize="hasRole('orga')">
+                <a th:href="@{/zulassung2/orga/upload-receipt}">
+                    Quittungen validieren
+                </a>
+            </li>
+            <li sec:authorize="hasRole('studentin')">
+                <a th:href="@{/zulassung2/studi}">
+                    Studiseite
+                </a>
+            </li>
+        </ul>
+    </nav>
 </header>
 
 <main th:fragment="bodycontent">
-  <div th:replace="${content} ?: ~{}"></div>
+    <div th:replace="${content} ?: ~{}"></div>
 </main>
 
 </body>
