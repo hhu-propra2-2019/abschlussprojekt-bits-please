@@ -171,7 +171,7 @@ public class OrganisatorController {
   @Secured("ROLE_orga")
   public String sendMail() {
     for (Student student : students) {
-      emailService.createFileAndMail(new CustomReceiptData(student, currentSubject));
+      emailService.sendMail(student, currentSubject);
     }
     return "redirect:/zulassung2/orga";
   }
