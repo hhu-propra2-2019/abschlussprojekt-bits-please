@@ -19,7 +19,7 @@ public class MinIoHelper {
 
   private void initializeClient() {
     try {
-      minioClient = new MinioClient("https://play.min.io", "Q3AM3UQ867SPQQA43P2F", "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG");
+      minioClient = new MinioClient("http://localhost:9000", "minioadmin", "minioadmin");
     } catch (InvalidEndpointException | InvalidPortException e) {
       e.printStackTrace();
     }
