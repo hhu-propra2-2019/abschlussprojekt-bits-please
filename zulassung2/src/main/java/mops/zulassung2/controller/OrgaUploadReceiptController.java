@@ -1,10 +1,10 @@
 package mops.zulassung2.controller;
 
-import mops.zulassung2.model.dataobjects.AccountCreator;
-import mops.zulassung2.model.dataobjects.Entry;
-import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.model.crypto.Receipt;
-import mops.zulassung2.services.*;
+import mops.zulassung2.model.dataobjects.AccountCreator;
+import mops.zulassung2.services.OrganisatorService;
+import mops.zulassung2.services.ReceiptData;
+import mops.zulassung2.services.SignatureService;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
@@ -17,15 +17,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SessionScope
-@RequestMapping("/zulassung2")
+@RequestMapping("/zulassung2/orga")
 @Controller
-public class OrganisatorController {
+public class OrgaUploadReceiptController {
 
   private final OrganisatorService organisatorService;
   private final SignatureService signatureService;
-  private final EmailService emailService;
-  public List<Student> students = new ArrayList<>();
-  public String currentSubject;
   private List<ReceiptData> verifiedReceipts = new ArrayList<>();
   private AccountCreator accountCreator;
   private String dangerMessage;
@@ -33,66 +30,43 @@ public class OrganisatorController {
   private String successMessage;
 
   /**
-   * Constructs OrganisatorController by injecting Beans of
+   * Constructs Controller by injecting Beans of
    * OrganisatorService, SignatureService and Emailservice.
    *
    * @param organisatorService Service for parsing files
    * @param signatureService   Service for signing files
-   * @param emailService       Service for sending emails
    */
-  public OrganisatorController(OrganisatorService organisatorService,
-                               SignatureService signatureService,
-                               EmailService emailService) {
+  public OrgaUploadReceiptController(OrganisatorService organisatorService,
+                                     SignatureService signatureService) {
     accountCreator = new AccountCreator();
     this.organisatorService = organisatorService;
     this.signatureService = signatureService;
-    this.emailService = emailService;
   }
 
   /**
-   * Bei einem GET-Request auf /orga wird diese Funktion aufgerufen.
-   * *
+   * This method is called for a GET request to /orga/upload-receipt.
    *
-   * @param token mit den Rollen des Accounts
-   * @param model Objekt von Spring, das als Container genutzt wird, um die Variablen mitzuliefern
-   * @return gibt eine view zurück, die gerendert werden kann
+   * @param token contains account data
+   * @param model Spring object that is used as a container to supply the variables
+   * @return Returns view orga-upload-receipt
    */
-  @GetMapping("/orga")
+  @GetMapping("/upload-receipt")
   @Secured("ROLE_orga")
-  public String orga(KeycloakAuthenticationToken token, Model model) {
+  public String redirectOrga(KeycloakAuthenticationToken token, Model model) {
     resetMessages();
     model.addAttribute("account", accountCreator.createFromPrincipal(token));
-    model.addAttribute("entries", Entry.generate(10));
-    model.addAttribute("students", students);
     model.addAttribute("receipts", verifiedReceipts);
 
-    return "orga";
+    return "orga-upload-receipt";
   }
 
   /**
-   * Bei einem POST-Request auf /orga wird diese Funktion aufgerufen.
-   * *
-   *
-   * @param file ist das File, welches hochgeladen wurde.
-   * @return gibt die view orga zurück.
-   */
-
-  @PostMapping("/orga")
-  @Secured("ROLE_orga")
-  public String submit(@RequestParam("file") MultipartFile file, String subject) {
-    currentSubject = subject;
-    students = organisatorService.processCSVUpload(file);
-
-    return "redirect:/zulassung2/orga";
-  }
-
-  /**
-   * Upload receipts.
+   * This method is called for a POST request to /orga/upload-receipt.
    *
    * @param receipt Textfile provided by user
    * @return Returns view depending on the validity of the receipt.
    */
-  @PostMapping("/orga/upload-receipt")
+  @PostMapping("/upload-receipt")
   @Secured("ROLE_orga")
   public String uploadReceipt(@RequestParam("receipt") MultipartFile... receipt) {
 
@@ -106,9 +80,9 @@ public class OrganisatorController {
       if (rec.isEmpty() || receiptLines == null) {
 
         if (firstError) {
-          setMessages("Folgende übergebene Quittungen haben ein falsches Format "
+          setDangerMessage("Folgende übergebene Quittungen haben ein falsches Format "
               + "und konnten daher nicht geprüft werden: "
-              + rec.getOriginalFilename(), null, null);
+              + rec.getOriginalFilename());
           firstError = false;
         } else {
           setDangerMessage(dangerMessage.concat(", " + rec.getOriginalFilename()));
@@ -147,33 +121,18 @@ public class OrganisatorController {
     } else if (checkRun) {
 
       if (allReceiptsValid) { // not all files but all signatures are valid
-        setSuccessMessage(" Quittungen im korrekten Format wurden geprüft. "
+        setSuccessMessage(" Neu hochgeladene Quittungen im korrekten Format wurden geprüft. "
             + "Die korrekt formatierten Quittungen sind gültig.");
       } else { // not all files and not all signatures are valid
         setErrorMessage(" Quittungen im korrekten Format wurden geprüft. "
             + "Bitte überprüfen Sie die Gültigkeit anhand der Tabelle.");
       }
 
+    } else {
+      setErrorMessage("Es wurden keine neuen Quittungen geprüft,"
+          + " da keine dem geforderten Format entsprach.");
     }
-    return "redirect:/zulassung2/orga/";
-  }
-
-  /**
-   * Bei einem POST-Request auf /orga/sendmail wird diese Funktion aufgerufen.
-   * *
-   * Diese Methode ruft "createFilesAndMails" im EmailService auf
-   * um Emails zu erstellen und dann zu verschicken.
-   *
-   * @return gibt die view orga zurück.
-   */
-
-  @PostMapping("/orga/sendmail")
-  @Secured("ROLE_orga")
-  public String sendMail() {
-    for (Student student : students) {
-      emailService.sendMail(student, currentSubject);
-    }
-    return "redirect:/zulassung2/orga";
+    return "redirect:/zulassung2/orga/upload-receipt";
   }
 
   /**
