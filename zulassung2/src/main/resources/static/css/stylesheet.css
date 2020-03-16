@@ -1,12 +1,3 @@
-
-.sntoprightcornerout{
-    position: relative;
-}
-
-.sntoprightcornerin{
-    position: absolute; top: 0px; right: 0px;
-}
-
 .border {
     width: 50em;
     height: 30ex;
