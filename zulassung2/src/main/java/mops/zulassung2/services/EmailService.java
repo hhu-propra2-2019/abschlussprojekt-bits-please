@@ -63,10 +63,13 @@ public class EmailService {
    * Diese Methode erstellt benutzerdefinierte Files und ruft sendMessage auf.
    */
 
-  public File createFile(ReceiptData receiptData, String data, Receipt receipt) {
+  public File createFile(Student student, String currentSubject) {
+    ReceiptData receiptData = new CustomReceiptData(student, currentSubject);
+    String data = receiptData.create();
+    Receipt receipt = signatureService.sign(data);
     File file = new File(System.getProperty("user.dir")
-        + "token_" + receiptData.getModule()
-        + "_" + receiptData.getName() + ".txt");
+            + "token_" + receiptData.getModule()
+            + "_" + receiptData.getName() + ".txt");
     FileWriter writer;
 
     try {
@@ -80,21 +83,15 @@ public class EmailService {
     return file;
   }
 
-
   /**
    * Sendet eine E-Mail mit den Informationen.
    *
    * @param student        Gibt einen Student in die Methode hinein.
    * @param currentSubject Gibt das Studienfach des Students mit in die Methode hinein.
    */
-  public void sendMail(Student student, String currentSubject) {
-    ReceiptData receiptData = new CustomReceiptData(student, currentSubject);
-    String data = receiptData.create();
-    Receipt receipt = signatureService.sign(data);
-    File file = createFile(receiptData, data, receipt);
-
+  public void sendMail(Student student, String currentSubject, File file) {
     String emailText = createCustomizedEmailBodyText(student, currentSubject);
-    String mail = receiptData.getEmail();
+    String mail = student.getEmail();
     String subject = "Ihr Zulassungsnachweis zum Fach: ";
     sendMessage(mail, subject + currentSubject, emailText, file, file.getName());
 

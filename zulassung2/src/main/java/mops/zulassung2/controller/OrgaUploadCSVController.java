@@ -1,5 +1,8 @@
 package mops.zulassung2.controller;
 
+import mops.zulassung2.model.CustomNameCreator;
+import mops.zulassung2.model.MinIoHelper;
+import mops.zulassung2.model.NameCreator;
 import mops.zulassung2.model.dataobjects.AccountCreator;
 import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.services.EmailService;
@@ -12,7 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.SessionScope;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @SessionScope
@@ -25,6 +30,8 @@ public class OrgaUploadCSVController {
   public List<Student> students = new ArrayList<>();
   public String currentSubject;
   public String currentSemester;
+  private NameCreator nameCreator;
+  private MinIoHelper minIoHelper;
   private AccountCreator accountCreator;
   private String dangerMessage;
   private String errorMessage;
@@ -40,6 +47,8 @@ public class OrgaUploadCSVController {
   public OrgaUploadCSVController(OrganisatorService organisatorService,
                                  EmailService emailService) {
     accountCreator = new AccountCreator();
+    nameCreator = new CustomNameCreator();
+    minIoHelper = new MinIoHelper();
     this.organisatorService = organisatorService;
     this.emailService = emailService;
   }
@@ -100,7 +109,16 @@ public class OrgaUploadCSVController {
   @Secured("ROLE_orga")
   public String sendMail() {
     for (Student student : students) {
-      emailService.sendMail(student, currentSubject);
+      File file = emailService.createFile(student, currentSubject);
+      emailService.sendMail(student, currentSubject, file);
+
+      String bucketName = nameCreator.createBucketName(student);
+      if (!minIoHelper.bucketExists(bucketName)) {
+        minIoHelper.makeBucket(bucketName);
+      }
+
+      minIoHelper.putObject(bucketName, file.getName(), file.getPath(), file.length(),
+              new HashMap<String, String>(), ".txt");
     }
     return "redirect:/zulassung2/orga/upload-csv";
   }
@@ -115,7 +133,9 @@ public class OrgaUploadCSVController {
   @PostMapping("/sendmail/individual")
   @Secured("ROLE_orga")
   public String sendMail(@RequestParam("count") int count) {
-    emailService.sendMail(students.get(count), currentSubject);
+    Student selectedStudent = students.get(count);
+    File file = emailService.createFile(selectedStudent, currentSubject);
+    emailService.sendMail(selectedStudent, currentSubject, file);
     return "redirect:/zulassung2/orga/upload-csv";
   }
 

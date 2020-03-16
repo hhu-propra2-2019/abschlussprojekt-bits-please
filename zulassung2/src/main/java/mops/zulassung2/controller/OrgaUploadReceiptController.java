@@ -1,7 +1,11 @@
 package mops.zulassung2.controller;
 
-import mops.zulassung2.model.crypto.Receipt;
+import mops.zulassung2.model.CustomNameCreator;
+import mops.zulassung2.model.MinIoHelper;
+import mops.zulassung2.model.NameCreator;
 import mops.zulassung2.model.dataobjects.AccountCreator;
+import mops.zulassung2.model.dataobjects.Student;
+import mops.zulassung2.model.crypto.Receipt;
 import mops.zulassung2.services.OrganisatorService;
 import mops.zulassung2.services.ReceiptData;
 import mops.zulassung2.services.SignatureService;
@@ -13,7 +17,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.SessionScope;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @SessionScope
@@ -81,8 +87,8 @@ public class OrgaUploadReceiptController {
 
         if (firstError) {
           setDangerMessage("Folgende übergebene Quittungen haben ein falsches Format "
-              + "und konnten daher nicht geprüft werden: "
-              + rec.getOriginalFilename());
+                  + "und konnten daher nicht geprüft werden: "
+                  + rec.getOriginalFilename());
           firstError = false;
         } else {
           setDangerMessage(dangerMessage.concat(", " + rec.getOriginalFilename()));
@@ -90,8 +96,8 @@ public class OrgaUploadReceiptController {
 
       } else {
         receipts.add(organisatorService.readReceiptContent(
-            receiptLines.get(0),
-            receiptLines.get(1)));
+                receiptLines.get(0),
+                receiptLines.get(1)));
       }
     }
 
@@ -115,22 +121,22 @@ public class OrgaUploadReceiptController {
         setSuccessMessage("Alle neu hochgeladenen Quittungen wurden geprüft und sind gültig.");
       } else { // all files but not all signatures are valid
         setErrorMessage("Alle hochgeladenen Quittungen wurden geprüft. "
-            + "Bitte überprüfen Sie die Gültigkeit anhand der Tabelle.");
+                + "Bitte überprüfen Sie die Gültigkeit anhand der Tabelle.");
       }
 
     } else if (checkRun) {
 
       if (allReceiptsValid) { // not all files but all signatures are valid
         setSuccessMessage(" Neu hochgeladene Quittungen im korrekten Format wurden geprüft. "
-            + "Die korrekt formatierten Quittungen sind gültig.");
+                + "Die korrekt formatierten Quittungen sind gültig.");
       } else { // not all files and not all signatures are valid
         setErrorMessage(" Quittungen im korrekten Format wurden geprüft. "
-            + "Bitte überprüfen Sie die Gültigkeit anhand der Tabelle.");
+                + "Bitte überprüfen Sie die Gültigkeit anhand der Tabelle.");
       }
 
     } else {
       setErrorMessage("Es wurden keine neuen Quittungen geprüft,"
-          + " da keine dem geforderten Format entsprach.");
+              + " da keine dem geforderten Format entsprach.");
     }
     return "redirect:/zulassung2/orga/upload-receipt";
   }
