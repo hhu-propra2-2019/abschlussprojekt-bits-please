@@ -43,12 +43,12 @@ public class CustomValidator implements Validator {
           || (counter == 1 && !key.startsWith("email:"))
           || (counter == 2 && !key.startsWith("name:"))
           || (counter == 3 && !key.startsWith("forename:"))
-          || (counter == 4 && !key.startsWith("module:"))) {
+          || (counter == 4 && !key.startsWith("module:"))
+          || (counter == 5 && !key.startsWith("semester:"))) {
         return false;
       }
       counter++;
     }
-
-    return true;
+    return counter == 6;
   }
 }

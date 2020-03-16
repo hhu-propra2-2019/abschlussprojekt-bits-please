@@ -58,6 +58,7 @@ public class OrganisatorService {
 
     ReceiptData receiptData = new CustomReceiptData(student,
         dataObjects[4].split(":")[1], // Module
+        dataObjects[5].split(":")[1], // Semester
         signature);                         // Signature
 
     return receiptData;
