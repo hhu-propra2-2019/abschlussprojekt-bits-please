@@ -20,6 +20,20 @@ public class CustomReceiptData implements ReceiptData {
   /**
    * Saves the data of the receipt.
    *
+   * @param student        Contains the data of the student
+   * @param currentSubject Contains subject of the student
+   */
+  public CustomReceiptData(Student student, String currentSubject) {
+    this.matriculationNumber = student.getMatriculationNumber();
+    this.email = student.getEmail();
+    this.name = student.getName();
+    this.foreName = student.getForeName();
+    this.module = currentSubject;
+  }
+
+  /**
+   * Saves the data of the receipt.
+   *
    * @param student         Contains the data of the student
    * @param currentSubject  Contains subject of the student
    * @param currentSemester Contains semester of the student

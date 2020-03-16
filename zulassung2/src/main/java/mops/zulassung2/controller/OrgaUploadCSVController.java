@@ -2,7 +2,6 @@ package mops.zulassung2.controller;
 
 import mops.zulassung2.model.dataobjects.AccountCreator;
 import mops.zulassung2.model.dataobjects.Student;
-import mops.zulassung2.services.CustomReceiptData;
 import mops.zulassung2.services.EmailService;
 import mops.zulassung2.services.OrganisatorService;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
@@ -101,8 +100,7 @@ public class OrgaUploadCSVController {
   @Secured("ROLE_orga")
   public String sendMail() {
     for (Student student : students) {
-      emailService.createFileAndMail(
-          new CustomReceiptData(student, currentSubject, currentSemester));
+      emailService.sendMail(student, currentSubject);
     }
     return "redirect:/zulassung2/orga/upload-csv";
   }
@@ -117,8 +115,7 @@ public class OrgaUploadCSVController {
   @PostMapping("/sendmail/individual")
   @Secured("ROLE_orga")
   public String sendMail(@RequestParam("count") int count) {
-    emailService.createFileAndMail(
-        new CustomReceiptData(students.get(count), currentSubject, currentSemester));
+    emailService.sendMail(students.get(count), currentSubject);
     return "redirect:/zulassung2/orga/upload-csv";
   }
 
