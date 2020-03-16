@@ -1,7 +1,6 @@
 package mops.zulassung2.controller;
 
 import mops.zulassung2.model.dataobjects.AccountCreator;
-import mops.zulassung2.model.dataobjects.Entry;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
@@ -31,7 +30,6 @@ public class StudentController {
   @Secured("ROLE_studentin")
   public String student(KeycloakAuthenticationToken token, Model model) {
     model.addAttribute("account", accountCreator.createFromPrincipal(token));
-    model.addAttribute("entries", Entry.generate(10));
     // authenticatedAccess.increment();
     return "student";
   }

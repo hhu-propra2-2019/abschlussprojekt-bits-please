@@ -1,7 +1,6 @@
 package mops.zulassung2.controller;
 
 import mops.zulassung2.model.dataobjects.AccountCreator;
-import mops.zulassung2.model.dataobjects.Entry;
 import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.model.crypto.Receipt;
 import mops.zulassung2.services.*;
@@ -62,7 +61,6 @@ public class OrganisatorController {
   public String orga(KeycloakAuthenticationToken token, Model model) {
     resetMessages();
     model.addAttribute("account", accountCreator.createFromPrincipal(token));
-    model.addAttribute("entries", Entry.generate(10));
     model.addAttribute("students", students);
     model.addAttribute("receipts", verifiedReceipts);
 
