@@ -1,5 +1,8 @@
 package mops.zulassung2.controller;
 
+import mops.zulassung2.model.CustomNameCreator;
+import mops.zulassung2.model.MinIOHelper;
+import mops.zulassung2.model.NameCreator;
 import mops.zulassung2.model.dataobjects.AccountCreator;
 import mops.zulassung2.model.dataobjects.Entry;
 import mops.zulassung2.model.dataobjects.Student;
@@ -28,6 +31,8 @@ public class OrganisatorController {
   public String currentSubject;
   private List<ReceiptData> verifiedReceipts = new ArrayList<>();
   private AccountCreator accountCreator;
+  private NameCreator nameCreator;
+  private MinIOHelper minIOHelper;
   private String dangerMessage;
   private String errorMessage;
   private String successMessage;
@@ -44,6 +49,8 @@ public class OrganisatorController {
                                SignatureService signatureService,
                                EmailService emailService) {
     accountCreator = new AccountCreator();
+    nameCreator = new CustomNameCreator();
+    minIOHelper = new MinIOHelper();
     this.organisatorService = organisatorService;
     this.signatureService = signatureService;
     this.emailService = emailService;
@@ -107,8 +114,8 @@ public class OrganisatorController {
 
         if (firstError) {
           setMessages("Folgende übergebene Quittungen haben ein falsches Format "
-              + "und konnten daher nicht geprüft werden: "
-              + rec.getOriginalFilename(), null, null);
+                  + "und konnten daher nicht geprüft werden: "
+                  + rec.getOriginalFilename(), null, null);
           firstError = false;
         } else {
           setDangerMessage(dangerMessage.concat(", " + rec.getOriginalFilename()));
@@ -116,8 +123,8 @@ public class OrganisatorController {
 
       } else {
         receipts.add(organisatorService.readReceiptContent(
-            receiptLines.get(0),
-            receiptLines.get(1)));
+                receiptLines.get(0),
+                receiptLines.get(1)));
       }
     }
 
@@ -141,17 +148,17 @@ public class OrganisatorController {
         setSuccessMessage("Alle neu hochgeladenen Quittungen wurden geprüft und sind gültig.");
       } else { // all files but not all signatures are valid
         setErrorMessage("Alle hochgeladenen Quittungen wurden geprüft. "
-            + "Bitte überprüfen Sie die Gültigkeit anhand der Tabelle.");
+                + "Bitte überprüfen Sie die Gültigkeit anhand der Tabelle.");
       }
 
     } else if (checkRun) {
 
       if (allReceiptsValid) { // not all files but all signatures are valid
         setSuccessMessage(" Quittungen im korrekten Format wurden geprüft. "
-            + "Die korrekt formatierten Quittungen sind gültig.");
+                + "Die korrekt formatierten Quittungen sind gültig.");
       } else { // not all files and not all signatures are valid
         setErrorMessage(" Quittungen im korrekten Format wurden geprüft. "
-            + "Bitte überprüfen Sie die Gültigkeit anhand der Tabelle.");
+                + "Bitte überprüfen Sie die Gültigkeit anhand der Tabelle.");
       }
 
     }
@@ -172,6 +179,12 @@ public class OrganisatorController {
   public String sendMail() {
     for (Student student : students) {
       emailService.createFileAndMail(new CustomReceiptData(student, currentSubject));
+      String bucketName = nameCreator.createBucketName(student);
+      if (!minIOHelper.bucketExists(bucketName)) {
+        minIOHelper.makeBucket(bucketName);
+      }
+
+      minIOHelper.putObject(bucketName, "zulassung.txt", "zulassung.txt");
     }
     return "redirect:/zulassung2/orga";
   }
