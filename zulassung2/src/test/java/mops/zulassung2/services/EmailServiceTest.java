@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.mail.javamail.JavaMailSender;
 
+import javax.mail.MessagingException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -37,10 +38,18 @@ class EmailServiceTest {
     String filename = "Dateiname";
 
     //Act
-    emailServices.sendMessage(to, subject, text, attach, filename);
+    try {
+      emailServices.sendMessage(to, subject, text, attach, filename);
+    } catch (MessagingException e) {
+      e.printStackTrace();
+    }
 
     //Assert
-    verify(emailServices).sendMessage(to, subject, text, attach, filename);
+    try {
+      verify(emailServices).sendMessage(to, subject, text, attach, filename);
+    } catch (MessagingException e) {
+      e.printStackTrace();
+    }
   }
 
   @Test
@@ -51,10 +60,18 @@ class EmailServiceTest {
     File file = mock(File.class);
 
     //Act
-    emailServices.sendMail(student, subject, file);
+    try {
+      emailServices.sendMail(student, subject, file);
+    } catch (MessagingException e) {
+      e.printStackTrace();
+    }
 
     //Assert
-    verify(emailServices).sendMail(student, subject, file);
+    try {
+      verify(emailServices).sendMail(student, subject, file);
+    } catch (MessagingException e) {
+      e.printStackTrace();
+    }
   }
 
   @Test
