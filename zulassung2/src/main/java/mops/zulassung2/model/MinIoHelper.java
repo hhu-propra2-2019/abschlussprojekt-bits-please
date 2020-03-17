@@ -1,7 +1,6 @@
 package mops.zulassung2.model;
 
 import io.minio.MinioClient;
-import io.minio.ServerSideEncryption;
 import io.minio.errors.*;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -13,13 +12,13 @@ import java.util.Map;
 public class MinIoHelper {
   private MinioClient minioClient;
 
-  public MinIoHelper() {
-    initializeClient();
+  public MinIoHelper(String endpoint, String accessKey, String secretKey) {
+    initializeClient(endpoint, accessKey, secretKey);
   }
 
-  private void initializeClient() {
+  private void initializeClient(String endpoint, String accessKey, String secretKey) {
     try {
-      minioClient = new MinioClient("http://localhost:9000", "minioadmin", "minioadmin");
+      minioClient = new MinioClient(endpoint, accessKey, secretKey);
     } catch (InvalidEndpointException | InvalidPortException e) {
       e.printStackTrace();
     }
@@ -51,7 +50,7 @@ public class MinIoHelper {
    */
   public void makeBucket(String bucketName) {
     try {
-      minioClient.makeBucket(bucketName);
+      minioClient.makeBucket(bucketName.toLowerCase());
     } catch (InvalidBucketNameException | NoSuchAlgorithmException | InsufficientDataException
             | IOException | InvalidKeyException | NoResponseException
             | XmlPullParserException | ErrorResponseException | InternalException
@@ -67,7 +66,7 @@ public class MinIoHelper {
    */
   public void removeBucket(String bucketName) {
     try {
-      minioClient.removeBucket(bucketName);
+      minioClient.removeBucket(bucketName.toLowerCase());
     } catch (InvalidBucketNameException | NoSuchAlgorithmException | InsufficientDataException
             | IOException | InvalidKeyException | NoResponseException
             | XmlPullParserException | ErrorResponseException | InternalException

@@ -1,9 +1,6 @@
 package mops.zulassung2.controller;
 
 import mops.Zulassung2Application;
-import mops.zulassung2.model.CustomNameCreator;
-import mops.zulassung2.model.MinIoHelper;
-import mops.zulassung2.model.NameCreator;
 import mops.zulassung2.model.dataobjects.AccountCreator;
 import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.services.EmailService;
@@ -21,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.mail.MessagingException;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @SessionScope
@@ -35,8 +31,6 @@ public class OrgaUploadCSVController {
   public List<Student> students = new ArrayList<>();
   public String currentSubject;
   public String currentSemester;
-  private NameCreator nameCreator;
-  private MinIoHelper minIoHelper;
   private AccountCreator accountCreator;
   private String dangerMessage;
   private String warningMessage;
@@ -52,8 +46,6 @@ public class OrgaUploadCSVController {
   public OrgaUploadCSVController(OrganisatorService organisatorService,
                                  EmailService emailService) {
     accountCreator = new AccountCreator();
-    nameCreator = new CustomNameCreator();
-    minIoHelper = new MinIoHelper();
     this.organisatorService = organisatorService;
     this.emailService = emailService;
   }
@@ -126,6 +118,7 @@ public class OrgaUploadCSVController {
       File file = emailService.createFile(student, currentSubject);
       try {
         emailService.sendMail(student, currentSubject, file);
+        organisatorService.storeReceipt(student, file);
       } catch (MessagingException e) {
         if (firstError) {
           setDangerMessage("An folgende Studenten konnte keine Email versendet werden: "
@@ -136,13 +129,7 @@ public class OrgaUploadCSVController {
               + student.getForeName() + " " + student.getName()));
         }
       }
-      String bucketName = nameCreator.createBucketName(student);
-      if (!minIoHelper.bucketExists(bucketName)) {
-        minIoHelper.makeBucket(bucketName);
-      }
 
-      minIoHelper.putObject(bucketName, file.getName(), file.getPath(), file.length(),
-          new HashMap<String, String>(), ".txt");
     }
     if (firstError) {
       setSuccessMessage("Alle Emails wurden erfolgreich versendet.");
@@ -151,6 +138,7 @@ public class OrgaUploadCSVController {
     }
     return "redirect:/zulassung2/orga/upload-csv";
   }
+
 
   /**
    * This method is called for a POST request to /orga/sendmail/individual.
@@ -166,6 +154,7 @@ public class OrgaUploadCSVController {
     File file = emailService.createFile(selectedStudent, currentSubject);
     try {
       emailService.sendMail(selectedStudent, currentSubject, file);
+      organisatorService.storeReceipt(selectedStudent, file);
       setSuccessMessage("Email an " + selectedStudent.getForeName() + " "
           + selectedStudent.getName()
           + " wurde erfolgreich versendet.");

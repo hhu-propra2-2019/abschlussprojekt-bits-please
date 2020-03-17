@@ -1,16 +1,35 @@
 package mops.zulassung2.services;
 
+import mops.zulassung2.model.CustomNameCreator;
+import mops.zulassung2.model.MinIoHelper;
+import mops.zulassung2.model.NameCreator;
 import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.model.fileparsing.CustomCSVLineParser;
 import mops.zulassung2.model.fileparsing.CustomValidator;
 import mops.zulassung2.model.fileparsing.FileParser;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
 public class OrganisatorService {
+
+  private NameCreator nameCreator;
+  private MinIoHelper minIoHelper;
+  @Value("${endpoint}")
+  private String endpoint;
+  @Value("${access_key}")
+  private String accessKey;
+  @Value("${secret_key}")
+  private String secretKey;
+
+  public OrganisatorService() {
+    nameCreator = new CustomNameCreator();
+  }
 
   /**
    * Extracts list of students from given CSV file.
@@ -56,5 +75,26 @@ public class OrganisatorService {
         signature);                         // Signature
 
     return receiptData;
+  }
+
+  /**
+   * *  stores receipt for given student.
+   *
+   * @param student student whose receipt needs to be stored
+   * @param file    receipt that needs to be stored
+   */
+
+  public void storeReceipt(Student student, File file) {
+
+    if (minIoHelper == null) {
+      minIoHelper = new MinIoHelper(endpoint, accessKey, secretKey);
+    }
+    String bucketName = nameCreator.createBucketName(student);
+    if (!minIoHelper.bucketExists(bucketName)) {
+      minIoHelper.makeBucket(bucketName);
+    }
+
+    minIoHelper.putObject(bucketName, file.getName(), file.getPath(), file.length(),
+        new HashMap<String, String>(), ".txt");
   }
 }
