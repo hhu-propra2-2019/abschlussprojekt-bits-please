@@ -52,7 +52,8 @@ public class EmailService {
    * @param attach   file to be attached
    * @param filename name of the attached file
    */
-  public void sendMessage(String to, String subject, String text, File attach, String filename) throws MessagingException {
+  public void sendMessage(String to, String subject, String text, File attach, String filename)
+      throws MessagingException {
     MimeMessage message = emailSender.createMimeMessage();
     MimeMessageHelper helper = new MimeMessageHelper(message, true);
     if (!isValidEmailAddress(to)) {
@@ -97,7 +98,8 @@ public class EmailService {
    * @param student        Gibt einen Student in die Methode hinein.
    * @param currentSubject Gibt das Studienfach des Students mit in die Methode hinein.
    */
-  public void sendMail(Student student, String currentSubject, File file) throws MessagingException {
+  public void sendMail(Student student, String currentSubject, File file)
+      throws MessagingException {
     String emailText = createCustomizedEmailBodyText(student, currentSubject);
     String mail = student.getEmail();
     String subject = "Ihr Zulassungsnachweis zum Fach: ";

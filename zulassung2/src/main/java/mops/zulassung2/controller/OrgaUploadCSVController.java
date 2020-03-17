@@ -132,7 +132,8 @@ public class OrgaUploadCSVController {
               + student.getForeName() + " " + student.getName());
           firstError = false;
         } else {
-          setDangerMessage(dangerMessage.concat(", " + student.getForeName() + " " + student.getName()));
+          setDangerMessage(dangerMessage.concat(", "
+              + student.getForeName() + " " + student.getName()));
         }
       }
       String bucketName = nameCreator.createBucketName(student);
