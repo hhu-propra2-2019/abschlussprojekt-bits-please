@@ -24,9 +24,9 @@ public class OrganisatorService {
   @Value("${endpoint}")
   private String endpoint;
   @Value("${access_key}")
-  private String access_key;
+  private String accessKey;
   @Value("${secret_key}")
-  private String secret_key;
+  private String secretKey;
 
   public OrganisatorService() {
     nameCreator = new CustomNameCreator();
@@ -83,10 +83,17 @@ public class OrganisatorService {
     return receiptData;
   }
 
+  /**
+   * *  stores receipt for given student.
+   *
+   * @param student student whose receipt needs to be stored
+   * @param file    receipt that needs to be stored
+   */
+
   public void storeReceipt(Student student, File file) {
 
     if (minIoHelper == null) {
-      minIoHelper = new MinIoHelper(endpoint, access_key, secret_key);
+      minIoHelper = new MinIoHelper(endpoint, accessKey, secretKey);
     }
     String bucketName = nameCreator.createBucketName(student);
     if (!minIoHelper.bucketExists(bucketName)) {
