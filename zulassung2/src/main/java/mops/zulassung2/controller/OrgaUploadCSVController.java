@@ -1,10 +1,13 @@
 package mops.zulassung2.controller;
 
+import mops.Zulassung2Application;
 import mops.zulassung2.model.dataobjects.AccountCreator;
 import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.services.EmailService;
 import mops.zulassung2.services.OrganisatorService;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.SessionScope;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.MessagingException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +25,7 @@ import java.util.List;
 @Controller
 public class OrgaUploadCSVController {
 
+  private static final Logger logger = LoggerFactory.getLogger(Zulassung2Application.class);
   private final OrganisatorService organisatorService;
   private final EmailService emailService;
   public List<Student> students = new ArrayList<>();
@@ -28,7 +33,7 @@ public class OrgaUploadCSVController {
   public String currentSemester;
   private AccountCreator accountCreator;
   private String dangerMessage;
-  private String errorMessage;
+  private String warningMessage;
   private String successMessage;
 
   /**
@@ -84,9 +89,17 @@ public class OrgaUploadCSVController {
   @PostMapping("/upload-csv")
   @Secured("ROLE_orga")
   public String submit(@RequestParam("file") MultipartFile file, String subject, String semester) {
+    if (!file.getContentType().contains("csv")) {
+      setDangerMessage("Die Datei muss im .csv Format sein!");
+      return "redirect:/zulassung2/orga/upload-csv";
+    }
     currentSubject = subject.replaceAll("[: ]", "-");
     currentSemester = semester.replaceAll("[: ]", "-");
     students = organisatorService.processCSVUpload(file);
+    if (students == null) {
+      setDangerMessage("Die Datei konnte nicht gelesen werden!");
+      return "redirect:/zulassung2/orga/upload-csv";
+    }
 
     return "redirect:/zulassung2/orga/upload-csv";
   }
@@ -100,11 +113,28 @@ public class OrgaUploadCSVController {
   @PostMapping("/sendmail")
   @Secured("ROLE_orga")
   public String sendMail() {
+    boolean firstError = true;
     for (Student student : students) {
       File file = emailService.createFile(student, currentSubject);
-      emailService.sendMail(student, currentSubject, file);
+      try {
+        emailService.sendMail(student, currentSubject, file);
+        organisatorService.storeReceipt(student, file);
+      } catch (MessagingException e) {
+        if (firstError) {
+          setDangerMessage("An folgende Studenten konnte keine Email versendet werden: "
+              + student.getForeName() + " " + student.getName());
+          firstError = false;
+        } else {
+          setDangerMessage(dangerMessage.concat(", "
+              + student.getForeName() + " " + student.getName()));
+        }
+      }
 
-      organisatorService.storeReceipt(student, file);
+    }
+    if (firstError) {
+      setSuccessMessage("Alle Emails wurden erfolgreich versendet.");
+    } else {
+      setWarningMessage("Es wurden nicht alle Emails korrekt versendet.");
     }
     return "redirect:/zulassung2/orga/upload-csv";
   }
@@ -122,21 +152,29 @@ public class OrgaUploadCSVController {
   public String sendMail(@RequestParam("count") int count) {
     Student selectedStudent = students.get(count);
     File file = emailService.createFile(selectedStudent, currentSubject);
-    emailService.sendMail(selectedStudent, currentSubject, file);
-    organisatorService.storeReceipt(selectedStudent, file);
-
+    try {
+      emailService.sendMail(selectedStudent, currentSubject, file);
+      organisatorService.storeReceipt(selectedStudent, file);
+      setSuccessMessage("Email an " + selectedStudent.getForeName() + " "
+          + selectedStudent.getName()
+          + " wurde erfolgreich versendet.");
+    } catch (MessagingException e) {
+      setDangerMessage("Email an " + selectedStudent.getForeName()
+          + " " + selectedStudent.getName()
+          + " konnte nicht versendet werden!");
+    }
     return "redirect:/zulassung2/orga/upload-csv";
   }
 
   /**
-   * Set Error and Success Messages for the frontend.
+   * Set Warning and Success Messages for the frontend.
    *
-   * @param errorMessage   Describe error
+   * @param warningMessage Describe warning
    * @param successMessage Send a joyful message to the user
    */
-  private void setMessages(String dangerMessage, String errorMessage, String successMessage) {
+  private void setMessages(String dangerMessage, String warningMessage, String successMessage) {
     this.dangerMessage = dangerMessage;
-    this.errorMessage = errorMessage;
+    this.warningMessage = warningMessage;
     this.successMessage = successMessage;
   }
 
@@ -150,12 +188,12 @@ public class OrgaUploadCSVController {
   }
 
   /**
-   * Set Error Message for the frontend.
+   * Set Warning Message for the frontend.
    *
-   * @param errorMessage Describe error
+   * @param warningMessage Describe warning
    */
-  private void setErrorMessage(String errorMessage) {
-    this.errorMessage = errorMessage;
+  private void setWarningMessage(String warningMessage) {
+    this.warningMessage = warningMessage;
   }
 
   /**
@@ -179,9 +217,9 @@ public class OrgaUploadCSVController {
     return dangerMessage;
   }
 
-  @ModelAttribute("error")
-  String getError() {
-    return errorMessage;
+  @ModelAttribute("warning")
+  String getWarning() {
+    return warningMessage;
   }
 
   @ModelAttribute("success")
