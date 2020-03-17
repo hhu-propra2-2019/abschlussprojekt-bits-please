@@ -123,6 +123,8 @@ public class OrgaUploadCSVController {
     Student selectedStudent = students.get(count);
     File file = emailService.createFile(selectedStudent, currentSubject);
     emailService.sendMail(selectedStudent, currentSubject, file);
+    organisatorService.storeReceipt(selectedStudent, file);
+
     return "redirect:/zulassung2/orga/upload-csv";
   }
 

@@ -1,0 +1,14 @@
+version: "3.7"
+services:
+  zulassung2:
+    image: alpine:latest
+  minio:
+    image: minio/minio:latest
+    ports:
+      - 9000:9000
+    volumes:
+      - ./minio_data:/data
+    environment:
+      MINIO_ACCESS_KEY: admin
+      MINIO_SECRET_KEY: zulassung2
+    command: server /data
