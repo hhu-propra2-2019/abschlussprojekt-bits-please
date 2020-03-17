@@ -82,5 +82,6 @@ class EmailServiceTest {
 
     // Assert
     assertEquals(data, content);
+    Files.deleteIfExists(file.toPath());
   }
 }
