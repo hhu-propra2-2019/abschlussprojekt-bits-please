@@ -1,5 +1,6 @@
 package mops.zulassung2.controller;
 
+import mops.Zulassung2Application;
 import mops.zulassung2.model.CustomNameCreator;
 import mops.zulassung2.model.MinIoHelper;
 import mops.zulassung2.model.NameCreator;
@@ -8,6 +9,8 @@ import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.services.EmailService;
 import mops.zulassung2.services.OrganisatorService;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,6 +28,7 @@ import java.util.List;
 @Controller
 public class OrgaUploadCSVController {
 
+  private static final Logger logger = LoggerFactory.getLogger(Zulassung2Application.class);
   private final OrganisatorService organisatorService;
   private final EmailService emailService;
   public List<Student> students = new ArrayList<>();
@@ -92,9 +96,17 @@ public class OrgaUploadCSVController {
   @PostMapping("/upload-csv")
   @Secured("ROLE_orga")
   public String submit(@RequestParam("file") MultipartFile file, String subject, String semester) {
+    if (!file.getContentType().contains("csv")) {
+      setDangerMessage("Die Datei muss im .csv Format sein!");
+      return "redirect:/zulassung2/orga/upload-csv";
+    }
     currentSubject = subject.replaceAll("[: ]", "-");
     currentSemester = semester.replaceAll("[: ]", "-");
     students = organisatorService.processCSVUpload(file);
+    if (students == null) {
+      setDangerMessage("Die Datei konnte nicht gelesen werden!");
+      return "redirect:/zulassung2/orga/upload-csv";
+    }
 
     return "redirect:/zulassung2/orga/upload-csv";
   }
@@ -118,7 +130,7 @@ public class OrgaUploadCSVController {
       }
 
       minIoHelper.putObject(bucketName, file.getName(), file.getPath(), file.length(),
-              new HashMap<String, String>(), ".txt");
+          new HashMap<String, String>(), ".txt");
     }
     return "redirect:/zulassung2/orga/upload-csv";
   }

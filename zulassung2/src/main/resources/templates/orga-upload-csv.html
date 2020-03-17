@@ -41,13 +41,10 @@
     <div class="alert alert-danger" id="danger-message" th:if="${danger} != null" th:text="${danger}">
         Some danger message
     </div>
-    <div class="alert alert-warning" id="error-message" th:if="${error} != null" th:text="${error}">
-        Some error message
-    </div>
     <div class="alert alert-success" id="success-message" th:if="${success} != null" th:text="${success}">
         Some success message
     </div>
-    <div class="table-responsive" th:if="${not students.isEmpty()}">
+    <div class="table-responsive" th:if="${students!=null and not students.isEmpty()}">
         <div class="lead">Zugelassene Teilnehmer zur Veranstaltung <span th:text="${subject}">Subject</span> im <span
                 th:text="${semester}">Semester</span></div>
         <br>
