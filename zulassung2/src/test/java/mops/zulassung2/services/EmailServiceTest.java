@@ -4,7 +4,6 @@ import mops.zulassung2.model.crypto.Receipt;
 import mops.zulassung2.model.dataobjects.Student;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.mail.javamail.JavaMailSender;
 
 import java.io.File;
@@ -13,15 +12,14 @@ import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class EmailServiceTest {
 
-  private Student douglas = new Student("2729350", "dobla101@hhu.de", "blank", "douglas");
   static EmailService emailServices = mock(EmailService.class);
   static EmailService emailService;
   static SignatureService signatureService = mock(SignatureService.class);
+  private Student douglas = new Student("2729350", "dobla101@hhu.de", "blank", "douglas");
 
   @BeforeAll
   static void setUp() {
@@ -30,14 +28,33 @@ class EmailServiceTest {
   }
 
   @Test
+  void sendMessage() {
+    //Arrange
+    String to = "snami100@uni-duesseldorf.de";
+    String subject = "Informatik";
+    String text = "Test, sendMessage";
+    File attach = mock(File.class);
+    String filename = "Dateiname";
+
+    //Act
+    emailServices.sendMessage(to, subject, text, attach, filename);
+
+    //Assert
+    verify(emailServices).sendMessage(to, subject, text, attach, filename);
+  }
+
+  @Test
   void sendMail() {
+    //Arrange
     Student student = new Student("272490", "snami100@uni-duesseldorf.de", "Amin", "Snur");
     String subject = "Informatik";
     File file = mock(File.class);
 
+    //Act
     emailServices.sendMail(student, subject, file);
 
-    Mockito.verify(emailServices).sendMail(student, subject, file);
+    //Assert
+    verify(emailServices).sendMail(student, subject, file);
   }
 
   @Test
@@ -45,18 +62,18 @@ class EmailServiceTest {
     // Arrange
     ReceiptData receiptData = mock(ReceiptData.class);
     String data = "matriculationnumber:" + douglas.getMatriculationNumber()
-            + " email:" + douglas.getEmail()
-            + " name:" + douglas.getName()
-            + " forename:" + douglas.getForeName()
-            + " module:" + "informatik"
-            + " semester:" + "null"
-            + "\n"
-            + "signatur";
+        + " email:" + douglas.getEmail()
+        + " name:" + douglas.getName()
+        + " forename:" + douglas.getForeName()
+        + " module:" + "informatik"
+        + " semester:" + "null"
+        + "\n"
+        + "signatur";
     Receipt receipt = mock(Receipt.class);
     when(receiptData.getModule()).thenReturn("informatik");
     when(receiptData.getName()).thenReturn("blank");
     when(receipt.getSignature()).thenReturn("signatur");
-    Receipt receipt1 = new Receipt(data,"signatur");
+    Receipt receipt1 = new Receipt(data, "signatur");
     when(signatureService.sign(anyString())).thenReturn(receipt1);
 
     // Act
