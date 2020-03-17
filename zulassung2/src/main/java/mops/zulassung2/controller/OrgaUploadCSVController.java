@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.SessionScope;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.MessagingException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,7 +39,7 @@ public class OrgaUploadCSVController {
   private MinIoHelper minIoHelper;
   private AccountCreator accountCreator;
   private String dangerMessage;
-  private String errorMessage;
+  private String warningMessage;
   private String successMessage;
 
   /**
@@ -120,10 +121,20 @@ public class OrgaUploadCSVController {
   @PostMapping("/sendmail")
   @Secured("ROLE_orga")
   public String sendMail() {
+    boolean firstError = true;
     for (Student student : students) {
       File file = emailService.createFile(student, currentSubject);
-      emailService.sendMail(student, currentSubject, file);
-
+      try {
+        emailService.sendMail(student, currentSubject, file);
+      } catch (MessagingException e) {
+        if (firstError) {
+          setDangerMessage("An folgende Studenten konnte keine Email versendet werden: "
+              + student.getForeName() + " " + student.getName());
+          firstError = false;
+        } else {
+          setDangerMessage(dangerMessage.concat(", " + student.getForeName() + " " + student.getName()));
+        }
+      }
       String bucketName = nameCreator.createBucketName(student);
       if (!minIoHelper.bucketExists(bucketName)) {
         minIoHelper.makeBucket(bucketName);
@@ -131,6 +142,11 @@ public class OrgaUploadCSVController {
 
       minIoHelper.putObject(bucketName, file.getName(), file.getPath(), file.length(),
           new HashMap<String, String>(), ".txt");
+    }
+    if (firstError) {
+      setSuccessMessage("Alle Emails wurden erfolgreich versendet.");
+    } else {
+      setWarningMessage("Es wurden nicht alle Emails korrekt versendet.");
     }
     return "redirect:/zulassung2/orga/upload-csv";
   }
@@ -147,19 +163,28 @@ public class OrgaUploadCSVController {
   public String sendMail(@RequestParam("count") int count) {
     Student selectedStudent = students.get(count);
     File file = emailService.createFile(selectedStudent, currentSubject);
-    emailService.sendMail(selectedStudent, currentSubject, file);
+    try {
+      emailService.sendMail(selectedStudent, currentSubject, file);
+      setSuccessMessage("Email an " + selectedStudent.getForeName() + " "
+          + selectedStudent.getName()
+          + " wurde erfolgreich versendet.");
+    } catch (MessagingException e) {
+      setDangerMessage("Email an " + selectedStudent.getForeName()
+          + " " + selectedStudent.getName()
+          + " konnte nicht versendet werden!");
+    }
     return "redirect:/zulassung2/orga/upload-csv";
   }
 
   /**
-   * Set Error and Success Messages for the frontend.
+   * Set Warning and Success Messages for the frontend.
    *
-   * @param errorMessage   Describe error
+   * @param warningMessage Describe warning
    * @param successMessage Send a joyful message to the user
    */
-  private void setMessages(String dangerMessage, String errorMessage, String successMessage) {
+  private void setMessages(String dangerMessage, String warningMessage, String successMessage) {
     this.dangerMessage = dangerMessage;
-    this.errorMessage = errorMessage;
+    this.warningMessage = warningMessage;
     this.successMessage = successMessage;
   }
 
@@ -173,12 +198,12 @@ public class OrgaUploadCSVController {
   }
 
   /**
-   * Set Error Message for the frontend.
+   * Set Warning Message for the frontend.
    *
-   * @param errorMessage Describe error
+   * @param warningMessage Describe warning
    */
-  private void setErrorMessage(String errorMessage) {
-    this.errorMessage = errorMessage;
+  private void setWarningMessage(String warningMessage) {
+    this.warningMessage = warningMessage;
   }
 
   /**
@@ -202,9 +227,9 @@ public class OrgaUploadCSVController {
     return dangerMessage;
   }
 
-  @ModelAttribute("error")
-  String getError() {
-    return errorMessage;
+  @ModelAttribute("warning")
+  String getWarning() {
+    return warningMessage;
   }
 
   @ModelAttribute("success")
