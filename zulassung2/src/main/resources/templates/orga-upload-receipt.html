@@ -11,10 +11,8 @@
 <body>
 
 <div class="jumbotron" id="content" th:fragment="mycontent">
-    <div>
-        <img alt="pen" class="rounded float-right"
-             src="../static/pictures/pen.png" th:src="@{/pictures/pen.png}" width="10%">
-    </div>
+    <img alt="pen" class="rounded float-right"
+         src="../static/pictures/pen.png" th:src="@{/pictures/pen.png}" width="10%">
     <h1 class="display-4">Quittungen validieren</h1>
     <form class="inline-form" enctype="multipart/form-data" method="post"
           th:action="@{/zulassung2/orga/upload-receipt}">
