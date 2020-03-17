@@ -21,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.mail.MessagingException;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @SessionScope
@@ -35,8 +34,6 @@ public class OrgaUploadCSVController {
   public List<Student> students = new ArrayList<>();
   public String currentSubject;
   public String currentSemester;
-  private NameCreator nameCreator;
-  private MinIoHelper minIoHelper;
   private AccountCreator accountCreator;
   private String dangerMessage;
   private String warningMessage;
@@ -52,8 +49,6 @@ public class OrgaUploadCSVController {
   public OrgaUploadCSVController(OrganisatorService organisatorService,
                                  EmailService emailService) {
     accountCreator = new AccountCreator();
-    nameCreator = new CustomNameCreator();
-    minIoHelper = new MinIoHelper();
     this.organisatorService = organisatorService;
     this.emailService = emailService;
   }
@@ -126,6 +121,7 @@ public class OrgaUploadCSVController {
       File file = emailService.createFile(student, currentSubject);
       try {
         emailService.sendMail(student, currentSubject, file);
+        organisatorService.storeReceipt(student, file);
       } catch (MessagingException e) {
         if (firstError) {
           setDangerMessage("An folgende Studenten konnte keine Email versendet werden: "
@@ -152,6 +148,7 @@ public class OrgaUploadCSVController {
     return "redirect:/zulassung2/orga/upload-csv";
   }
 
+
   /**
    * This method is called for a POST request to /orga/sendmail/individual.
    * It calls "createFilesAndMails" in the EmailService to create emails and then send them.
@@ -166,6 +163,7 @@ public class OrgaUploadCSVController {
     File file = emailService.createFile(selectedStudent, currentSubject);
     try {
       emailService.sendMail(selectedStudent, currentSubject, file);
+      organisatorService.storeReceipt(selectedStudent, file);
       setSuccessMessage("Email an " + selectedStudent.getForeName() + " "
           + selectedStudent.getName()
           + " wurde erfolgreich versendet.");
