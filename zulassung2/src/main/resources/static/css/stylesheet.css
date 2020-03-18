@@ -1,0 +1,15 @@
+
+.btn-margin-buttom {
+    margin-bottom: 10px;
+}
+
+
+.scrollable {
+    height: 500px;
+    overflow: scroll;
+}
+
+.inline-form {
+    display: inline;
+}
+
