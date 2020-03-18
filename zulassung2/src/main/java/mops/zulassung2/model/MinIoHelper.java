@@ -119,6 +119,11 @@ public class MinIoHelper {
     }
   }
 
+  /**
+   * Creates a list of all bucket/object combinations.
+   *
+   * @return
+   */
   public List<BucketObject> getAllObjects() {
     List<BucketObject> buckets = new ArrayList<>();
     try {
@@ -140,6 +145,13 @@ public class MinIoHelper {
     return buckets;
   }
 
+  /**
+   * Get time of creation of object.
+   *
+   * @param bucketName name of the bucket
+   * @param objectName name of the object
+   * @return
+   */
   public Date getCreateTime(String bucketName, String objectName) {
     Date date = null;
     try {
@@ -155,6 +167,12 @@ public class MinIoHelper {
     return date;
   }
 
+  /**
+   * Checks whether a bucket is empty or not.
+   *
+   * @param bucketName name of the bucket
+   * @return
+   */
   public boolean isBucketEmpty(String bucketName) {
     List<Bucket> bucketList = null;
     try {

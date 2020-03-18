@@ -29,6 +29,9 @@ public class DeleteStorageTask {
   public DeleteStorageTask() {
   }
 
+  /**
+   * Task that periodically deletes too old files.
+   */
   @Scheduled(fixedRateString = "${check_storage_rate}")
   public void delete() {
     if (minIoHelper == null) {
@@ -36,7 +39,9 @@ public class DeleteStorageTask {
     }
     List<BucketObject> allObjects = minIoHelper.getAllObjects();
     for (BucketObject bucketObject : allObjects) {
-      Date creationDate = minIoHelper.getCreateTime(bucketObject.getBucketName(), bucketObject.getObjectName());
+      String bucketName = bucketObject.getBucketName();
+      String objectName = bucketObject.getObjectName();
+      Date creationDate = minIoHelper.getCreateTime(bucketName, objectName);
       Date currentDate = DateTime.now().toDate();
 
       Calendar c = Calendar.getInstance();
@@ -45,10 +50,10 @@ public class DeleteStorageTask {
       Date newDate = c.getTime();
 
       if (newDate.before(currentDate)) {
-        minIoHelper.removeObject(bucketObject.getBucketName(), bucketObject.getObjectName());
+        minIoHelper.removeObject(bucketName, objectName);
 
-        if (minIoHelper.isBucketEmpty(bucketObject.getBucketName())) {
-          minIoHelper.removeBucket(bucketObject.getBucketName());
+        if (minIoHelper.isBucketEmpty(bucketName)) {
+          minIoHelper.removeBucket(bucketName);
         }
       }
     }
