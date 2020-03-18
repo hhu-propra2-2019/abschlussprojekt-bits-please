@@ -1,4 +1,4 @@
-package mops.zulassung2.model;
+package mops.zulassung2.model.minio;
 
 import io.minio.MinioClient;
 import io.minio.ObjectStat;
@@ -11,7 +11,10 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 public class MinIoHelper {
   private MinioClient minioClient;

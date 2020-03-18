@@ -1,11 +1,7 @@
 package mops.zulassung2.controller;
 
-import mops.zulassung2.model.CustomNameCreator;
-import mops.zulassung2.model.MinIoHelper;
-import mops.zulassung2.model.NameCreator;
-import mops.zulassung2.model.dataobjects.AccountCreator;
-import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.model.crypto.Receipt;
+import mops.zulassung2.model.dataobjects.AccountCreator;
 import mops.zulassung2.services.OrganisatorService;
 import mops.zulassung2.services.ReceiptData;
 import mops.zulassung2.services.SignatureService;
@@ -17,9 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.SessionScope;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @SessionScope
