@@ -26,12 +26,13 @@ public class OrgaUploadCSVController {
   private final OrganisatorService organisatorService;
   private final EmailService emailService;
   public List<Student> students = new ArrayList<>();
-  public String currentSubject;
-  public String currentSemester;
+  public String currentSubject = "";
+  public String currentSemester = "";
   private AccountCreator accountCreator;
   private String dangerMessage;
   private String warningMessage;
   private String successMessage;
+
 
   /**
    * Constructs OrganisatorController by injecting Beans of

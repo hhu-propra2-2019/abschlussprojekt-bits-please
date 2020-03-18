@@ -6,8 +6,8 @@
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
     <title>Organisation</title>
-
 </head>
+
 <body>
 
 <div class="jumbotron" id="content" th:fragment="mycontent">
@@ -28,11 +28,11 @@
             <label class="lead" for="subjectControlInput">Fach:</label>
             <input class="form-control form-control-sm" id="subjectControlInput" name="subject"
                    placeholder="Name des Fachs"
-                   required type="text">
+                   required th:value="${subject}" type="text">
             <label class="lead" for="semesterControlInput">Semester:</label>
             <input class="form-control form-control-sm" id="semesterControlInput" name="semester"
                    placeholder="z.B. 2019WiSe"
-                   required type="text">
+                   required th:value="${semester}" type="text">
             <hr>
             <button class="btn btn-primary" type="submit">Hochladen</button>
         </form>
