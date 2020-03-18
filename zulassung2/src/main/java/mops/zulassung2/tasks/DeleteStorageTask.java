@@ -30,7 +30,7 @@ public class DeleteStorageTask {
    * Task that periodically deletes too old files.
    */
   @Scheduled(fixedRateString = "${check_storage_rate}")
-  public void delete() {
+  public void checkStorageDuration() {
     if (minIoHelper == null) {
       minIoHelper = new MinIoHelper(endpoint, accessKey, secretKey);
     }
@@ -39,21 +39,33 @@ public class DeleteStorageTask {
       String bucketName = bucketObject.getBucketName();
       String objectName = bucketObject.getObjectName();
       Date creationDate = minIoHelper.getCreateTime(bucketName, objectName);
-      Date currentDate = DateTime.now().toDate();
 
-      Calendar c = Calendar.getInstance();
-      c.setTime(creationDate);
-      c.add(Calendar.YEAR, storageDuration);
-      Date newDate = c.getTime();
+      Date deletionDate = getDeletionDate(creationDate);
 
-      if (newDate.before(currentDate)) {
-        minIoHelper.removeObject(bucketName, objectName);
-
-        if (minIoHelper.isBucketEmpty(bucketName)) {
-          minIoHelper.removeBucket(bucketName);
-        }
-      }
+      deleteObject(bucketName, objectName, deletionDate);
     }
+  }
+
+  private void deleteObject(String bucketName, String objectName, Date deletionDate) {
+    Date currentDate = DateTime.now().toDate();
+    if (deletionDate.before(currentDate)) {
+      minIoHelper.removeObject(bucketName, objectName);
+
+      deleteBucket(bucketName);
+    }
+  }
+
+  private void deleteBucket(String bucketName) {
+    if (minIoHelper.isBucketEmpty(bucketName)) {
+      minIoHelper.removeBucket(bucketName);
+    }
+  }
+
+  private Date getDeletionDate(Date creationDate) {
+    Calendar c = Calendar.getInstance();
+    c.setTime(creationDate);
+    c.add(Calendar.YEAR, storageDuration);
+    return c.getTime();
   }
 
 }
