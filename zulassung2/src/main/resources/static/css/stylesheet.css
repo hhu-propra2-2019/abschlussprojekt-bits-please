@@ -1,12 +1,12 @@
 
-.btn-margin-buttom {
-    margin-bottom: 10px;
+.smargin-bottom {
+    margin-bottom: 100px;
 }
 
 
 .scrollable {
-    height: 500px;
-    overflow: scroll;
+    height: 600px;
+    overflow: auto;
 }
 
 .inline-form {
