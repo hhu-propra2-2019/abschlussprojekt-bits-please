@@ -1,12 +1,12 @@
 package mops.zulassung2.services;
 
-import mops.zulassung2.model.CustomNameCreator;
-import mops.zulassung2.model.MinIoHelper;
-import mops.zulassung2.model.NameCreator;
 import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.model.fileparsing.CustomCSVLineParser;
 import mops.zulassung2.model.fileparsing.CustomValidator;
 import mops.zulassung2.model.fileparsing.FileParser;
+import mops.zulassung2.model.minio.CustomNameCreator;
+import mops.zulassung2.model.minio.MinIoHelper;
+import mops.zulassung2.model.minio.NameCreator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -64,15 +64,15 @@ public class OrganisatorService {
 
     String[] dataObjects = receiptContent.split(" ");
     Student student = new Student(
-        dataObjects[0].split(":")[1], // Matriculationnumber
-        dataObjects[1].split(":")[1], // Email
-        dataObjects[2].split(":")[1], // Name
-        dataObjects[3].split(":")[1]); // Forename
+            dataObjects[0].split(":")[1], // Matriculationnumber
+            dataObjects[1].split(":")[1], // Email
+            dataObjects[2].split(":")[1], // Name
+            dataObjects[3].split(":")[1]); // Forename
 
     ReceiptData receiptData = new CustomReceiptData(student,
-        dataObjects[4].split(":")[1], // Module
-        dataObjects[5].split(":")[1], // Semester
-        signature);                         // Signature
+            dataObjects[4].split(":")[1], // Module
+            dataObjects[5].split(":")[1], // Semester
+            signature);                         // Signature
 
     return receiptData;
   }
@@ -95,6 +95,6 @@ public class OrganisatorService {
     }
 
     minIoHelper.putObject(bucketName, file.getName(), file.getPath(), file.length(),
-        new HashMap<String, String>(), ".txt");
+            new HashMap<String, String>(), ".txt");
   }
 }

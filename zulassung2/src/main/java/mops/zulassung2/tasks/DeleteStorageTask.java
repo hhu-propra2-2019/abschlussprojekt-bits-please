@@ -1,14 +1,11 @@
-package mops.zulassung2.model.tasks;
+package mops.zulassung2.tasks;
 
-import com.fasterxml.jackson.databind.ser.std.CalendarSerializer;
-import mops.zulassung2.model.BucketObject;
-import mops.zulassung2.model.MinIoHelper;
+import mops.zulassung2.model.minio.BucketObject;
+import mops.zulassung2.model.minio.MinIoHelper;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import java.text.DateFormat;
-import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
