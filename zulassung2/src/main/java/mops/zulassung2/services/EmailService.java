@@ -1,18 +1,14 @@
 package mops.zulassung2.services;
 
-import mops.Zulassung2Application;
 import mops.zulassung2.model.crypto.Receipt;
 import mops.zulassung2.model.dataobjects.Student;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.io.FileWriter;
@@ -22,7 +18,6 @@ import java.nio.charset.StandardCharsets;
 @Service
 public class EmailService {
 
-  private static final Logger logger = LoggerFactory.getLogger(Zulassung2Application.class);
   private final JavaMailSender emailSender;
   private final SignatureService signatureService;
   @Value("${email_body_text}")
@@ -34,14 +29,8 @@ public class EmailService {
   }
 
   private static boolean isValidEmailAddress(String email) {
-    boolean result = true;
-    try {
-      InternetAddress emailAddr = new InternetAddress(email);
-      emailAddr.validate();
-    } catch (AddressException ex) {
-      result = false;
-    }
-    return result;
+    EmailValidator validator = EmailValidator.getInstance();
+    return validator.isValid(email);
   }
 
   /**
@@ -72,8 +61,8 @@ public class EmailService {
    * Diese Methode erstellt benutzerdefinierte Files und ruft sendMessage auf.
    */
 
-  public File createFile(Student student, String currentSubject) {
-    ReceiptData receiptData = new CustomReceiptData(student, currentSubject);
+  public File createFile(Student student, String currentSubject, String currentSemester) {
+    ReceiptData receiptData = new CustomReceiptData(student, currentSubject, currentSemester);
     String data = receiptData.create();
     Receipt receipt = signatureService.sign(data);
     File file = new File(System.getProperty("user.dir")

@@ -83,7 +83,7 @@ class EmailServiceTest {
         + " name:" + douglas.getName()
         + " forename:" + douglas.getForeName()
         + " module:" + "informatik"
-        + " semester:" + "null"
+        + " semester:" + "2019SoSe"
         + "\n"
         + "signatur";
     Receipt receipt = mock(Receipt.class);
@@ -94,7 +94,7 @@ class EmailServiceTest {
     when(signatureService.sign(anyString())).thenReturn(receipt1);
 
     // Act
-    File file = emailService.createFile(douglas, "informatik");
+    File file = emailService.createFile(douglas, "informatik", "2019SoSe");
     String content = Files.readString(file.toPath());
 
     // Assert

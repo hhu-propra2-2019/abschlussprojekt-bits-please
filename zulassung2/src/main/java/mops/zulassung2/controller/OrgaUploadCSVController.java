@@ -1,13 +1,11 @@
 package mops.zulassung2.controller;
 
-import mops.Zulassung2Application;
 import mops.zulassung2.model.dataobjects.AccountCreator;
 import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.services.EmailService;
 import mops.zulassung2.services.OrganisatorService;
+import org.apache.commons.io.FilenameUtils;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,7 +23,6 @@ import java.util.List;
 @Controller
 public class OrgaUploadCSVController {
 
-  private static final Logger logger = LoggerFactory.getLogger(Zulassung2Application.class);
   private final OrganisatorService organisatorService;
   private final EmailService emailService;
   public List<Student> students = new ArrayList<>();
@@ -89,7 +86,7 @@ public class OrgaUploadCSVController {
   @PostMapping("/upload-csv")
   @Secured("ROLE_orga")
   public String submit(@RequestParam("file") MultipartFile file, String subject, String semester) {
-    if (!file.getContentType().contains("csv")) {
+    if (!FilenameUtils.isExtension(file.getOriginalFilename(), "csv")) {
       setDangerMessage("Die Datei muss im .csv Format sein!");
       return "redirect:/zulassung2/orga/upload-csv";
     }
@@ -115,7 +112,7 @@ public class OrgaUploadCSVController {
   public String sendMail() {
     boolean firstError = true;
     for (Student student : students) {
-      File file = emailService.createFile(student, currentSubject);
+      File file = emailService.createFile(student, currentSubject, currentSemester);
       try {
         emailService.sendMail(student, currentSubject, file);
         organisatorService.storeReceipt(student, file);
@@ -151,7 +148,7 @@ public class OrgaUploadCSVController {
   @Secured("ROLE_orga")
   public String sendMail(@RequestParam("count") int count) {
     Student selectedStudent = students.get(count);
-    File file = emailService.createFile(selectedStudent, currentSubject);
+    File file = emailService.createFile(selectedStudent, currentSubject, currentSemester);
     try {
       emailService.sendMail(selectedStudent, currentSubject, file);
       organisatorService.storeReceipt(selectedStudent, file);
