@@ -53,7 +53,7 @@ public class EmailService {
    * @param filename name of the attached file
    */
   public void sendMessage(String to, String subject, String text, File attach, String filename)
-      throws MessagingException {
+          throws MessagingException {
     MimeMessage message = emailSender.createMimeMessage();
     MimeMessageHelper helper = new MimeMessageHelper(message, true);
     if (!isValidEmailAddress(to)) {
@@ -77,8 +77,8 @@ public class EmailService {
     String data = receiptData.create();
     Receipt receipt = signatureService.sign(data);
     File file = new File(System.getProperty("user.dir")
-        + "token_" + receiptData.getModule()
-        + "_" + receiptData.getName() + ".txt");
+            + "token_" + receiptData.getModule()
+            + "_" + receiptData.getName() + ".txt");
     FileWriter writer;
 
     try {
@@ -99,7 +99,7 @@ public class EmailService {
    * @param currentSubject Gibt das Studienfach des Students mit in die Methode hinein.
    */
   public void sendMail(Student student, String currentSubject, File file)
-      throws MessagingException {
+          throws MessagingException {
     String emailText = createCustomizedEmailBodyText(student, currentSubject);
     String mail = student.getEmail();
     String subject = "Ihr Zulassungsnachweis zum Fach: ";

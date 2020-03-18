@@ -1,13 +1,17 @@
 package mops.zulassung2.model;
 
 import io.minio.MinioClient;
+import io.minio.ObjectStat;
+import io.minio.Result;
 import io.minio.errors.*;
+import io.minio.messages.Bucket;
+import io.minio.messages.Item;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Map;
+import java.util.*;
 
 public class MinIoHelper {
   private MinioClient minioClient;
@@ -113,5 +117,63 @@ public class MinIoHelper {
             | InsufficientDataException | InvalidResponseException e) {
       e.printStackTrace();
     }
+  }
+
+  public List<BucketObject> getAllObjects() {
+    List<BucketObject> buckets = new ArrayList<>();
+    try {
+      List<Bucket> bucketList = minioClient.listBuckets();
+      for (Bucket bucket : bucketList) {
+        Iterable<Result<Item>> bucketObjects = minioClient.listObjects(bucket.name());
+        for (Result<Item> object : bucketObjects) {
+          BucketObject bucketObject = new BucketObject(bucket.name(), object.get().objectName());
+          buckets.add(bucketObject);
+        }
+      }
+    } catch (InvalidBucketNameException | NoSuchAlgorithmException | InsufficientDataException
+            | IOException | InvalidKeyException | NoResponseException
+            | XmlPullParserException | ErrorResponseException | InternalException
+            | InvalidResponseException e) {
+      e.printStackTrace();
+    }
+
+    return buckets;
+  }
+
+  public Date getCreateTime(String bucketName, String objectName) {
+    Date date = null;
+    try {
+      ObjectStat objectStat = minioClient.statObject(bucketName, objectName);
+      date = objectStat.createdTime();
+    } catch (InvalidBucketNameException | NoSuchAlgorithmException | InsufficientDataException
+            | IOException | InvalidKeyException | NoResponseException
+            | XmlPullParserException | ErrorResponseException | InternalException
+            | InvalidResponseException | InvalidArgumentException e) {
+      e.printStackTrace();
+    }
+
+    return date;
+  }
+
+  public boolean isBucketEmpty(String bucketName) {
+    List<Bucket> bucketList = null;
+    try {
+      bucketList = minioClient.listBuckets();
+      for (Bucket bucket : bucketList) {
+        if (bucket.name().equals(bucketName)) {
+          Iterable<Result<Item>> results = minioClient.listObjects(bucket.name());
+          for (Result<Item> item : results) {
+            return false;
+          }
+        }
+      }
+    } catch (InvalidBucketNameException | NoSuchAlgorithmException | InsufficientDataException
+            | IOException | InvalidKeyException | NoResponseException
+            | XmlPullParserException | ErrorResponseException | InternalException
+            | InvalidResponseException e) {
+      e.printStackTrace();
+    }
+
+    return true;
   }
 }
