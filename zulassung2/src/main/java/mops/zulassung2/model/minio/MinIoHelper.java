@@ -35,7 +35,7 @@ public class MinIoHelper {
    * Checks whether given bucketName exists.
    *
    * @param bucketName name of the bucket
-   * @return
+   * @return boolean
    */
   public boolean bucketExists(String bucketName) {
     try {
@@ -125,7 +125,7 @@ public class MinIoHelper {
   /**
    * Creates a list of all bucket/object combinations.
    *
-   * @return
+   * @return list of bucket objects
    */
   public List<BucketObject> getAllObjects() {
     List<BucketObject> buckets = new ArrayList<>();
@@ -153,7 +153,7 @@ public class MinIoHelper {
    *
    * @param bucketName name of the bucket
    * @param objectName name of the object
-   * @return
+   * @return date
    */
   public Date getCreateTime(String bucketName, String objectName) {
     Date date = null;
@@ -174,10 +174,10 @@ public class MinIoHelper {
    * Checks whether a bucket is empty or not.
    *
    * @param bucketName name of the bucket
-   * @return
+   * @return boolean
    */
   public boolean isBucketEmpty(String bucketName) {
-    List<Bucket> bucketList = null;
+    List<Bucket> bucketList;
     try {
       bucketList = minioClient.listBuckets();
       for (Bucket bucket : bucketList) {
