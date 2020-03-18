@@ -1,4 +1,5 @@
 package mops.zulassung2;
+
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import mops.zulassung2.model.dataobjects.Student;
@@ -53,14 +54,9 @@ public class ValidatorTests {
 
   @Test
   public void validateCSVTest() throws IOException {
-    customValidator =new CustomValidator();
+    customValidator = new CustomValidator();
     final CSVParser parser = CSVParser.parse("9999999\ntest@uni-duesseldorf.de\nmeier\nmax",
-        CSVFormat.DEFAULT.withHeader("matriculationnumber", "email", "name","forename"));
-   assertThat(customValidator.validateCSV(parser)).isTrue();
-
-
-
+        CSVFormat.DEFAULT.withHeader("matriculationnumber", "email", "name", "forename"));
+    assertThat(customValidator.validateCSV(parser)).isTrue();
   }
-
-
 }
