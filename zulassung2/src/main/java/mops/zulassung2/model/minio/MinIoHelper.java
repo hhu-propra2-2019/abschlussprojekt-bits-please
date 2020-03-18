@@ -132,11 +132,7 @@ public class MinIoHelper {
     try {
       List<Bucket> bucketList = minioClient.listBuckets();
       for (Bucket bucket : bucketList) {
-        Iterable<Result<Item>> bucketObjects = minioClient.listObjects(bucket.name());
-        for (Result<Item> object : bucketObjects) {
-          BucketObject bucketObject = new BucketObject(bucket.name(), object.get().objectName());
-          buckets.add(bucketObject);
-        }
+        addBucketObjects(buckets, bucket);
       }
     } catch (InvalidBucketNameException | NoSuchAlgorithmException | InsufficientDataException
             | IOException | InvalidKeyException | NoResponseException
@@ -146,6 +142,23 @@ public class MinIoHelper {
     }
 
     return buckets;
+  }
+
+  private void addBucketObjects(List<BucketObject> buckets, Bucket bucket) {
+
+    Iterable<Result<Item>> bucketObjects;
+    try {
+      bucketObjects = minioClient.listObjects(bucket.name());
+
+      for (Result<Item> object : bucketObjects) {
+        BucketObject bucketObject = new BucketObject(bucket.name(), object.get().objectName());
+        buckets.add(bucketObject);
+      }
+    } catch (XmlPullParserException | InvalidBucketNameException | NoSuchAlgorithmException
+            | InsufficientDataException | IOException | InvalidKeyException
+            | NoResponseException | ErrorResponseException | InternalException e) {
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -182,8 +195,7 @@ public class MinIoHelper {
       bucketList = minioClient.listBuckets();
       for (Bucket bucket : bucketList) {
         if (bucket.name().equals(bucketName)) {
-          Iterable<Result<Item>> results = minioClient.listObjects(bucket.name());
-          for (Result<Item> item : results) {
+          if (isObjectListEmpty(bucket)) {
             return false;
           }
         }
@@ -196,5 +208,13 @@ public class MinIoHelper {
     }
 
     return true;
+  }
+
+  private boolean isObjectListEmpty(Bucket bucket) throws XmlPullParserException {
+    Iterable<Result<Item>> results = minioClient.listObjects(bucket.name());
+    for (Result<Item> item : results) {
+      return true;
+    }
+    return false;
   }
 }
