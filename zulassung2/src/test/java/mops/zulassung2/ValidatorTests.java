@@ -53,10 +53,48 @@ public class ValidatorTests {
   }
 
   @Test
-  public void validateCSVTest() throws IOException {
+  public void falseTextFormatTest() throws IOException {
+    customValidator = new CustomValidator();
+    student = new Student("9999999", "test@uni-duesseldorf.de", "meier", "max");
+    String currentSubject = "informatik";
+    String semster = "zwei";
+    customReceiptData = new CustomReceiptData(student,currentSubject);
+    File file = new File("test.txt");
+    FileWriter writer = null;
+    try {
+      writer = new FileWriter(file, UTF_8);
+      writer.write(customReceiptData.create());
+      writer.write("falshes Format");
+    } catch (IOException e) {
+      e.printStackTrace();
+    } finally {
+      //close resources
+      try {
+        writer.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+    String receiptContent = Files.readString(file.toPath(), StandardCharsets.UTF_8);
+    List<String> lines = receiptContent.lines().collect(Collectors.toList());
+    assertThat(customValidator.validateTXT(lines)).isFalse();
+
+  }
+
+  @Test
+   public void validateCSVTest() throws IOException {
     customValidator = new CustomValidator();
     final CSVParser parser = CSVParser.parse("9999999\ntest@uni-duesseldorf.de\nmeier\nmax",
         CSVFormat.DEFAULT.withHeader("matriculationnumber", "email", "name", "forename"));
     assertThat(customValidator.validateCSV(parser)).isTrue();
   }
+
+  @Test
+   public void falseCSVFormatTest() throws IOException {
+    customValidator = new CustomValidator();
+    final CSVParser parser = CSVParser.parse("999999\ntest@uni-duesseldorf.de\nmeier\nmax",
+        CSVFormat.DEFAULT.withHeader("firma", "email", "name", "forename"));
+    assertThat(customValidator.validateCSV(parser)).isFalse();
+  }
+
 }
