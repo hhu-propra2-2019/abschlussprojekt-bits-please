@@ -12,11 +12,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ParseFileTests {
 
+  static FileParser parser = new FileParser(new CustomValidator(), new CustomCSVLineParser());
   private Student tim = new Student("2727912", "tigeu100@hhu.de", "geuer", "tim");
   private Student markus = new Student("2757144", "masie@hhu.de", "siewert", "markus");
   private String header = "matriculationnumber,email,name,forename\n";
   private String student1Data = "2727912,tigeu100@hhu.de,geuer,tim\n";
   private String student2Data = "2757144,masie@hhu.de,siewert,markus\n";
+
+
+  /**
+   * Diese Methode stellt den Test´s allgemeine Informationen und Variablen für den CSV-Parser bereit
+   *
+   * @param data Da dieser Wert bei jedem Test unterschiedlich ist, übergeben wir der Methode "data" bei jedem Aufruf
+   * @return gibt die CSV-Datei zurück
+   */
+  public MockMultipartFile csvSetUp(String data) {
+    byte[] bytes = data.getBytes(StandardCharsets.UTF_8);
+    String name = "testFile.csv";
+    String fileName = "test_students.csv";
+    return new MockMultipartFile(name, fileName, "text/csv", bytes);
+  }
 
   @Test
   public void testParsingStudentsFromCSV() {
@@ -27,14 +42,9 @@ class ParseFileTests {
     students.add(markus);
 
     String data = header + student1Data + student2Data;
-    FileParser parser = new FileParser(new CustomValidator(), new CustomCSVLineParser());
-    byte[] bytes = data.getBytes(StandardCharsets.UTF_8);
-    String name = "testFile.csv";
-    String fileName = "test_students.csv";
-    MockMultipartFile csvFile = new MockMultipartFile(name, fileName, "text/csv", bytes);
 
     // Act
-    List<Student> parsedStudents = parser.processCSV(csvFile);
+    List<Student> parsedStudents = parser.processCSV(csvSetUp(data));
 
     // Assert
     assertThat(parsedStudents).isEqualTo(students);
@@ -44,14 +54,9 @@ class ParseFileTests {
   public void testParsingInvalidCSVFile() {
     // Arrange
     String data = student1Data + student2Data;
-    FileParser parser = new FileParser(new CustomValidator(), new CustomCSVLineParser());
-    byte[] bytes = data.getBytes(StandardCharsets.UTF_8);
-    String name = "testFile.csv";
-    String fileName = "test_students.csv";
-    MockMultipartFile csvFile = new MockMultipartFile(name, fileName, "text/csv", bytes);
 
     // Act
-    List<Student> parsedStudents = parser.processCSV(csvFile);
+    List<Student> parsedStudents = parser.processCSV(csvSetUp(data));
 
     // Assert
     assertThat(parsedStudents).isEqualTo(null);
@@ -62,14 +67,9 @@ class ParseFileTests {
     // Arrange
     String wrongNamedCollumnsHeader = "matricl,mail,nam,fornam\n";
     String data = wrongNamedCollumnsHeader + student1Data + student2Data;
-    FileParser parser = new FileParser(new CustomValidator(), new CustomCSVLineParser());
-    byte[] bytes = data.getBytes(StandardCharsets.UTF_8);
-    String name = "testFile.csv";
-    String fileName = "test_students.csv";
-    MockMultipartFile csvFile = new MockMultipartFile(name, fileName, "text/csv", bytes);
 
     // Act
-    List<Student> parsedStudents = parser.processCSV(csvFile);
+    List<Student> parsedStudents = parser.processCSV(csvSetUp(data));
 
     // Assert
     assertThat(parsedStudents).isEqualTo(null);
@@ -80,14 +80,9 @@ class ParseFileTests {
     // Arrange
     String incorrectSequenceHeader = "forname,name,email,matriculationnumber\n";
     String data = incorrectSequenceHeader + student1Data + student2Data;
-    FileParser parser = new FileParser(new CustomValidator(), new CustomCSVLineParser());
-    byte[] bytes = data.getBytes(StandardCharsets.UTF_8);
-    String name = "testFile.csv";
-    String fileName = "test_students.csv";
-    MockMultipartFile csvFile = new MockMultipartFile(name, fileName, "text/csv", bytes);
 
     // Act
-    List<Student> parsedStudents = parser.processCSV(csvFile);
+    List<Student> parsedStudents = parser.processCSV(csvSetUp(data));
 
     // Assert
     assertThat(parsedStudents).isEqualTo(null);
@@ -97,17 +92,11 @@ class ParseFileTests {
   public void testSizeOfStudentList() {
     // Arrange
     String data = header;
-    FileParser parser = new FileParser(new CustomValidator(), new CustomCSVLineParser());
-    byte[] bytes = data.getBytes(StandardCharsets.UTF_8);
-    String name = "testFile.csv";
-    String fileName = "test_students.csv";
-    MockMultipartFile csvFile = new MockMultipartFile(name, fileName, "text/csv", bytes);
 
     // Act
-    List<Student> parsedStudents = parser.processCSV(csvFile);
+    List<Student> parsedStudents = parser.processCSV(csvSetUp(data));
 
     // Assert
     assertThat(parsedStudents).isEqualTo(null);
   }
-
 }
