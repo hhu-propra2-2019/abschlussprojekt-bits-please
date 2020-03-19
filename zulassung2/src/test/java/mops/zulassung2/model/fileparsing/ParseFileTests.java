@@ -21,10 +21,11 @@ class ParseFileTests {
 
 
   /**
-   * Diese Methode stellt den Test´s allgemeine Informationen und Variablen für den CSV-Parser bereit
+   * This method provides the test's general information and variables for the CSV parser.
    *
-   * @param data Da dieser Wert bei jedem Test unterschiedlich ist, übergeben wir der Methode "data" bei jedem Aufruf
-   * @return gibt die CSV-Datei zurück
+   * @param data Since this value is different for each test,
+   *             we pass the "data" method on every call.
+   * @return returns the CSV-File.
    */
   public MockMultipartFile csvSetUp(String data) {
     byte[] bytes = data.getBytes(StandardCharsets.UTF_8);
