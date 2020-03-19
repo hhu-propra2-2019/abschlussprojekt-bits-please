@@ -1,7 +1,6 @@
-package mops.zulassung2.model.services;
+package mops.zulassung2.services;
 
 import mops.zulassung2.model.crypto.Receipt;
-import mops.zulassung2.services.SignatureService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

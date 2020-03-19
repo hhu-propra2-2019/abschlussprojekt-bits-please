@@ -11,10 +11,9 @@
 <body>
 
 <div class="jumbotron" id="content" th:fragment="mycontent">
-    <div>
-        <img alt="pen" class="rounded float-right"
-             src="../static/pictures/pen.png" th:src="@{/pictures/pen.png}" width="10%">
-    </div>
+    <link href="../static/css/stylesheet.css" rel="stylesheet" th:href="@{/css/stylesheet.css}">
+    <img alt="pen" class="rounded float-right"
+         src="../static/pictures/pen.png" th:src="@{/pictures/pen.png}" width="10%">
     <h1 class="display-4">Quittungen validieren</h1>
     <form class="inline-form" enctype="multipart/form-data" method="post"
           th:action="@{/zulassung2/orga/upload-receipt}">
@@ -24,7 +23,6 @@
             <div class="custom-file">
                 <input accept=".txt" id="quittunghochladen" multiple name="receipt"
                        required type="file">
-                <!--<label class="custom-file-label" for="quittunghochladen">Wählen Sie Ihre Datei/-en aus</label>-->
             </div>
         </div>
         <hr>
@@ -41,36 +39,36 @@
         Some success message
     </div>
     <div class="table-responsive" th:if="${not receipts.isEmpty()}">
-        <table class="table">
-            <thead>
-            <tr>
-                <th>Nr.</th>
-                <th>Matrikelnummer</th>
-                <th>E-Mail</th>
-                <th>Nachname</th>
-                <th>Vorname</th>
-                <th>Modul</th>
-                <th>Erworben</th>
-                <th>Gültig</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="receipt, iterationStatus : ${receipts}">
-                <td th:text="${iterationStatus.count}">1</td>
-                <td th:text="${receipt.matriculationNumber}">123456</td>
-                <td th:text="${receipt.name}">Meier</td>
-                <td th:text="${receipt.foreName}">Brunhilde</td>
-                <td th:text="${receipt.email}">brunhilde.meier@mops.de</td>
-                <td th:text="${receipt.module}">Mopskunde</td>
-                <td th:text="${receipt.semester}">2010SoSe</td>
-                <td th:if="${receipt.valid}">&#10004;</td>
-                <td th:if="${not receipt.valid}">&#10060;</td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="scrollable">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Nr.</th>
+                    <th>Matrikelnummer</th>
+                    <th>E-Mail</th>
+                    <th>Nachname</th>
+                    <th>Vorname</th>
+                    <th>Modul</th>
+                    <th>Erworben</th>
+                    <th>Gültig</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="receipt, iterationStatus : ${receipts}">
+                    <td th:text="${iterationStatus.count}">1</td>
+                    <td th:text="${receipt.matriculationNumber}">123456</td>
+                    <td th:text="${receipt.name}">Meier</td>
+                    <td th:text="${receipt.foreName}">Brunhilde</td>
+                    <td th:text="${receipt.email}">brunhilde.meier@mops.de</td>
+                    <td th:text="${receipt.module}">Mopskunde</td>
+                    <td th:text="${receipt.semester}">2010SoSe</td>
+                    <td th:if="${receipt.valid}">&#10004;</td>
+                    <td th:if="${not receipt.valid}">&#10060;</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
-</div>
 </div>
 </body>
 </html>

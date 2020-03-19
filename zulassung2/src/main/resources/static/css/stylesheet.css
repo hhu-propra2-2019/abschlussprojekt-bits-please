@@ -1,0 +1,15 @@
+
+.smargin-bottom {
+    margin-bottom: 100px;
+}
+
+
+.scrollable {
+    height: 600px;
+    overflow: auto;
+}
+
+.inline-form {
+    display: inline;
+}
+
