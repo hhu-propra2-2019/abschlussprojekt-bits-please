@@ -14,21 +14,25 @@ import java.security.spec.InvalidKeySpecException;
 @Configuration
 public class SignatureConfig {
 
-  @Value("${dev_private_key}")
-  String privateKey;
-  @Value("${dev_public_key}")
-  String publicKey;
+  @Value("${DEV_PRIVATE_KEY}")
+  //@Value("#{environment.PRIVATE_KEY}")
+      String privateKey;
+  @Value("${DEV_PUBLIC_KEY}")
+  //@Value("#{environment.PUBLIC_KEY}")
+      String publicKey;
   KeyConverterInterface keyConverterInterface;
 
   @Bean
   PublicKey getPublicKey() throws InvalidKeySpecException, NoSuchAlgorithmException {
     keyConverterInterface = new KeyConverter();
+    System.out.println("private key: " + publicKey);
     return keyConverterInterface.getPublicKey(publicKey);
   }
 
   @Bean
   PrivateKey getPrivateKey() throws InvalidKeySpecException, NoSuchAlgorithmException {
     keyConverterInterface = new KeyConverter();
+    System.out.println("private key: " + privateKey);
     return keyConverterInterface.getPrivateKey(privateKey);
   }
 }
