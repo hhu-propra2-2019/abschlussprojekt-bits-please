@@ -1,17 +1,35 @@
 package mops.zulassung2.services;
 
-import mops.zulassung2.model.dataObjects.Student;
+import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.model.fileparsing.CustomCSVLineParser;
 import mops.zulassung2.model.fileparsing.CustomValidator;
 import mops.zulassung2.model.fileparsing.FileParser;
+import mops.zulassung2.model.minio.CustomNameCreator;
+import mops.zulassung2.model.minio.MinIoHelper;
+import mops.zulassung2.model.minio.NameCreator;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
 public class OrganisatorService {
+
+  private NameCreator nameCreator;
+  private MinIoHelper minIoHelper;
+  @Value("${endpoint}")
+  private String endpoint;
+  @Value("${access_key}")
+  private String accessKey;
+  @Value("${secret_key}")
+  private String secretKey;
+
+  public OrganisatorService() {
+    nameCreator = new CustomNameCreator();
+  }
 
   /**
    * Extracts list of students from given CSV file.
@@ -21,12 +39,7 @@ public class OrganisatorService {
    */
   public List<Student> processCSVUpload(MultipartFile file) {
     FileParser csvParser = new FileParser(new CustomValidator(), new CustomCSVLineParser());
-    List<Student> students = csvParser.processCSV(file);
-    if (students == null) {
-      students = new ArrayList<>();
-    }
-
-    return students;
+    return csvParser.processCSV(file);
   }
 
   /**
@@ -51,15 +64,37 @@ public class OrganisatorService {
 
     String[] dataObjects = receiptContent.split(" ");
     Student student = new Student(
-        dataObjects[0].split(":")[1], // Matriculationnumber
-        dataObjects[1].split(":")[1], // Email
-        dataObjects[2].split(":")[1], // Name
-        dataObjects[3].split(":")[1]); // Forename
+            dataObjects[0].split(":")[1], // Matriculationnumber
+            dataObjects[1].split(":")[1], // Email
+            dataObjects[2].split(":")[1], // Name
+            dataObjects[3].split(":")[1]); // Forename
 
     ReceiptData receiptData = new CustomReceiptData(student,
-        dataObjects[4].split(":")[1], // Module
-        signature);                         // Signature
+            dataObjects[4].split(":")[1], // Module
+            dataObjects[5].split(":")[1], // Semester
+            signature);                         // Signature
 
     return receiptData;
+  }
+
+  /**
+   * *  stores receipt for given student.
+   *
+   * @param student student whose receipt needs to be stored
+   * @param file    receipt that needs to be stored
+   */
+
+  public void storeReceipt(Student student, File file) {
+
+    if (minIoHelper == null) {
+      minIoHelper = new MinIoHelper(endpoint, accessKey, secretKey);
+    }
+    String bucketName = nameCreator.createBucketName(student);
+    if (!minIoHelper.bucketExists(bucketName)) {
+      minIoHelper.makeBucket(bucketName);
+    }
+
+    minIoHelper.putObject(bucketName, file.getName(), file.getPath(), file.length(),
+            new HashMap<String, String>(), ".txt");
   }
 }

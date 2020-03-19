@@ -47,10 +47,13 @@ repositories {
 }
 
 dependencies {
+    compile 'commons-validator:commons-validator:1.6'
+    compile group: 'commons-io', name: 'commons-io', version: '2.6'
     compile 'org.springframework.boot:spring-boot-starter-mail'
     compile "org.thymeleaf:thymeleaf-spring4:3.0.1.RELEASE"
     compile 'org.thymeleaf.extras:thymeleaf-extras-springsecurity4:3.0.4.RELEASE'
     compile "org.apache.commons:commons-csv:1.5"
+    compile "io.minio:minio:6.0.13"
     testCompile group: 'org.assertj', name: 'assertj-core', version: '3.14.0'
     implementation 'com.c4-soft.springaddons:spring-security-test-keycloack-addons:1.2.0'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'

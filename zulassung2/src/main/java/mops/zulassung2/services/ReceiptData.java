@@ -1,5 +1,4 @@
 package mops.zulassung2.services;
-import mops.zulassung2.model.dataObjects.Student;
 
 public interface ReceiptData {
   String create();
@@ -13,6 +12,8 @@ public interface ReceiptData {
   String getForeName();
 
   String getModule();
+
+  String getSemester();
 
   String getSignature();
 
