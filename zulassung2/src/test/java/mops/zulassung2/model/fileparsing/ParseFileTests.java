@@ -1,8 +1,5 @@
-package mops.zulassung2;
+package mops.zulassung2.model.fileparsing;
 
-import mops.zulassung2.model.fileparsing.CustomCSVLineParser;
-import mops.zulassung2.model.fileparsing.CustomValidator;
-import mops.zulassung2.model.fileparsing.FileParser;
 import mops.zulassung2.model.dataobjects.Student;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
