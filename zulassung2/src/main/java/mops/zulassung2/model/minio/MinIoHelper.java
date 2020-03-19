@@ -21,6 +21,7 @@ public class MinIoHelper {
 
   public MinIoHelper(String endpoint, String accessKey, String secretKey) {
     initializeClient(endpoint, accessKey, secretKey);
+
   }
 
   private void initializeClient(String endpoint, String accessKey, String secretKey) {
