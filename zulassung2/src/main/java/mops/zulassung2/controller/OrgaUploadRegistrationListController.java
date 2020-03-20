@@ -78,7 +78,7 @@ public class OrgaUploadRegistrationListController {
   public String submit(@RequestParam("file") MultipartFile file, String subject, String semester) {
     if (!FilenameUtils.isExtension(file.getOriginalFilename(), "csv")) {
       setDangerMessage("Die Datei muss im .csv Format sein!");
-      return "redirect:/zulassung2/orga/registrationlist";
+      return "redirect:/zulassung2/orga/upload-registrationlist";
     }
     currentSubject = subject.replaceAll("[: ]", "-");
     currentSemester = semester.replaceAll("[: ]", "-");
@@ -88,7 +88,7 @@ public class OrgaUploadRegistrationListController {
       return "redirect:/zulassung2/orga/registrationlist";
     }
 
-    return "redirect:/zulassung2/orga/registrationlist";
+    return "redirect:/zulassung2/orga/upload-registrationlist";
   }
 
   /**

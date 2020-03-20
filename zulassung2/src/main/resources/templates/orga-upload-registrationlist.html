@@ -49,9 +49,10 @@
     </div>
 
     <div class="table-responsive" th:if="${students!=null and not students.isEmpty()}">
-        <div class="lead">Zugelassene Teilnehmer zur Veranstaltung <span th:text="${subject}">Subject</span> im
+        <div class="lead">Nicht Zugelassene Teilnehmer zur Veranstaltung <span th:text="${subject}">Subject</span> im
             <span
-                    th:text="${semester}">Semester</span></div>
+                    th:text="${semester}">Semester</span> asdsad
+        </div>
         <br>
         <div class="scrollable">
             <table class="table">
@@ -77,7 +78,7 @@
                               method="POST"
                               th:action="@{/zulassung2/orga/sendmailreglist/individual(count=${iterationStatus.index})}">
                             <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
-                            <button class="btn btn-primary" type="submit">Zulassungsnachweis senden
+                            <button class="btn btn-primary" type="submit">Warnungsnachricht senden
                             </button>
                         </form>
                     </td>
@@ -87,7 +88,7 @@
         <form action="/zulassung2/orga/sendmailreglist" class="inline-form" method="POST">
             <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
             <br>
-            <button class="btn btn-primary" type="submit">Zulassungsnachweise an alle Teilnehmer senden
+            <button class="btn btn-primary" type="submit">Warnungsnachricht an alle Betroffenen senden
             </button>
         </form>
     </div>
