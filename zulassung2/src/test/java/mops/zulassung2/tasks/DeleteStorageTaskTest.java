@@ -13,7 +13,7 @@ import static org.mockito.Mockito.*;
 
 public class DeleteStorageTaskTest {
 
-  private MinIoHelper minIoHelper;
+  private MinIoImplementation minIo;
   private CustomDateInterface customDateInterface;
   private DeleteStorageTask deleteStorageTask;
   private List<BucketObject> bucketObjects;
@@ -23,9 +23,9 @@ public class DeleteStorageTaskTest {
 
   @BeforeEach
   private void setBaseUp() {
-    minIoHelper = mock(MinIoHelper.class);
+    minIo = mock(MinIoImplementation.class);
     customDateInterface = mock(CustomDate.class);
-    deleteStorageTask = new DeleteStorageTask(minIoHelper, 5, customDateInterface);
+    deleteStorageTask = new DeleteStorageTask(minIo, 5, customDateInterface);
     bucketObjects = new ArrayList<>();
     BucketObject bucketObject = new BucketObject(bucketName, objectName);
     bucketObjects.add(bucketObject);
@@ -39,16 +39,16 @@ public class DeleteStorageTaskTest {
     Date currentDate = DateUtils.parseDateFromString("2021-01-01");
 
     when(customDateInterface.getCurrentDate()).thenReturn(currentDate);
-    when(minIoHelper.getAllObjects()).thenReturn(bucketObjects);
-    when(minIoHelper.getCreateTime(bucketName, objectName)).thenReturn(creationDate);
-    when(minIoHelper.isBucketEmpty(bucketName)).thenReturn(true);
+    when(minIo.getAllObjects()).thenReturn(bucketObjects);
+    when(minIo.getCreateTime(bucketName, objectName)).thenReturn(creationDate);
+    when(minIo.isBucketEmpty(bucketName)).thenReturn(true);
 
     //Act
     deleteStorageTask.checkStorageDuration();
 
     //Assert
-    verify(minIoHelper, times(1)).removeObject(bucketName, objectName);
-    verify(minIoHelper, times(1)).removeBucket(bucketName);
+    verify(minIo, times(1)).removeObject(bucketName, objectName);
+    verify(minIo, times(1)).removeBucket(bucketName);
 
   }
 
@@ -60,16 +60,16 @@ public class DeleteStorageTaskTest {
     Date currentDate = DateUtils.parseDateFromString("2021-01-01");
 
     when(customDateInterface.getCurrentDate()).thenReturn(currentDate);
-    when(minIoHelper.getAllObjects()).thenReturn(bucketObjects);
-    when(minIoHelper.getCreateTime(bucketName, objectName)).thenReturn(creationDate);
-    when(minIoHelper.isBucketEmpty(bucketName)).thenReturn(true);
+    when(minIo.getAllObjects()).thenReturn(bucketObjects);
+    when(minIo.getCreateTime(bucketName, objectName)).thenReturn(creationDate);
+    when(minIo.isBucketEmpty(bucketName)).thenReturn(true);
 
     //Act
     deleteStorageTask.checkStorageDuration();
 
     //Assert
-    verify(minIoHelper, times(1)).removeObject(bucketName, objectName);
-    verify(minIoHelper, times(1)).removeBucket(bucketName);
+    verify(minIo, times(1)).removeObject(bucketName, objectName);
+    verify(minIo, times(1)).removeBucket(bucketName);
 
   }
 
