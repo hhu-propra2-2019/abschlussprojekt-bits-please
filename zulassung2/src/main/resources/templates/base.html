@@ -23,6 +23,11 @@
     <nav class="navigation navigation-secondary" is="mops-navigation" th:fragment="navigation">
         <ul>
             <li sec:authorize="hasRole('orga')">
+                <a th:href="@{/zulassung2/orga/upload-registrationlist}">
+                    Anmeldeliste hochladen
+                </a>
+            </li>
+            <li sec:authorize="hasRole('orga')">
                 <a th:href="@{/zulassung2/orga/upload-csv}">
                     Zulassungsliste hochladen
                 </a>
@@ -37,6 +42,7 @@
                     Studiseite
                 </a>
             </li>
+
         </ul>
     </nav>
 </header>
