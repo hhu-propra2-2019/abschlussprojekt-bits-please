@@ -3,6 +3,7 @@ package mops.zulassung2.model.minio;
 import io.minio.Result;
 import io.minio.messages.Bucket;
 import io.minio.messages.Item;
+import mops.zulassung2.model.dataobjects.Student;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,9 +12,11 @@ import java.util.Map;
 
 public class MinIoImplementation {
   private MinIoRepositoryInterface minIo;
+  private NameCreator nameCreator;
 
-  public MinIoImplementation(MinIoRepositoryInterface minIo) {
+  public MinIoImplementation(MinIoRepositoryInterface minIo, NameCreator nameCreator) {
     this.minIo = minIo;
+    this.nameCreator = nameCreator;
   }
 
   /**
@@ -91,6 +94,28 @@ public class MinIoImplementation {
     Iterable<Result<Item>> results = minIo.listObjects(bucket.name());
     for (Result<Item> item : results) {
       return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Checks whether a student is authorized to participate.
+   *
+   * @param student student that needs to be checked
+   * @param subject subject that student needs to be authorized for
+   * @return
+   */
+  public boolean isAuthorized(Student student, String subject) {
+    String bucketName = nameCreator.createBucketName(student);
+    if (minIo.bucketExists(bucketName)) {
+      Iterable<Result<Item>> objects = minIo.listObjects(bucketName);
+      for (Result<Item> object : objects) {
+        String objectName = minIo.getObjectName(object);
+        if (objectName.contains(subject)) {
+          return true;
+        }
+      }
     }
 
     return false;
