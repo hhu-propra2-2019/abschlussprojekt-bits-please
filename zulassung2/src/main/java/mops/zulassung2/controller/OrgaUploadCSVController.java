@@ -48,6 +48,7 @@ public class OrgaUploadCSVController {
     this.emailService = emailService;
   }
 
+
   /**
    * This method is called for a GET request to /orga.
    *
@@ -76,6 +77,7 @@ public class OrgaUploadCSVController {
 
     return "orga-upload-csv";
   }
+
 
   /**
    * This method is called for a POST request to /orga/upload-csv.

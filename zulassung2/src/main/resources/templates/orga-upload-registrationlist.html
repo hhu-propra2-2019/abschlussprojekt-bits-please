@@ -34,7 +34,15 @@
             <input class="form-control form-control-sm" id="semesterControlInput" name="semester"
                    placeholder="z.B. 2019WiSe"
                    required th:value="${semester}" type="text">
+            <br>
+            <label class="lead" for="optionAnzeige">Wählen Sie bitte aus ob Sie die Zugelassenen oder nicht
+                Zugelassenen Studenten anzeigen möchten.</label>
+            <select class="form-control" id="optionAnzeige">
+                <option>Zugelassen</option>
+                <option>Nicht zugelassen</option>
+            </select>
             <hr>
+
             <button class="btn btn-primary" type="submit">Hochladen</button>
         </form>
     </div>
@@ -48,7 +56,9 @@
         Some success message
     </div>
 
-    <div class="table-responsive" th:if="${students!=null and not students.isEmpty()}">
+
+    <!-- <div class="table-responsive" th:if="${students!=null and not students.isEmpty()}"> -->
+    <div class="table-responsive" th:if="${notallowed!=null and not notallowed.isEmpty()}">
         <div class="lead">Nicht Zugelassene Teilnehmer zur Veranstaltung <span th:text="${subject}">Subject</span> im
             <span
                     th:text="${semester}">Semester</span> asdsad
@@ -63,16 +73,17 @@
                     <th>Vorname</th>
                     <th>Nachname</th>
                     <th>E-Mail</th>
+                    <th>Gültig</th>
                     <th>Individuell versenden</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="student, iterationStatus : ${students}">
+                <tr th:each="notallowed, iterationStatus : ${notallowed}">
                     <td th:text="${iterationStatus.count}">1</td>
-                    <td th:text="${student.matriculationNumber}">123456</td>
-                    <td th:text="${student.name}">Meier</td>
-                    <td th:text="${student.foreName}">Brunhilde</td>
-                    <td th:text="${student.email}">brundhilde.meier@mops.de</td>
+                    <td th:text="${notallowed.matriculationNumber}">123456</td>
+                    <td th:text="${notallowed.name}">Meier</td>
+                    <td th:text="${notallowed.foreName}">Brunhilde</td>
+                    <td th:text="${notallowed.email}">brundhilde.meier@mops.de</td>
                     <td>
                         <form class="inline-form"
                               method="POST"
@@ -84,13 +95,42 @@
                     </td>
                 </tbody>
             </table>
+            <form action="/zulassung2/orga/sendmailreglist" class="inline-form" method="POST">
+                <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
+                <br>
+                <button class="btn btn-primary" type="submit">Warnungsnachricht an alle Betroffenen senden
+                </button>
+            </form>
         </div>
-        <form action="/zulassung2/orga/sendmailreglist" class="inline-form" method="POST">
-            <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
-            <br>
-            <button class="btn btn-primary" type="submit">Warnungsnachricht an alle Betroffenen senden
-            </button>
-        </form>
+    </div>
+    <div class="table-responsive" th:if="${allowed!=null and not allowed.isEmpty()}">
+        <div class="lead">Nicht Zugelassene Teilnehmer zur Veranstaltung <span th:text="${subject}">Subject</span> im
+            <span
+                    th:text="${semester}">Semester</span> asdsad
+        </div>
+        <div class="scrollable">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Nr.</th>
+                    <th>Matrikelnummer</th>
+                    <th>Vorname</th>
+                    <th>Nachname</th>
+                    <th>E-Mail</th>
+                    <th>Gültig</th>
+                    <th>Individuell versenden</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="allowed, iterationStatus : ${allowed}">
+                    <td th:text="${iterationStatus.count}">1</td>
+                    <td th:text="${allowed.matriculationNumber}">123456</td>
+                    <td th:text="${allowed.name}">Meier</td>
+                    <td th:text="${allowed.foreName}">Brunhilde</td>
+                    <td th:text="${allowed.email}">brundhilde.meier@mops.de</td>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 </body>

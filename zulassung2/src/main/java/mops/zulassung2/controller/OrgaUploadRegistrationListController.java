@@ -2,6 +2,7 @@ package mops.zulassung2.controller;
 
 import mops.zulassung2.model.dataobjects.AccountCreator;
 import mops.zulassung2.model.dataobjects.Student;
+import mops.zulassung2.model.form.OrgaUploadRegistrationList;
 import mops.zulassung2.services.EmailService;
 import mops.zulassung2.services.OrganisatorService;
 import org.apache.commons.io.FilenameUtils;
@@ -26,6 +27,8 @@ public class OrgaUploadRegistrationListController {
   private final OrganisatorService organisatorService;
   private final EmailService emailService;
   public List<Student> students = new ArrayList<>();
+  public List<Student> notAllowed = new ArrayList<>();
+  public List<Student> Allowed = new ArrayList<>();
   public String currentSubject = "";
   public String currentSemester = "";
   private AccountCreator accountCreator;
@@ -61,7 +64,9 @@ public class OrgaUploadRegistrationListController {
   public String orga(KeycloakAuthenticationToken token, Model model) {
     resetMessages();
     model.addAttribute("account", accountCreator.createFromPrincipal(token));
-    model.addAttribute("students", students);
+    model.addAttribute("notallowed", notAllowed);
+    model.addAttribute("allowed", Allowed);
+    model.addAttribute("orgauploadregistrationlist", new OrgaUploadRegistrationList());
 
     return "orga-upload-registrationlist";
   }
@@ -75,7 +80,8 @@ public class OrgaUploadRegistrationListController {
 
   @PostMapping("/upload-registrationlist")
   @Secured("ROLE_orga")
-  public String submit(@RequestParam("file") MultipartFile file, String subject, String semester) {
+  public String submit(@RequestParam("file") MultipartFile file, String subject, String semester,
+                       Model model, OrgaUploadRegistrationList orgaUploadRegistrationList) {
     if (!FilenameUtils.isExtension(file.getOriginalFilename(), "csv")) {
       setDangerMessage("Die Datei muss im .csv Format sein!");
       return "redirect:/zulassung2/orga/upload-registrationlist";
@@ -88,8 +94,18 @@ public class OrgaUploadRegistrationListController {
       return "redirect:/zulassung2/orga/registrationlist";
     }
 
+
+    for (Student student : students) {
+      if (orgaUploadRegistrationList.test2(student, subject) == false) {
+        notAllowed.add(student);
+      } else {
+        Allowed.add(student);
+      }
+    }
+
     return "redirect:/zulassung2/orga/upload-registrationlist";
   }
+
 
   /**
    * This method is called for a POST request to /orga/sendmail.
