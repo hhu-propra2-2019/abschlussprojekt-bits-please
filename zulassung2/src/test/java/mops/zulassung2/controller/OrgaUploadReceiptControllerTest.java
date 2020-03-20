@@ -4,7 +4,7 @@ import com.c4_soft.springaddons.test.security.context.support.WithMockKeycloackA
 import mops.zulassung2.services.EmailService;
 import mops.zulassung2.services.OrganisatorService;
 import mops.zulassung2.services.SignatureService;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.nio.charset.StandardCharsets;
 
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -31,23 +32,25 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     KeycloakSpringBootConfigResolver.class})
 class OrgaUploadReceiptControllerTest {
 
-  static MockMultipartFile mockMultipartFile;
+  MockMultipartFile mockMultipartFile;
   @Autowired
   MockMvc mvc;
   @MockBean
-  EmailService emailService;
-  @MockBean
   OrganisatorService organisatorService;
+  @MockBean
+  EmailService emailService;
   @MockBean
   SignatureService signatureService;
 
-  @BeforeAll
-  static void createFile() {
+  @BeforeEach
+  void createFile() {
     mockMultipartFile = new MockMultipartFile(
-        "MockReceipt",
+        "receipt",
         "Receipt.txt",
         "text/plain",
-        "Test Data".getBytes(StandardCharsets.UTF_8));
+        "MockData".getBytes(StandardCharsets.UTF_8));
+
+    when(organisatorService.processTXTUpload(mockMultipartFile)).thenReturn(null);
   }
 
   @Test
@@ -70,9 +73,35 @@ class OrgaUploadReceiptControllerTest {
 
   @Test
   @WithMockKeycloackAuth("orga")
-  void orgaPostWithValidCsrfIsOk() throws Exception {
+  void orgaPostWithValidCsrfOneFileIsOk() throws Exception {
     mvc.perform(multipart("/zulassung2/orga/upload-receipt")
         .file(mockMultipartFile)
+        .with(csrf()))
+        .andExpect(redirectedUrl("/zulassung2/orga/upload-receipt"));
+  }
+
+  @Test
+  @WithMockKeycloackAuth("orga")
+  void orgaPostWithValidCsrfMultipleFilesIsOk() throws Exception {
+
+    MockMultipartFile mockMultipartFile1 = new MockMultipartFile(
+        "receipt",
+        "Receipt.txt",
+        "text/plain",
+        "MockData1".getBytes(StandardCharsets.UTF_8));
+    MockMultipartFile mockMultipartFile2 = new MockMultipartFile(
+        "receipt",
+        "Receipt.txt",
+        "text/plain",
+        "MockData2".getBytes(StandardCharsets.UTF_8));
+
+    when(organisatorService.processTXTUpload(mockMultipartFile1)).thenReturn(null);
+    when(organisatorService.processTXTUpload(mockMultipartFile2)).thenReturn(null);
+
+    mvc.perform(multipart("/zulassung2/orga/upload-receipt")
+        .file(mockMultipartFile)
+        .file(mockMultipartFile1)
+        .file(mockMultipartFile2)
         .with(csrf()))
         .andExpect(redirectedUrl("/zulassung2/orga/upload-receipt"));
   }
