@@ -167,4 +167,70 @@ public class MinIoTest {
     // Assert
     assertThat(allObjects).isEqualTo(expectedObjects);
   }
+
+  @Test
+  void testMinIoIsBucketEmpty_oneBucketEmpty() {
+    // Arrange
+    Bucket bucket = mock(Bucket.class);
+    List<Bucket> buckets = new ArrayList<>();
+    buckets.add(bucket);
+
+    List<Result<Item>> objects = createObjects(0);
+    MinIoRepositoryInterface repo = mock(MinIoRepository.class);
+    MinIoImplementation minIo = new MinIoImplementation(repo);
+    when(bucket.name()).thenReturn(getBucketName(0));
+    when(repo.listBuckets()).thenReturn(buckets);
+    when(repo.listObjects(getBucketName(0))).thenReturn(objects);
+    boolean expected = true;
+
+    // Act
+    boolean isBucketEmpty = minIo.isBucketEmpty(getBucketName(0));
+
+    // Assert
+    assertThat(isBucketEmpty).isEqualTo(expected);
+  }
+
+  @Test
+  void testMinIoIsBucketEmpty_oneBucketOneObject() {
+    // Arrange
+    Bucket bucket = mock(Bucket.class);
+    List<Bucket> buckets = new ArrayList<>();
+    buckets.add(bucket);
+
+    List<Result<Item>> objects = createObjects(1);
+    MinIoRepositoryInterface repo = mock(MinIoRepository.class);
+    MinIoImplementation minIo = new MinIoImplementation(repo);
+    when(bucket.name()).thenReturn(getBucketName(0));
+    when(repo.listBuckets()).thenReturn(buckets);
+    when(repo.listObjects(getBucketName(0))).thenReturn(objects);
+    boolean expected = false;
+
+    // Act
+    boolean isBucketEmpty = minIo.isBucketEmpty(getBucketName(0));
+
+    // Assert
+    assertThat(isBucketEmpty).isEqualTo(expected);
+  }
+
+  @Test
+  void testMinIoIsBucketEmpty_oneBucketTwoObject() {
+    // Arrange
+    Bucket bucket = mock(Bucket.class);
+    List<Bucket> buckets = new ArrayList<>();
+    buckets.add(bucket);
+
+    List<Result<Item>> objects = createObjects(2);
+    MinIoRepositoryInterface repo = mock(MinIoRepository.class);
+    MinIoImplementation minIo = new MinIoImplementation(repo);
+    when(bucket.name()).thenReturn(getBucketName(0));
+    when(repo.listBuckets()).thenReturn(buckets);
+    when(repo.listObjects(getBucketName(0))).thenReturn(objects);
+    boolean expected = false;
+
+    // Act
+    boolean isBucketEmpty = minIo.isBucketEmpty(getBucketName(0));
+
+    // Assert
+    assertThat(isBucketEmpty).isEqualTo(expected);
+  }
 }
