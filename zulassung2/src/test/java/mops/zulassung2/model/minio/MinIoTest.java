@@ -3,6 +3,7 @@ package mops.zulassung2.model.minio;
 import io.minio.Result;
 import io.minio.messages.Bucket;
 import io.minio.messages.Item;
+import mops.zulassung2.model.dataobjects.Student;
 import org.junit.jupiter.api.Test;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -72,7 +73,8 @@ public class MinIoTest {
     when(repo.listObjects(getBucketName(0))).thenReturn(objects);
     when(repo.getObjectName(objects.get(0))).thenReturn(getObjectName(0));
 
-    MinIoImplementation minIo = new MinIoImplementation(repo);
+    NameCreator nameCreator = new CustomNameCreator();
+    MinIoImplementation minIo = new MinIoImplementation(repo, nameCreator);
 
     // Act
     List<BucketObject> allObjects = minIo.getAllObjects();
@@ -97,7 +99,8 @@ public class MinIoTest {
     when(repo.getObjectName(objects.get(0))).thenReturn(getObjectName(0));
     when(repo.getObjectName(objects.get(1))).thenReturn(getObjectName(1));
 
-    MinIoImplementation minIo = new MinIoImplementation(repo);
+    NameCreator nameCreator = new CustomNameCreator();
+    MinIoImplementation minIo = new MinIoImplementation(repo, nameCreator);
 
     // Act
     List<BucketObject> allObjects = minIo.getAllObjects();
@@ -127,7 +130,8 @@ public class MinIoTest {
     when(repo.getObjectName(bucketObjects.get(0))).thenReturn(getObjectName(0));
     when(repo.getObjectName(bucket2Objects.get(0))).thenReturn(getObjectName(0));
 
-    MinIoImplementation minIo = new MinIoImplementation(repo);
+    NameCreator nameCreator = new CustomNameCreator();
+    MinIoImplementation minIo = new MinIoImplementation(repo, nameCreator);
 
     // Act
     List<BucketObject> allObjects = minIo.getAllObjects();
@@ -159,7 +163,8 @@ public class MinIoTest {
     when(repo.getObjectName(bucket2Objects.get(0))).thenReturn(getObjectName(0));
     when(repo.getObjectName(bucket2Objects.get(1))).thenReturn(getObjectName(1));
 
-    MinIoImplementation minIo = new MinIoImplementation(repo);
+    NameCreator nameCreator = new CustomNameCreator();
+    MinIoImplementation minIo = new MinIoImplementation(repo, nameCreator);
 
     // Act
     List<BucketObject> allObjects = minIo.getAllObjects();
@@ -177,7 +182,8 @@ public class MinIoTest {
 
     List<Result<Item>> objects = createObjects(0);
     MinIoRepositoryInterface repo = mock(MinIoRepository.class);
-    MinIoImplementation minIo = new MinIoImplementation(repo);
+    NameCreator nameCreator = new CustomNameCreator();
+    MinIoImplementation minIo = new MinIoImplementation(repo, nameCreator);
     when(bucket.name()).thenReturn(getBucketName(0));
     when(repo.listBuckets()).thenReturn(buckets);
     when(repo.listObjects(getBucketName(0))).thenReturn(objects);
@@ -199,7 +205,8 @@ public class MinIoTest {
 
     List<Result<Item>> objects = createObjects(1);
     MinIoRepositoryInterface repo = mock(MinIoRepository.class);
-    MinIoImplementation minIo = new MinIoImplementation(repo);
+    NameCreator nameCreator = new CustomNameCreator();
+    MinIoImplementation minIo = new MinIoImplementation(repo, nameCreator);
     when(bucket.name()).thenReturn(getBucketName(0));
     when(repo.listBuckets()).thenReturn(buckets);
     when(repo.listObjects(getBucketName(0))).thenReturn(objects);
@@ -221,7 +228,8 @@ public class MinIoTest {
 
     List<Result<Item>> objects = createObjects(2);
     MinIoRepositoryInterface repo = mock(MinIoRepository.class);
-    MinIoImplementation minIo = new MinIoImplementation(repo);
+    NameCreator nameCreator = new CustomNameCreator();
+    MinIoImplementation minIo = new MinIoImplementation(repo, nameCreator);
     when(bucket.name()).thenReturn(getBucketName(0));
     when(repo.listBuckets()).thenReturn(buckets);
     when(repo.listObjects(getBucketName(0))).thenReturn(objects);
@@ -232,5 +240,103 @@ public class MinIoTest {
 
     // Assert
     assertThat(isBucketEmpty).isEqualTo(expected);
+  }
+
+  @Test
+  void testIsAuthorized_noBucket() {
+    // Arrange
+    Student student = new Student();
+    String studentBucketName = "test-student";
+    NameCreator nameCreator = mock(CustomNameCreator.class);
+    MinIoRepositoryInterface repo = mock(MinIoRepository.class);
+    MinIoImplementation minIo = new MinIoImplementation(repo, nameCreator);
+    boolean expected = false;
+
+    when(nameCreator.createBucketName(student)).thenReturn(studentBucketName);
+    when(repo.bucketExists(studentBucketName)).thenReturn(false);
+
+    // Act
+    boolean isAuthorized = minIo.isAuthorized(student, "");
+
+    // Assert
+    assertThat(isAuthorized).isEqualTo(expected);
+  }
+
+  @Test
+  void testIsAuthorized_bucketNoObject() {
+    // Arrange
+    Student student = new Student();
+    String studentBucketName = "test-student";
+
+    List<Result<Item>> objects = createObjects(0);
+
+    NameCreator nameCreator = mock(CustomNameCreator.class);
+    MinIoRepositoryInterface repo = mock(MinIoRepository.class);
+    MinIoImplementation minIo = new MinIoImplementation(repo, nameCreator);
+    boolean expected = false;
+
+    when(nameCreator.createBucketName(student)).thenReturn(studentBucketName);
+    when(repo.bucketExists(studentBucketName)).thenReturn(true);
+    when(repo.listObjects(getBucketName(0))).thenReturn(objects);
+
+    // Act
+    boolean isAuthorized = minIo.isAuthorized(student, "");
+
+    // Assert
+    assertThat(isAuthorized).isEqualTo(expected);
+  }
+
+  @Test
+  void testIsAuthorized_bucketNoCorrectObject() {
+    // Arrange
+    Student student = new Student();
+    String studentBucketName = "test-student";
+
+    List<Result<Item>> objects = createObjects(3);
+
+    NameCreator nameCreator = mock(CustomNameCreator.class);
+    MinIoRepositoryInterface repo = mock(MinIoRepository.class);
+    MinIoImplementation minIo = new MinIoImplementation(repo, nameCreator);
+    boolean expected = false;
+
+    when(nameCreator.createBucketName(student)).thenReturn(studentBucketName);
+    when(repo.bucketExists(studentBucketName)).thenReturn(true);
+    when(repo.listObjects(studentBucketName)).thenReturn(objects);
+    when(repo.getObjectName(objects.get(0))).thenReturn(getObjectName(0));
+    when(repo.getObjectName(objects.get(1))).thenReturn(getObjectName(1));
+    when(repo.getObjectName(objects.get(2))).thenReturn(getObjectName(2));
+
+    // Act
+    boolean isAuthorized = minIo.isAuthorized(student, "propra");
+
+    // Assert
+    assertThat(isAuthorized).isEqualTo(expected);
+  }
+
+  @Test
+  void testIsAuthorized_bucketCorrectObject() {
+    // Arrange
+    Student student = new Student();
+    String studentBucketName = "test-student";
+
+    List<Result<Item>> objects = createObjects(3);
+
+    NameCreator nameCreator = mock(CustomNameCreator.class);
+    MinIoRepositoryInterface repo = mock(MinIoRepository.class);
+    MinIoImplementation minIo = new MinIoImplementation(repo, nameCreator);
+    boolean expected = true;
+
+    when(nameCreator.createBucketName(student)).thenReturn(studentBucketName);
+    when(repo.bucketExists(studentBucketName)).thenReturn(true);
+    when(repo.listObjects(studentBucketName)).thenReturn(objects);
+    when(repo.getObjectName(objects.get(0))).thenReturn(getObjectName(0));
+    when(repo.getObjectName(objects.get(1))).thenReturn(getObjectName(1));
+    when(repo.getObjectName(objects.get(2))).thenReturn("test-propra-object");
+
+    // Act
+    boolean isAuthorized = minIo.isAuthorized(student, "propra");
+
+    // Assert
+    assertThat(isAuthorized).isEqualTo(expected);
   }
 }

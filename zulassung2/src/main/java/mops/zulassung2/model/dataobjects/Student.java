@@ -2,10 +2,12 @@ package mops.zulassung2.model.dataobjects;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.Objects;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 public class Student {
 

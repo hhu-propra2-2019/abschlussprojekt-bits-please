@@ -37,7 +37,8 @@ public class DeleteStorageTask {
 
   public DeleteStorageTask(MinIoConfig config, int storeDuration, CustomDateInterface currentDate) {
     MinIoRepositoryInterface repo = new MinIoRepository(config.endpoint, config.accessKey, config.secretKey);
-    this.minIoImplementation = new MinIoImplementation(repo);
+    NameCreator nameCreator = new CustomNameCreator();
+    this.minIoImplementation = new MinIoImplementation(repo, nameCreator);
     this.storageDuration = storeDuration;
     this.currentDate = currentDate;
   }

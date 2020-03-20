@@ -86,7 +86,8 @@ public class OrganisatorService {
 
     if (minIo == null) {
       MinIoRepositoryInterface repo = new MinIoRepository(endpoint, accessKey, secretKey);
-      minIo = new MinIoImplementation(repo);
+      NameCreator nameCreator = new CustomNameCreator();
+      minIo = new MinIoImplementation(repo, nameCreator);
     }
     String bucketName = nameCreator.createBucketName(student);
     if (!minIo.bucketExists(bucketName)) {
