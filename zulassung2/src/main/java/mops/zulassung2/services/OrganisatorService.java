@@ -4,9 +4,7 @@ import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.model.fileparsing.CustomCSVLineParser;
 import mops.zulassung2.model.fileparsing.CustomValidator;
 import mops.zulassung2.model.fileparsing.FileParser;
-import mops.zulassung2.model.minio.CustomNameCreator;
-import mops.zulassung2.model.minio.MinIoHelper;
-import mops.zulassung2.model.minio.NameCreator;
+import mops.zulassung2.model.minio.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,7 +17,7 @@ import java.util.List;
 public class OrganisatorService {
 
   private NameCreator nameCreator;
-  private MinIoHelper minIoHelper;
+  private MinIoImplementation minIo;
   @Value("${endpoint}")
   private String endpoint;
   @Value("${access_key}")
@@ -86,15 +84,16 @@ public class OrganisatorService {
 
   public void storeReceipt(Student student, File file) {
 
-    if (minIoHelper == null) {
-      minIoHelper = new MinIoHelper(endpoint, accessKey, secretKey);
+    if (minIo == null) {
+      MinIoRepositoryInterface repo = new MinIoRepository(endpoint, accessKey, secretKey);
+      minIo = new MinIoImplementation(repo);
     }
     String bucketName = nameCreator.createBucketName(student);
-    if (!minIoHelper.bucketExists(bucketName)) {
-      minIoHelper.makeBucket(bucketName);
+    if (!minIo.bucketExists(bucketName)) {
+      minIo.makeBucket(bucketName);
     }
 
-    minIoHelper.putObject(bucketName, file.getName(), file.getPath(), file.length(),
+    minIo.putObject(bucketName, file.getName(), file.getPath(), file.length(),
             new HashMap<String, String>(), ".txt");
   }
 }
