@@ -1,7 +1,6 @@
 package mops.zulassung2.controller;
 
 import com.c4_soft.springaddons.test.security.context.support.WithMockKeycloackAuth;
-import mops.zulassung2.services.EmailService;
 import mops.zulassung2.services.OrganisatorService;
 import mops.zulassung2.services.SignatureService;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,8 +36,6 @@ class OrgaUploadReceiptControllerTest {
   MockMvc mvc;
   @MockBean
   OrganisatorService organisatorService;
-  @MockBean
-  EmailService emailService;
   @MockBean
   SignatureService signatureService;
 
