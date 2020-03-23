@@ -4,7 +4,7 @@ import mops.zulassung2.model.OrgaUploadCSVForm;
 import mops.zulassung2.model.dataobjects.AccountCreator;
 import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.services.EmailService;
-import mops.zulassung2.services.OrganisatorService;
+import mops.zulassung2.services.FileService;
 import org.apache.commons.io.FilenameUtils;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.access.annotation.Secured;
@@ -19,11 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SessionScope
-@RequestMapping("/zulassung2/orga")
+@RequestMapping("/zulassung2")
 @Controller
-public class OrgaUploadCSVController {
+public class UploadApprovedStudentsController {
 
-  private final OrganisatorService organisatorService;
+  private final FileService fileService;
   private final EmailService emailService;
   public List<Student> students = new ArrayList<>();
   public String currentSubject = "";
@@ -38,26 +38,14 @@ public class OrgaUploadCSVController {
    * Constructs OrganisatorController by injecting Beans of
    * OrganisatorService, SignatureService and Emailservice.
    *
-   * @param organisatorService Service for parsing files
-   * @param emailService       Service for sending emails
+   * @param fileService  Service for parsing files
+   * @param emailService Service for sending emails
    */
-  public OrgaUploadCSVController(OrganisatorService organisatorService,
-                                 EmailService emailService) {
+  public UploadApprovedStudentsController(FileService fileService,
+                                          EmailService emailService) {
     accountCreator = new AccountCreator();
-    this.organisatorService = organisatorService;
+    this.fileService = fileService;
     this.emailService = emailService;
-  }
-
-  /**
-   * This method is called for a GET request to /orga.
-   *
-   * @return Redirects to view orga-upload-csv
-   */
-  @GetMapping("")
-  @Secured("ROLE_orga")
-  public String redirectOrga() {
-
-    return "redirect:/zulassung2/orga/upload-csv";
   }
 
   /**
@@ -67,7 +55,7 @@ public class OrgaUploadCSVController {
    * @param model Spring object that is used as a container to supply the variables
    * @return Returns view orga-upload-csv
    */
-  @GetMapping("/upload-csv")
+  @GetMapping("/upload-approved-students")
   @Secured("ROLE_orga")
   public String orga(KeycloakAuthenticationToken token, Model model, @ModelAttribute("form") OrgaUploadCSVForm form) {
     resetMessages();
@@ -75,40 +63,41 @@ public class OrgaUploadCSVController {
     model.addAttribute("students", students);
     model.addAttribute("form", form);
 
-    return "orga-upload-csv";
+    return "upload-approved-students";
   }
 
   /**
-   * This method is called for a POST request to /orga/upload-csv.
+   * This method is called for a POST request to /upload-approved-students.
    *
    * @param model model to be injected
    * @param form  form to be injected
    * @return Redirects to view orga-upload-csv
    */
 
-  @PostMapping("/upload-csv")
+  @PostMapping("/upload-approved-students")
   @Secured("ROLE_orga")
   public String submit(Model model, @ModelAttribute("form") OrgaUploadCSVForm form) {
     if (!FilenameUtils.isExtension(form.getMultipartFile().getOriginalFilename(), "csv")) {
       setDangerMessage("Die Datei muss im .csv Format sein!");
-      return "redirect:/zulassung2/orga/upload-csv";
+      return "redirect:/zulassung2/upload-approved-students";
     }
     currentSubject = form.getSubject().replaceAll("[: ]", "-");
     currentSemester = form.getSemester().replaceAll("[: ]", "-");
-    students = organisatorService.processCSVUpload(form.getMultipartFile());
+
+    students = fileService.processCSVUpload(form.getMultipartFile());
     if (students == null) {
       setDangerMessage("Die Datei konnte nicht gelesen werden!");
-      return "redirect:/zulassung2/orga/upload-csv";
+      return "redirect:/zulassung2/upload-approved-students";
     }
 
-    return "redirect:/zulassung2/orga/upload-csv";
+    return "redirect:/zulassung2/upload-approved-students";
   }
 
   /**
    * This method is called for a POST request to /orga/sendmail.
    * It calls "createFilesAndMails" in the EmailService to create emails and then send them.
    *
-   * @return Redirects to view orga-upload-csv
+   * @return Redirects to view upload-approved-students
    */
   @PostMapping("/sendmail")
   @Secured("ROLE_orga")
@@ -118,7 +107,7 @@ public class OrgaUploadCSVController {
       File file = emailService.createFile(student, currentSubject, currentSemester);
       try {
         emailService.sendMail(student, currentSubject, file);
-        organisatorService.storeReceipt(student, file);
+        fileService.storeReceipt(student, file);
       } catch (MessagingException e) {
         if (firstError) {
           setDangerMessage("An folgende Studenten konnte keine Email versendet werden: "
@@ -136,7 +125,7 @@ public class OrgaUploadCSVController {
     } else {
       setWarningMessage("Es wurden nicht alle Emails korrekt versendet.");
     }
-    return "redirect:/zulassung2/orga/upload-csv";
+    return "redirect:/zulassung2/upload-approved-students";
   }
 
 
@@ -145,7 +134,7 @@ public class OrgaUploadCSVController {
    * It calls "createFilesAndMails" in the EmailService to create emails and then send them.
    * In doing so, it uses the provided counter to get to the student from the list of students.
    *
-   * @return Redirects to view orga-upload-csv
+   * @return Redirects to view upload-approved-students
    */
   @PostMapping("/sendmail/individual")
   @Secured("ROLE_orga")
@@ -154,7 +143,7 @@ public class OrgaUploadCSVController {
     File file = emailService.createFile(selectedStudent, currentSubject, currentSemester);
     try {
       emailService.sendMail(selectedStudent, currentSubject, file);
-      organisatorService.storeReceipt(selectedStudent, file);
+      fileService.storeReceipt(selectedStudent, file);
       setSuccessMessage("Email an " + selectedStudent.getForeName() + " "
               + selectedStudent.getName()
               + " wurde erfolgreich versendet.");
@@ -163,7 +152,7 @@ public class OrgaUploadCSVController {
               + " " + selectedStudent.getName()
               + " konnte nicht versendet werden!");
     }
-    return "redirect:/zulassung2/orga/upload-csv";
+    return "redirect:/zulassung2/upload-approved-students";
   }
 
   /**

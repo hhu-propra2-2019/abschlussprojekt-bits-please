@@ -10,11 +10,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 
 @Service
-public class OrganisatorService {
+public class FileService {
 
   private NameCreator nameCreator;
   private MinIoImplementation minIo;
@@ -25,7 +28,7 @@ public class OrganisatorService {
   @Value("${secret_key}")
   private String secretKey;
 
-  public OrganisatorService() {
+  public FileService() {
     nameCreator = new CustomNameCreator();
   }
 
@@ -62,15 +65,15 @@ public class OrganisatorService {
 
     String[] dataObjects = receiptContent.split(" ");
     Student student = new Student(
-            dataObjects[0].split(":")[1], // Matriculationnumber
-            dataObjects[1].split(":")[1], // Email
-            dataObjects[2].split(":")[1], // Name
-            dataObjects[3].split(":")[1]); // Forename
+        dataObjects[0].split(":")[1], // Matriculationnumber
+        dataObjects[1].split(":")[1], // Email
+        dataObjects[2].split(":")[1], // Name
+        dataObjects[3].split(":")[1]); // Forename
 
     ReceiptData receiptData = new CustomReceiptData(student,
-            dataObjects[4].split(":")[1], // Module
-            dataObjects[5].split(":")[1], // Semester
-            signature);                         // Signature
+        dataObjects[4].split(":")[1], // Module
+        dataObjects[5].split(":")[1], // Semester
+        signature);                         // Signature
 
     return receiptData;
   }
@@ -95,6 +98,32 @@ public class OrganisatorService {
     }
 
     minIo.putObject(bucketName, file.getName(), file.getPath(), file.length(),
-            new HashMap<String, String>(), ".txt");
+        new HashMap<String, String>(), ".txt");
+  }
+
+  /**
+   * creates a File from a MultiPartFile that was uploaded by user.
+   *
+   * @param receiptData Student Information
+   * @param signature   Signature of the receipt
+   * @return redirect
+   */
+
+  public File createFileFromSubmittedReceipt(ReceiptData receiptData, String signature) {
+    String data = receiptData.create();
+    File file = new File(System.getProperty("user.dir")
+        + "token_" + receiptData.getModule()
+        + "_" + receiptData.getName() + ".txt");
+    FileWriter writer;
+
+    try {
+      writer = new FileWriter(file, StandardCharsets.UTF_8);
+      writer.write(data + "\n");
+      writer.write(signature);
+      writer.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return file;
   }
 }

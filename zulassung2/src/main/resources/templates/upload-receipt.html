@@ -16,7 +16,7 @@
          src="../static/pictures/pen.png" th:src="@{/pictures/pen.png}" width="10%">
     <h1 class="display-4">Quittungen validieren</h1>
     <form class="inline-form" enctype="multipart/form-data" method="post"
-          th:action="@{/zulassung2/orga/upload-receipt}">
+          th:action="@{/zulassung2/upload-receipt}">
         <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
         <p class="lead">Laden Sie die zu prüfenden Quittungen hoch:</p>
         <div class="input-group mb-3">

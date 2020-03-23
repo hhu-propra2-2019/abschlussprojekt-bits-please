@@ -2,7 +2,8 @@ package mops.zulassung2.controller;
 
 import mops.zulassung2.model.crypto.Receipt;
 import mops.zulassung2.model.dataobjects.AccountCreator;
-import mops.zulassung2.services.OrganisatorService;
+import mops.zulassung2.model.dataobjects.Student;
+import mops.zulassung2.services.FileService;
 import mops.zulassung2.services.ReceiptData;
 import mops.zulassung2.services.SignatureService;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
@@ -17,11 +18,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SessionScope
-@RequestMapping("/zulassung2/orga")
+@RequestMapping("/zulassung2")
 @Controller
-public class OrgaUploadReceiptController {
+public class UploadReceiptsController {
 
-  private final OrganisatorService organisatorService;
+  private final FileService fileService;
   private final SignatureService signatureService;
   private List<ReceiptData> verifiedReceipts = new ArrayList<>();
   private AccountCreator accountCreator;
@@ -33,13 +34,13 @@ public class OrgaUploadReceiptController {
    * Constructs Controller by injecting Beans of
    * OrganisatorService, SignatureService and Emailservice.
    *
-   * @param organisatorService Service for parsing files
-   * @param signatureService   Service for signing files
+   * @param fileService      Service for parsing files
+   * @param signatureService Service for signing files
    */
-  public OrgaUploadReceiptController(OrganisatorService organisatorService,
-                                     SignatureService signatureService) {
+  public UploadReceiptsController(FileService fileService,
+                                  SignatureService signatureService) {
     accountCreator = new AccountCreator();
-    this.organisatorService = organisatorService;
+    this.fileService = fileService;
     this.signatureService = signatureService;
   }
 
@@ -51,31 +52,30 @@ public class OrgaUploadReceiptController {
    * @return Returns view orga-upload-receipt
    */
   @GetMapping("/upload-receipt")
-  @Secured("ROLE_orga")
+  @Secured({"ROLE_orga", "ROLE_studentin"})
   public String redirectOrga(KeycloakAuthenticationToken token, Model model) {
     resetMessages();
     model.addAttribute("account", accountCreator.createFromPrincipal(token));
     model.addAttribute("receipts", verifiedReceipts);
 
-    return "orga-upload-receipt";
+    return "upload-receipt";
   }
 
   /**
    * This method is called for a POST request to /orga/upload-receipt.
    *
-   * @param receipt Textfile provided by user
+   * @param receiptMultipartFile Textfile provided by user
    * @return Returns view depending on the validity of the receipt.
    */
   @PostMapping("/upload-receipt")
-  @Secured("ROLE_orga")
-  public String uploadReceipt(@RequestParam("receipt") MultipartFile... receipt) {
-
-    List<ReceiptData> receipts = new ArrayList<>();
+  @Secured({"ROLE_orga", "ROLE_studentin"})
+  public String uploadReceipt(@RequestParam("receipt") MultipartFile... receiptMultipartFile) {
+    List<ReceiptData> receiptDataList = new ArrayList<>();
 
     boolean firstError = true;
-    for (MultipartFile rec : receipt) {
+    for (MultipartFile rec : receiptMultipartFile) {
 
-      List<String> receiptLines = organisatorService.processTXTUpload(rec);
+      List<String> receiptLines = fileService.processTXTUpload(rec);
 
       if (rec.isEmpty() || receiptLines == null) {
 
@@ -89,7 +89,7 @@ public class OrgaUploadReceiptController {
         }
 
       } else {
-        receipts.add(organisatorService.readReceiptContent(
+        receiptDataList.add(fileService.readReceiptContent(
             receiptLines.get(0),
             receiptLines.get(1)));
       }
@@ -97,10 +97,19 @@ public class OrgaUploadReceiptController {
 
     boolean checkRun = false;
     boolean allReceiptsValid = true;
-    for (ReceiptData data : receipts) {
+    for (ReceiptData data : receiptDataList) {
 
       boolean valid = signatureService.verify(new Receipt(data.create(), data.getSignature()));
       data.setValid(valid);
+      if (valid) {
+        Student student = new Student(
+            data.getMatriculationNumber(),
+            data.getEmail(),
+            data.getName(),
+            data.getForeName());
+        fileService.storeReceipt(student,
+            fileService.createFileFromSubmittedReceipt(data, data.getSignature()));
+      }
       verifiedReceipts.add(data);
       if (!valid) {
         allReceiptsValid = false;
@@ -132,7 +141,7 @@ public class OrgaUploadReceiptController {
       setWarningMessage("Es wurden keine neuen Quittungen geprüft,"
           + " da keine dem geforderten Format entsprach.");
     }
-    return "redirect:/zulassung2/orga/upload-receipt";
+    return "redirect:/zulassung2/upload-receipt";
   }
 
   /**
