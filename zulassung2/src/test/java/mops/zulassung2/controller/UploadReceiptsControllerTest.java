@@ -1,7 +1,7 @@
 package mops.zulassung2.controller;
 
 import com.c4_soft.springaddons.test.security.context.support.WithMockKeycloackAuth;
-import mops.zulassung2.services.OrganisatorService;
+import mops.zulassung2.services.FileService;
 import mops.zulassung2.services.SignatureService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,16 +26,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(OrgaUploadReceiptController.class)
+@WebMvcTest(UploadReceiptsController.class)
 @ComponentScan(basePackageClasses = {KeycloakSecurityComponents.class,
     KeycloakSpringBootConfigResolver.class})
-class OrgaUploadReceiptControllerTest {
+class UploadReceiptsControllerTest {
 
   MockMultipartFile mockMultipartFile;
   @Autowired
   MockMvc mvc;
   @MockBean
-  OrganisatorService organisatorService;
+  FileService fileService;
   @MockBean
   SignatureService signatureService;
 
@@ -47,34 +47,74 @@ class OrgaUploadReceiptControllerTest {
         "text/plain",
         "MockData".getBytes(StandardCharsets.UTF_8));
 
-    when(organisatorService.processTXTUpload(mockMultipartFile)).thenReturn(null);
+    when(fileService.processTXTUpload(mockMultipartFile)).thenReturn(null);
   }
 
   @Test
   @WithMockKeycloackAuth("studentin")
-  void studentIsRefused() throws Exception {
-    mvc.perform(get("/zulassung2/orga/upload-receipt"))
-        .andExpect(status().isForbidden());
-    mvc.perform(multipart("/zulassung2/orga/upload-receipt")
+  void studentinGetIsOk() throws Exception {
+    mvc.perform(get("/zulassung2/upload-receipt"))
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  @WithMockKeycloackAuth("studentin")
+  void studentinPostWithValidCsrfOneFileIsOk() throws Exception {
+    mvc.perform(multipart("/zulassung2/upload-receipt")
         .file(mockMultipartFile)
         .with(csrf()))
+        .andExpect(redirectedUrl("/zulassung2/upload-receipt"));
+  }
+
+  @Test
+  @WithMockKeycloackAuth("studentin")
+  void studentinPostWithValidCsrfMultipleFilesIsOk() throws Exception {
+
+    MockMultipartFile mockMultipartFile1 = new MockMultipartFile(
+        "receipt",
+        "Receipt.txt",
+        "text/plain",
+        "MockData1".getBytes(StandardCharsets.UTF_8));
+    MockMultipartFile mockMultipartFile2 = new MockMultipartFile(
+        "receipt",
+        "Receipt.txt",
+        "text/plain",
+        "MockData2".getBytes(StandardCharsets.UTF_8));
+
+    when(fileService.processTXTUpload(mockMultipartFile1)).thenReturn(null);
+    when(fileService.processTXTUpload(mockMultipartFile2)).thenReturn(null);
+
+    mvc.perform(multipart("/zulassung2/upload-receipt")
+        .file(mockMultipartFile)
+        .file(mockMultipartFile1)
+        .file(mockMultipartFile2)
+        .with(csrf()))
+        .andExpect(redirectedUrl("/zulassung2/upload-receipt"));
+  }
+
+  @Test
+  @WithMockKeycloackAuth("studentin")
+  void studentinPostWithInvalidCsrfIsRefused() throws Exception {
+    mvc.perform(multipart("/zulassung2/upload-receipt")
+        .file(mockMultipartFile)
+        .with(csrf().useInvalidToken()))
         .andExpect(status().isForbidden());
   }
 
   @Test
   @WithMockKeycloackAuth("orga")
   void orgaGetIsOk() throws Exception {
-    mvc.perform(get("/zulassung2/orga/upload-receipt"))
+    mvc.perform(get("/zulassung2/upload-receipt"))
         .andExpect(status().isOk());
   }
 
   @Test
   @WithMockKeycloackAuth("orga")
   void orgaPostWithValidCsrfOneFileIsOk() throws Exception {
-    mvc.perform(multipart("/zulassung2/orga/upload-receipt")
+    mvc.perform(multipart("/zulassung2/upload-receipt")
         .file(mockMultipartFile)
         .with(csrf()))
-        .andExpect(redirectedUrl("/zulassung2/orga/upload-receipt"));
+        .andExpect(redirectedUrl("/zulassung2/upload-receipt"));
   }
 
   @Test
@@ -92,21 +132,21 @@ class OrgaUploadReceiptControllerTest {
         "text/plain",
         "MockData2".getBytes(StandardCharsets.UTF_8));
 
-    when(organisatorService.processTXTUpload(mockMultipartFile1)).thenReturn(null);
-    when(organisatorService.processTXTUpload(mockMultipartFile2)).thenReturn(null);
+    when(fileService.processTXTUpload(mockMultipartFile1)).thenReturn(null);
+    when(fileService.processTXTUpload(mockMultipartFile2)).thenReturn(null);
 
-    mvc.perform(multipart("/zulassung2/orga/upload-receipt")
+    mvc.perform(multipart("/zulassung2/upload-receipt")
         .file(mockMultipartFile)
         .file(mockMultipartFile1)
         .file(mockMultipartFile2)
         .with(csrf()))
-        .andExpect(redirectedUrl("/zulassung2/orga/upload-receipt"));
+        .andExpect(redirectedUrl("/zulassung2/upload-receipt"));
   }
 
   @Test
   @WithMockKeycloackAuth("orga")
   void orgaPostWithInvalidCsrfIsRefused() throws Exception {
-    mvc.perform(multipart("/zulassung2/orga/upload-receipt")
+    mvc.perform(multipart("/zulassung2/upload-receipt")
         .file(mockMultipartFile)
         .with(csrf().useInvalidToken()))
         .andExpect(status().isForbidden());
@@ -114,9 +154,9 @@ class OrgaUploadReceiptControllerTest {
 
   @Test
   void unauthorizedIsRedirectedToLogin() throws Exception {
-    mvc.perform(get("/zulassung2/orga/upload-receipt"))
+    mvc.perform(get("/zulassung2/upload-receipt"))
         .andExpect(redirectedUrl("/sso/login"));
-    mvc.perform(multipart("/zulassung2/orga/upload-receipt")
+    mvc.perform(multipart("/zulassung2/upload-receipt")
         .file(mockMultipartFile)
         .with(csrf()))
         .andExpect(redirectedUrl("/sso/login"));
