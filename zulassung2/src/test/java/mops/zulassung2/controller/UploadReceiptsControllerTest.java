@@ -51,6 +51,57 @@ class UploadReceiptsControllerTest {
   }
 
   @Test
+  @WithMockKeycloackAuth("studentin")
+  void studentinGetIsOk() throws Exception {
+    mvc.perform(get("/zulassung2/upload-receipt"))
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  @WithMockKeycloackAuth("studentin")
+  void studentinPostWithValidCsrfOneFileIsOk() throws Exception {
+    mvc.perform(multipart("/zulassung2/upload-receipt")
+        .file(mockMultipartFile)
+        .with(csrf()))
+        .andExpect(redirectedUrl("/zulassung2/upload-receipt"));
+  }
+
+  @Test
+  @WithMockKeycloackAuth("studentin")
+  void studentinPostWithValidCsrfMultipleFilesIsOk() throws Exception {
+
+    MockMultipartFile mockMultipartFile1 = new MockMultipartFile(
+        "receipt",
+        "Receipt.txt",
+        "text/plain",
+        "MockData1".getBytes(StandardCharsets.UTF_8));
+    MockMultipartFile mockMultipartFile2 = new MockMultipartFile(
+        "receipt",
+        "Receipt.txt",
+        "text/plain",
+        "MockData2".getBytes(StandardCharsets.UTF_8));
+
+    when(fileService.processTXTUpload(mockMultipartFile1)).thenReturn(null);
+    when(fileService.processTXTUpload(mockMultipartFile2)).thenReturn(null);
+
+    mvc.perform(multipart("/zulassung2/upload-receipt")
+        .file(mockMultipartFile)
+        .file(mockMultipartFile1)
+        .file(mockMultipartFile2)
+        .with(csrf()))
+        .andExpect(redirectedUrl("/zulassung2/upload-receipt"));
+  }
+
+  @Test
+  @WithMockKeycloackAuth("studentin")
+  void studentinPostWithInvalidCsrfIsRefused() throws Exception {
+    mvc.perform(multipart("/zulassung2/upload-receipt")
+        .file(mockMultipartFile)
+        .with(csrf().useInvalidToken()))
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
   @WithMockKeycloackAuth("orga")
   void orgaGetIsOk() throws Exception {
     mvc.perform(get("/zulassung2/upload-receipt"))
