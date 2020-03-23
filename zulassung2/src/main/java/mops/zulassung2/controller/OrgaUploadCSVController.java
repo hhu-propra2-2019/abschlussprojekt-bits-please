@@ -81,7 +81,8 @@ public class OrgaUploadCSVController {
   /**
    * This method is called for a POST request to /orga/upload-csv.
    *
-   * @param file File that was uploaded
+   * @param model model to be injected
+   * @param form  form to be injected
    * @return Redirects to view orga-upload-csv
    */
 
