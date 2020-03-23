@@ -1,5 +1,6 @@
 package mops.zulassung2.controller;
 
+import mops.zulassung2.model.OrgaUploadCSVForm;
 import mops.zulassung2.model.dataobjects.AccountCreator;
 import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.services.EmailService;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.SessionScope;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import java.io.File;
@@ -69,10 +69,11 @@ public class OrgaUploadCSVController {
    */
   @GetMapping("/upload-csv")
   @Secured("ROLE_orga")
-  public String orga(KeycloakAuthenticationToken token, Model model) {
+  public String orga(KeycloakAuthenticationToken token, Model model, @ModelAttribute("form") OrgaUploadCSVForm form) {
     resetMessages();
     model.addAttribute("account", accountCreator.createFromPrincipal(token));
     model.addAttribute("students", students);
+    model.addAttribute("form", form);
 
     return "orga-upload-csv";
   }
@@ -86,14 +87,14 @@ public class OrgaUploadCSVController {
 
   @PostMapping("/upload-csv")
   @Secured("ROLE_orga")
-  public String submit(@RequestParam("file") MultipartFile file, String subject, String semester) {
-    if (!FilenameUtils.isExtension(file.getOriginalFilename(), "csv")) {
+  public String submit(Model model, @ModelAttribute("form") OrgaUploadCSVForm form) {
+    if (!FilenameUtils.isExtension(form.getMultipartFile().getOriginalFilename(), "csv")) {
       setDangerMessage("Die Datei muss im .csv Format sein!");
       return "redirect:/zulassung2/orga/upload-csv";
     }
-    currentSubject = subject.replaceAll("[: ]", "-");
-    currentSemester = semester.replaceAll("[: ]", "-");
-    students = organisatorService.processCSVUpload(file);
+    currentSubject = form.getSubject().replaceAll("[: ]", "-");
+    currentSemester = form.getSemester().replaceAll("[: ]", "-");
+    students = organisatorService.processCSVUpload(form.getMultipartFile());
     if (students == null) {
       setDangerMessage("Die Datei konnte nicht gelesen werden!");
       return "redirect:/zulassung2/orga/upload-csv";
@@ -120,11 +121,11 @@ public class OrgaUploadCSVController {
       } catch (MessagingException e) {
         if (firstError) {
           setDangerMessage("An folgende Studenten konnte keine Email versendet werden: "
-              + student.getForeName() + " " + student.getName());
+                  + student.getForeName() + " " + student.getName());
           firstError = false;
         } else {
           setDangerMessage(dangerMessage.concat(", "
-              + student.getForeName() + " " + student.getName()));
+                  + student.getForeName() + " " + student.getName()));
         }
       }
 
@@ -154,12 +155,12 @@ public class OrgaUploadCSVController {
       emailService.sendMail(selectedStudent, currentSubject, file);
       organisatorService.storeReceipt(selectedStudent, file);
       setSuccessMessage("Email an " + selectedStudent.getForeName() + " "
-          + selectedStudent.getName()
-          + " wurde erfolgreich versendet.");
+              + selectedStudent.getName()
+              + " wurde erfolgreich versendet.");
     } catch (MessagingException e) {
       setDangerMessage("Email an " + selectedStudent.getForeName()
-          + " " + selectedStudent.getName()
-          + " konnte nicht versendet werden!");
+              + " " + selectedStudent.getName()
+              + " konnte nicht versendet werden!");
     }
     return "redirect:/zulassung2/orga/upload-csv";
   }
