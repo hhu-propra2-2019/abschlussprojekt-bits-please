@@ -50,15 +50,14 @@
         Some success message
     </div>
 
-    <div class
 
     <!-- <div class="table-responsive" th:if="${students!=null and not students.isEmpty()}"> -->
     <div class="table-responsive" th:if="${notallowed!=null and not notallowed.isEmpty()}">
-        <div class="lead">Nicht Zugelassene Teilnehmer zur Veranstaltung <span th:text="${subject}">Subject</span> im
+        <span class="lead">Nicht Zugelassene Teilnehmer zur Veranstaltung <span th:text="${subject}">Subject</span> im
             <span
                     th:text="${semester}">Semester</span>
-        </div>
-        <br>
+        </span>
+
         <div class="scrollable">
             <table class="table">
                 <thead>
@@ -91,17 +90,21 @@
             </table>
             <form action="/zulassung2/orga/sendmailreglist" class="inline-form" method="POST">
                 <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
-                <br>
                 <button class="btn btn-primary" type="submit">Warnungsnachricht an alle Betroffenen senden
                 </button>
             </form>
         </div>
     </div>
+
+
     <div class="table-responsive" th:if="${allowed!=null and not allowed.isEmpty()}">
-        <div class="lead">Zugelassene Teilnehmer zur Veranstaltung <span th:text="${subject}">Subject</span> im
+        <br>
+        <hr>
+        <span class="lead">Zugelassene Teilnehmer zur Veranstaltung <span th:text="${subject}">Subject</span> im
             <span
                     th:text="${semester}">Semester</span>
-        </div>
+        </span>
+        <br>
         <div class="scrollable">
             <table class="table">
                 <thead>
@@ -124,6 +127,8 @@
             </table>
         </div>
     </div>
+
+
 </div>
 </body>
 </html>
