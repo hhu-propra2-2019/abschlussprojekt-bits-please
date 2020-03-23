@@ -20,7 +20,7 @@ import java.util.List;
 @SessionScope
 @RequestMapping("/zulassung2")
 @Controller
-public class OrgaUploadReceiptController {
+public class UploadReceiptsController {
 
   private final OrganisatorService organisatorService;
   private final SignatureService signatureService;
@@ -37,8 +37,8 @@ public class OrgaUploadReceiptController {
    * @param organisatorService Service for parsing files
    * @param signatureService   Service for signing files
    */
-  public OrgaUploadReceiptController(OrganisatorService organisatorService,
-                                     SignatureService signatureService) {
+  public UploadReceiptsController(OrganisatorService organisatorService,
+                                  SignatureService signatureService) {
     accountCreator = new AccountCreator();
     this.organisatorService = organisatorService;
     this.signatureService = signatureService;
@@ -102,8 +102,13 @@ public class OrgaUploadReceiptController {
       boolean valid = signatureService.verify(new Receipt(data.create(), data.getSignature()));
       data.setValid(valid);
       if (valid) {
-        Student student = new Student(data.getMatriculationNumber(), data.getEmail(), data.getName(), data.getForeName());
-        organisatorService.storeReceipt(student, organisatorService.createFileFromSubmittedReceipt(data, data.getSignature()));
+        Student student = new Student(
+            data.getMatriculationNumber(),
+            data.getEmail(),
+            data.getName(),
+            data.getForeName());
+        organisatorService.storeReceipt(student,
+            organisatorService.createFileFromSubmittedReceipt(data, data.getSignature()));
       }
       verifiedReceipts.add(data);
       if (!valid) {
