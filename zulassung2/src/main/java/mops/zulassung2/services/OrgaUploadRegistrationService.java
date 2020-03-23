@@ -21,7 +21,13 @@ public class OrgaUploadRegistrationService {
     nameCreator = new CustomNameCreator();
   }
 
-
+  /**
+   * This method is responsible for the verification of the exam approval.
+   *
+   * @param student It gives a List of Students.
+   * @param subject The Subject of each Student.
+   * @return it returns a boolean which will show if a Student is allowed to take part in the Exam of "subject".
+   */
   public boolean test(Student student, String subject) {
     if (minIo == null) {
       MinIoRepositoryInterface repo = new MinIoRepository(endpoint, accessKey, secretKey);
