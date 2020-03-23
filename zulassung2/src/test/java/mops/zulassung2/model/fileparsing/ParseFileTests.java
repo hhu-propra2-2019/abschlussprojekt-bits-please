@@ -18,7 +18,12 @@ class ParseFileTests {
   private String header = "matriculationnumber,email,name,forename\n";
   private String student1Data = "2727912,tigeu100@hhu.de,geuer,tim\n";
   private String student2Data = "2757144,masie@hhu.de,siewert,markus\n";
-
+  private String txt1Data = "matriculationnumber:2727912"
+      + " email:tigeu100@hhu.de"
+      + " name:geuer"
+      + " forename:tim"
+      + " module:Propra"
+      + " semester:WS2019";
 
   /**
    * This method provides the test's general information and variables for the CSV parser.
@@ -32,6 +37,20 @@ class ParseFileTests {
     String name = "testFile.csv";
     String fileName = "test_students.csv";
     return new MockMultipartFile(name, fileName, "text/csv", bytes);
+  }
+
+  /**
+   * This method provides the test's general information and variables for the TXT parser.
+   *
+   * @param data Since this value is different for each test,
+   *             we pass the "data" method on every call.
+   * @return returns the TXT-File.
+   */
+  public MockMultipartFile txtSetUp(String data) {
+    byte[] bytes = data.getBytes(StandardCharsets.UTF_8);
+    String name = "testFile.txt";
+    String fileName = "testFile.txt";
+    return new MockMultipartFile(name, fileName, "text/plain", bytes);
   }
 
   @Test
@@ -99,5 +118,34 @@ class ParseFileTests {
 
     // Assert
     assertThat(parsedStudents).isEqualTo(null);
+  }
+
+  @Test
+  public void testParsingLinesFromTXT() {
+    // Arrange
+    List<String> lines = new ArrayList<>();
+
+    lines.add(txt1Data);
+    lines.add("Signature");
+
+    String data = txt1Data + "\nSignature";
+
+    // Act
+    List<String> parsedLines = parser.processTXT(txtSetUp(data));
+
+    // Assert
+    assertThat(parsedLines).isEqualTo(lines);
+  }
+
+  @Test
+  public void testParsingInvalidTXTFile() {
+    // Arrange
+    String data = txt1Data + "Signature";
+
+    // Act
+    List<String> parsedLines = parser.processTXT(txtSetUp(data));
+
+    // Assert
+    assertThat(parsedLines).isEqualTo(null);
   }
 }
