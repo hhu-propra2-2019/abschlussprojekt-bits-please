@@ -14,9 +14,9 @@ import java.security.spec.InvalidKeySpecException;
 @Configuration
 public class SignatureConfig {
 
-  @Value("${dev_private_key}")
+  @Value("${DEV_PRIVATE_KEY}")
   String privateKey;
-  @Value("${dev_public_key}")
+  @Value("${DEV_PUBLIC_KEY}")
   String publicKey;
   KeyConverterInterface keyConverterInterface;
 

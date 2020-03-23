@@ -1,9 +1,6 @@
 package mops.zulassung2.tasks;
 
-import mops.zulassung2.model.minio.BucketObject;
-import mops.zulassung2.model.minio.MinIoHelper;
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Value;
+import mops.zulassung2.model.minio.*;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.Calendar;
@@ -12,48 +9,77 @@ import java.util.List;
 
 public class DeleteStorageTask {
 
-  @Value("${receipt_storage_duration}")
   private int storageDuration;
+  private MinIoImplementation minIoImplementation;
+  private CustomDateInterface currentDate;
 
-  private MinIoHelper minIoHelper;
-  @Value("${endpoint}")
-  private String endpoint;
-  @Value("${access_key}")
-  private String accessKey;
-  @Value("${secret_key}")
-  private String secretKey;
+  /**
+   * Initialize minIoHelper from given instance.
+   *
+   * @param impl          minIoImplementation instance
+   * @param storeDuration duration in years
+   * @param currentDate   current date
+   */
 
-  public DeleteStorageTask() {
+  public DeleteStorageTask(MinIoImplementation impl, int storeDuration, CustomDateInterface currentDate) {
+    this.minIoImplementation = impl;
+    this.storageDuration = storeDuration;
+    this.currentDate = currentDate;
+  }
+
+  /**
+   * Initialize minIoHelper from given Strings.
+   *
+   * @param config        object with endpoint, accessKey, secretKey
+   * @param storeDuration duration in years
+   * @param currentDate   current date
+   */
+
+  public DeleteStorageTask(MinIoConfig config, int storeDuration, CustomDateInterface currentDate) {
+    MinIoRepositoryInterface repo = new MinIoRepository(config.endpoint, config.accessKey, config.secretKey);
+    NameCreator nameCreator = new CustomNameCreator();
+    this.minIoImplementation = new MinIoImplementation(repo, nameCreator);
+    this.storageDuration = storeDuration;
+    this.currentDate = currentDate;
   }
 
   /**
    * Task that periodically deletes too old files.
    */
   @Scheduled(fixedRateString = "${check_storage_rate}")
-  public void delete() {
-    if (minIoHelper == null) {
-      minIoHelper = new MinIoHelper(endpoint, accessKey, secretKey);
-    }
-    List<BucketObject> allObjects = minIoHelper.getAllObjects();
+  public void checkStorageDuration() {
+
+    List<BucketObject> allObjects = minIoImplementation.getAllObjects();
     for (BucketObject bucketObject : allObjects) {
       String bucketName = bucketObject.getBucketName();
       String objectName = bucketObject.getObjectName();
-      Date creationDate = minIoHelper.getCreateTime(bucketName, objectName);
-      Date currentDate = DateTime.now().toDate();
+      Date creationDate = minIoImplementation.getCreateTime(bucketName, objectName);
 
-      Calendar c = Calendar.getInstance();
-      c.setTime(creationDate);
-      c.add(Calendar.YEAR, storageDuration);
-      Date newDate = c.getTime();
+      Date deletionDate = getDeletionDate(creationDate);
 
-      if (newDate.before(currentDate)) {
-        minIoHelper.removeObject(bucketName, objectName);
-
-        if (minIoHelper.isBucketEmpty(bucketName)) {
-          minIoHelper.removeBucket(bucketName);
-        }
-      }
+      deleteObject(bucketName, objectName, deletionDate, currentDate.getCurrentDate());
     }
+  }
+
+  private void deleteObject(String bucketName, String objectName, Date deletionDate, Date curDate) {
+    if (deletionDate.before(curDate)) {
+      minIoImplementation.removeObject(bucketName, objectName);
+
+      deleteBucket(bucketName);
+    }
+  }
+
+  private void deleteBucket(String bucketName) {
+    if (minIoImplementation.isBucketEmpty(bucketName)) {
+      minIoImplementation.removeBucket(bucketName);
+    }
+  }
+
+  private Date getDeletionDate(Date creationDate) {
+    Calendar c = Calendar.getInstance();
+    c.setTime(creationDate);
+    c.add(Calendar.YEAR, storageDuration);
+    return c.getTime();
   }
 
 }

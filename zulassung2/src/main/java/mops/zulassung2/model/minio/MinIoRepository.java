@@ -11,15 +11,14 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class MinIoHelper {
+public class MinIoRepository implements MinIoRepositoryInterface {
   private MinioClient minioClient;
 
-  public MinIoHelper(String endpoint, String accessKey, String secretKey) {
+  public MinIoRepository(String endpoint, String accessKey, String secretKey) {
     initializeClient(endpoint, accessKey, secretKey);
   }
 
@@ -39,7 +38,7 @@ public class MinIoHelper {
    */
   public boolean bucketExists(String bucketName) {
     try {
-      return minioClient.bucketExists(bucketName);
+      return minioClient.bucketExists(bucketName.toLowerCase());
     } catch (InvalidBucketNameException | NoSuchAlgorithmException | InsufficientDataException
             | IOException | InvalidKeyException | NoResponseException
             | XmlPullParserException | ErrorResponseException | InternalException
@@ -95,7 +94,7 @@ public class MinIoHelper {
   public void putObject(String bucketName, String objectName, String fileName, Long size,
                         Map<String, String> headerMap, String contentType) {
     try {
-      minioClient.putObject(bucketName, objectName, fileName, size, headerMap,
+      minioClient.putObject(bucketName.toLowerCase(), objectName, fileName, size, headerMap,
               null, contentType); //no encryption necessary
     } catch (InvalidBucketNameException | NoSuchAlgorithmException | IOException
             | InvalidKeyException | NoResponseException | XmlPullParserException
@@ -113,7 +112,7 @@ public class MinIoHelper {
    */
   public void removeObject(String bucketName, String objectName) {
     try {
-      minioClient.removeObject(bucketName, objectName);
+      minioClient.removeObject(bucketName.toLowerCase(), objectName);
     } catch (InvalidBucketNameException | NoSuchAlgorithmException | IOException
             | InvalidKeyException | NoResponseException | XmlPullParserException
             | ErrorResponseException | InternalException | InvalidArgumentException
@@ -123,17 +122,13 @@ public class MinIoHelper {
   }
 
   /**
-   * Creates a list of all bucket/object combinations.
+   * Lists all buckets.
    *
-   * @return list of bucket objects
+   * @return
    */
-  public List<BucketObject> getAllObjects() {
-    List<BucketObject> buckets = new ArrayList<>();
+  public List<Bucket> listBuckets() {
     try {
-      List<Bucket> bucketList = minioClient.listBuckets();
-      for (Bucket bucket : bucketList) {
-        addBucketObjects(buckets, bucket);
-      }
+      return minioClient.listBuckets();
     } catch (InvalidBucketNameException | NoSuchAlgorithmException | InsufficientDataException
             | IOException | InvalidKeyException | NoResponseException
             | XmlPullParserException | ErrorResponseException | InternalException
@@ -141,24 +136,23 @@ public class MinIoHelper {
       e.printStackTrace();
     }
 
-    return buckets;
+    return null;
   }
 
-  private void addBucketObjects(List<BucketObject> buckets, Bucket bucket) {
-
-    Iterable<Result<Item>> bucketObjects;
+  /**
+   * Lists all objects.
+   *
+   * @param bucketName bucket name whose objects need to be queried
+   * @return
+   */
+  public Iterable<Result<Item>> listObjects(String bucketName) {
     try {
-      bucketObjects = minioClient.listObjects(bucket.name());
-
-      for (Result<Item> object : bucketObjects) {
-        BucketObject bucketObject = new BucketObject(bucket.name(), object.get().objectName());
-        buckets.add(bucketObject);
-      }
-    } catch (XmlPullParserException | InvalidBucketNameException | NoSuchAlgorithmException
-            | InsufficientDataException | IOException | InvalidKeyException
-            | NoResponseException | ErrorResponseException | InternalException e) {
+      return minioClient.listObjects(bucketName.toLowerCase());
+    } catch (XmlPullParserException e) {
       e.printStackTrace();
     }
+
+    return null;
   }
 
   /**
@@ -171,7 +165,7 @@ public class MinIoHelper {
   public Date getCreateTime(String bucketName, String objectName) {
     Date date = null;
     try {
-      ObjectStat objectStat = minioClient.statObject(bucketName, objectName);
+      ObjectStat objectStat = minioClient.statObject(bucketName.toLowerCase(), objectName);
       date = objectStat.createdTime();
     } catch (InvalidBucketNameException | NoSuchAlgorithmException | InsufficientDataException
             | IOException | InvalidKeyException | NoResponseException
@@ -184,37 +178,20 @@ public class MinIoHelper {
   }
 
   /**
-   * Checks whether a bucket is empty or not.
+   * Get the name of an object.
    *
-   * @param bucketName name of the bucket
-   * @return boolean
+   * @param object object whose name needs to be fetched
+   * @return
    */
-  public boolean isBucketEmpty(String bucketName) {
-    List<Bucket> bucketList;
+  public String getObjectName(Result<Item> object) {
     try {
-      bucketList = minioClient.listBuckets();
-      for (Bucket bucket : bucketList) {
-        if (bucket.name().equals(bucketName)) {
-          if (isObjectListEmpty(bucket)) {
-            return false;
-          }
-        }
-      }
+      return object.get().objectName();
     } catch (InvalidBucketNameException | NoSuchAlgorithmException | InsufficientDataException
             | IOException | InvalidKeyException | NoResponseException
-            | XmlPullParserException | ErrorResponseException | InternalException
-            | InvalidResponseException e) {
+            | XmlPullParserException | ErrorResponseException | InternalException e) {
       e.printStackTrace();
     }
 
-    return true;
-  }
-
-  private boolean isObjectListEmpty(Bucket bucket) throws XmlPullParserException {
-    Iterable<Result<Item>> results = minioClient.listObjects(bucket.name());
-    for (Result<Item> item : results) {
-      return true;
-    }
-    return false;
+    return null;
   }
 }

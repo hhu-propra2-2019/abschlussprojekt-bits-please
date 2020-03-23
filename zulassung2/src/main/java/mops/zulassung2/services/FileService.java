@@ -4,22 +4,23 @@ import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.model.fileparsing.CustomCSVLineParser;
 import mops.zulassung2.model.fileparsing.CustomValidator;
 import mops.zulassung2.model.fileparsing.FileParser;
-import mops.zulassung2.model.minio.CustomNameCreator;
-import mops.zulassung2.model.minio.MinIoHelper;
-import mops.zulassung2.model.minio.NameCreator;
+import mops.zulassung2.model.minio.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 
 @Service
-public class OrganisatorService {
+public class FileService {
 
   private NameCreator nameCreator;
-  private MinIoHelper minIoHelper;
+  private MinIoImplementation minIo;
   @Value("${endpoint}")
   private String endpoint;
   @Value("${access_key}")
@@ -27,7 +28,7 @@ public class OrganisatorService {
   @Value("${secret_key}")
   private String secretKey;
 
-  public OrganisatorService() {
+  public FileService() {
     nameCreator = new CustomNameCreator();
   }
 
@@ -64,15 +65,15 @@ public class OrganisatorService {
 
     String[] dataObjects = receiptContent.split(" ");
     Student student = new Student(
-            dataObjects[0].split(":")[1], // Matriculationnumber
-            dataObjects[1].split(":")[1], // Email
-            dataObjects[2].split(":")[1], // Name
-            dataObjects[3].split(":")[1]); // Forename
+        dataObjects[0].split(":")[1], // Matriculationnumber
+        dataObjects[1].split(":")[1], // Email
+        dataObjects[2].split(":")[1], // Name
+        dataObjects[3].split(":")[1]); // Forename
 
     ReceiptData receiptData = new CustomReceiptData(student,
-            dataObjects[4].split(":")[1], // Module
-            dataObjects[5].split(":")[1], // Semester
-            signature);                         // Signature
+        dataObjects[4].split(":")[1], // Module
+        dataObjects[5].split(":")[1], // Semester
+        signature);                         // Signature
 
     return receiptData;
   }
@@ -86,15 +87,43 @@ public class OrganisatorService {
 
   public void storeReceipt(Student student, File file) {
 
-    if (minIoHelper == null) {
-      minIoHelper = new MinIoHelper(endpoint, accessKey, secretKey);
+    if (minIo == null) {
+      MinIoRepositoryInterface repo = new MinIoRepository(endpoint, accessKey, secretKey);
+      NameCreator nameCreator = new CustomNameCreator();
+      minIo = new MinIoImplementation(repo, nameCreator);
     }
     String bucketName = nameCreator.createBucketName(student);
-    if (!minIoHelper.bucketExists(bucketName)) {
-      minIoHelper.makeBucket(bucketName);
+    if (!minIo.bucketExists(bucketName)) {
+      minIo.makeBucket(bucketName);
     }
 
-    minIoHelper.putObject(bucketName, file.getName(), file.getPath(), file.length(),
-            new HashMap<String, String>(), ".txt");
+    minIo.putObject(bucketName, file.getName(), file.getPath(), file.length(),
+        new HashMap<String, String>(), ".txt");
+  }
+
+  /**
+   * creates a File from a MultiPartFile that was uploaded by user.
+   *
+   * @param receiptData Student Information
+   * @param signature   Signature of the receipt
+   * @return redirect
+   */
+
+  public File createFileFromSubmittedReceipt(ReceiptData receiptData, String signature) {
+    String data = receiptData.create();
+    File file = new File(System.getProperty("user.dir")
+        + "token_" + receiptData.getModule()
+        + "_" + receiptData.getName() + ".txt");
+    FileWriter writer;
+
+    try {
+      writer = new FileWriter(file, StandardCharsets.UTF_8);
+      writer.write(data + "\n");
+      writer.write(signature);
+      writer.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return file;
   }
 }

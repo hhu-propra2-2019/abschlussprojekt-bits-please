@@ -2,7 +2,8 @@ package mops.zulassung2.controller;
 
 import mops.zulassung2.model.crypto.Receipt;
 import mops.zulassung2.model.dataobjects.AccountCreator;
-import mops.zulassung2.services.OrganisatorService;
+import mops.zulassung2.model.dataobjects.Student;
+import mops.zulassung2.services.FileService;
 import mops.zulassung2.services.ReceiptData;
 import mops.zulassung2.services.SignatureService;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
@@ -17,29 +18,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SessionScope
-@RequestMapping("/zulassung2/orga")
+@RequestMapping("/zulassung2")
 @Controller
-public class OrgaUploadReceiptController {
+public class UploadReceiptsController {
 
-  private final OrganisatorService organisatorService;
+  private final FileService fileService;
   private final SignatureService signatureService;
   private List<ReceiptData> verifiedReceipts = new ArrayList<>();
   private AccountCreator accountCreator;
   private String dangerMessage;
-  private String errorMessage;
+  private String warningMessage;
   private String successMessage;
 
   /**
    * Constructs Controller by injecting Beans of
    * OrganisatorService, SignatureService and Emailservice.
    *
-   * @param organisatorService Service for parsing files
-   * @param signatureService   Service for signing files
+   * @param fileService      Service for parsing files
+   * @param signatureService Service for signing files
    */
-  public OrgaUploadReceiptController(OrganisatorService organisatorService,
-                                     SignatureService signatureService) {
+  public UploadReceiptsController(FileService fileService,
+                                  SignatureService signatureService) {
     accountCreator = new AccountCreator();
-    this.organisatorService = organisatorService;
+    this.fileService = fileService;
     this.signatureService = signatureService;
   }
 
@@ -51,56 +52,64 @@ public class OrgaUploadReceiptController {
    * @return Returns view orga-upload-receipt
    */
   @GetMapping("/upload-receipt")
-  @Secured("ROLE_orga")
+  @Secured({"ROLE_orga", "ROLE_studentin"})
   public String redirectOrga(KeycloakAuthenticationToken token, Model model) {
     resetMessages();
     model.addAttribute("account", accountCreator.createFromPrincipal(token));
     model.addAttribute("receipts", verifiedReceipts);
 
-    return "orga-upload-receipt";
+    return "upload-receipt";
   }
 
   /**
    * This method is called for a POST request to /orga/upload-receipt.
    *
-   * @param receipt Textfile provided by user
+   * @param receiptMultipartFile Textfile provided by user
    * @return Returns view depending on the validity of the receipt.
    */
   @PostMapping("/upload-receipt")
-  @Secured("ROLE_orga")
-  public String uploadReceipt(@RequestParam("receipt") MultipartFile... receipt) {
-
-    List<ReceiptData> receipts = new ArrayList<>();
+  @Secured({"ROLE_orga", "ROLE_studentin"})
+  public String uploadReceipt(@RequestParam("receipt") MultipartFile... receiptMultipartFile) {
+    List<ReceiptData> receiptDataList = new ArrayList<>();
 
     boolean firstError = true;
-    for (MultipartFile rec : receipt) {
+    for (MultipartFile rec : receiptMultipartFile) {
 
-      List<String> receiptLines = organisatorService.processTXTUpload(rec);
+      List<String> receiptLines = fileService.processTXTUpload(rec);
 
       if (rec.isEmpty() || receiptLines == null) {
 
         if (firstError) {
           setDangerMessage("Folgende übergebene Quittungen haben ein falsches Format "
-                  + "und konnten daher nicht geprüft werden: "
-                  + rec.getOriginalFilename());
+              + "und konnten daher nicht geprüft werden: "
+              + rec.getOriginalFilename());
           firstError = false;
         } else {
           setDangerMessage(dangerMessage.concat(", " + rec.getOriginalFilename()));
         }
 
       } else {
-        receipts.add(organisatorService.readReceiptContent(
-                receiptLines.get(0),
-                receiptLines.get(1)));
+        receiptDataList.add(fileService.readReceiptContent(
+            receiptLines.get(0),
+            receiptLines.get(1)));
       }
     }
 
     boolean checkRun = false;
     boolean allReceiptsValid = true;
-    for (ReceiptData data : receipts) {
+    for (ReceiptData data : receiptDataList) {
 
       boolean valid = signatureService.verify(new Receipt(data.create(), data.getSignature()));
       data.setValid(valid);
+      if (valid) {
+        Student student = new Student(
+            data.getMatriculationNumber(),
+            data.getEmail(),
+            data.getName(),
+            data.getForeName());
+        fileService.storeReceipt(student,
+            fileService.createFileFromSubmittedReceipt(data, data.getSignature()));
+      }
       verifiedReceipts.add(data);
       if (!valid) {
         allReceiptsValid = false;
@@ -114,36 +123,37 @@ public class OrgaUploadReceiptController {
       if (allReceiptsValid) { // all files and signatures are valid
         setSuccessMessage("Alle neu hochgeladenen Quittungen wurden geprüft und sind gültig.");
       } else { // all files but not all signatures are valid
-        setErrorMessage("Alle hochgeladenen Quittungen wurden geprüft. "
-                + "Bitte überprüfen Sie die Gültigkeit anhand der Tabelle.");
+        setWarningMessage("Alle hochgeladenen Quittungen wurden geprüft. "
+            + "Bitte überprüfen Sie die Gültigkeit anhand der Tabelle.");
       }
 
     } else if (checkRun) {
 
       if (allReceiptsValid) { // not all files but all signatures are valid
         setSuccessMessage(" Neu hochgeladene Quittungen im korrekten Format wurden geprüft. "
-                + "Die korrekt formatierten Quittungen sind gültig.");
+            + "Die korrekt formatierten Quittungen sind gültig.");
       } else { // not all files and not all signatures are valid
-        setErrorMessage(" Quittungen im korrekten Format wurden geprüft. "
-                + "Bitte überprüfen Sie die Gültigkeit anhand der Tabelle.");
+        setWarningMessage(" Quittungen im korrekten Format wurden geprüft. "
+            + "Bitte überprüfen Sie die Gültigkeit anhand der Tabelle.");
       }
 
     } else {
-      setErrorMessage("Es wurden keine neuen Quittungen geprüft,"
-              + " da keine dem geforderten Format entsprach.");
+      setWarningMessage("Es wurden keine neuen Quittungen geprüft,"
+          + " da keine dem geforderten Format entsprach.");
     }
-    return "redirect:/zulassung2/orga/upload-receipt";
+    return "redirect:/zulassung2/upload-receipt";
   }
 
   /**
    * Set Error and Success Messages for the frontend.
    *
-   * @param errorMessage   Describe error
+   * @param dangerMessage  Describe danger
+   * @param warningMessage Describe warning
    * @param successMessage Send a joyful message to the user
    */
-  private void setMessages(String dangerMessage, String errorMessage, String successMessage) {
+  private void setMessages(String dangerMessage, String warningMessage, String successMessage) {
     this.dangerMessage = dangerMessage;
-    this.errorMessage = errorMessage;
+    this.warningMessage = warningMessage;
     this.successMessage = successMessage;
   }
 
@@ -159,10 +169,10 @@ public class OrgaUploadReceiptController {
   /**
    * Set Error Message for the frontend.
    *
-   * @param errorMessage Describe error
+   * @param warningMessage Describe warning
    */
-  private void setErrorMessage(String errorMessage) {
-    this.errorMessage = errorMessage;
+  private void setWarningMessage(String warningMessage) {
+    this.warningMessage = warningMessage;
   }
 
   /**
@@ -186,9 +196,9 @@ public class OrgaUploadReceiptController {
     return dangerMessage;
   }
 
-  @ModelAttribute("error")
-  String getError() {
-    return errorMessage;
+  @ModelAttribute("warning")
+  String getWarning() {
+    return warningMessage;
   }
 
   @ModelAttribute("success")
