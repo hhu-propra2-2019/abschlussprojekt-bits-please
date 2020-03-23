@@ -3,7 +3,7 @@ package mops.zulassung2.controller;
 import mops.zulassung2.model.dataobjects.AccountCreator;
 import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.services.EmailService;
-import mops.zulassung2.services.OrganisatorService;
+import mops.zulassung2.services.FileService;
 import org.apache.commons.io.FilenameUtils;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.access.annotation.Secured;
@@ -23,7 +23,7 @@ import java.util.List;
 @Controller
 public class UploadApprovedStudentsController {
 
-  private final OrganisatorService organisatorService;
+  private final FileService fileService;
   private final EmailService emailService;
   public List<Student> students = new ArrayList<>();
   public String currentSubject = "";
@@ -38,13 +38,13 @@ public class UploadApprovedStudentsController {
    * Constructs OrganisatorController by injecting Beans of
    * OrganisatorService, SignatureService and Emailservice.
    *
-   * @param organisatorService Service for parsing files
-   * @param emailService       Service for sending emails
+   * @param fileService  Service for parsing files
+   * @param emailService Service for sending emails
    */
-  public UploadApprovedStudentsController(OrganisatorService organisatorService,
+  public UploadApprovedStudentsController(FileService fileService,
                                           EmailService emailService) {
     accountCreator = new AccountCreator();
-    this.organisatorService = organisatorService;
+    this.fileService = fileService;
     this.emailService = emailService;
   }
 
@@ -81,7 +81,7 @@ public class UploadApprovedStudentsController {
     }
     currentSubject = subject.replaceAll("[: ]", "-");
     currentSemester = semester.replaceAll("[: ]", "-");
-    students = organisatorService.processCSVUpload(file);
+    students = fileService.processCSVUpload(file);
     if (students == null) {
       setDangerMessage("Die Datei konnte nicht gelesen werden!");
       return "redirect:/zulassung2/upload-approved-students";
@@ -104,7 +104,7 @@ public class UploadApprovedStudentsController {
       File file = emailService.createFile(student, currentSubject, currentSemester);
       try {
         emailService.sendMail(student, currentSubject, file);
-        organisatorService.storeReceipt(student, file);
+        fileService.storeReceipt(student, file);
       } catch (MessagingException e) {
         if (firstError) {
           setDangerMessage("An folgende Studenten konnte keine Email versendet werden: "
@@ -140,7 +140,7 @@ public class UploadApprovedStudentsController {
     File file = emailService.createFile(selectedStudent, currentSubject, currentSemester);
     try {
       emailService.sendMail(selectedStudent, currentSubject, file);
-      organisatorService.storeReceipt(selectedStudent, file);
+      fileService.storeReceipt(selectedStudent, file);
       setSuccessMessage("Email an " + selectedStudent.getForeName() + " "
           + selectedStudent.getName()
           + " wurde erfolgreich versendet.");

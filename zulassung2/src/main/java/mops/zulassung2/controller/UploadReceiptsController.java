@@ -3,7 +3,7 @@ package mops.zulassung2.controller;
 import mops.zulassung2.model.crypto.Receipt;
 import mops.zulassung2.model.dataobjects.AccountCreator;
 import mops.zulassung2.model.dataobjects.Student;
-import mops.zulassung2.services.OrganisatorService;
+import mops.zulassung2.services.FileService;
 import mops.zulassung2.services.ReceiptData;
 import mops.zulassung2.services.SignatureService;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
@@ -22,7 +22,7 @@ import java.util.List;
 @Controller
 public class UploadReceiptsController {
 
-  private final OrganisatorService organisatorService;
+  private final FileService fileService;
   private final SignatureService signatureService;
   private List<ReceiptData> verifiedReceipts = new ArrayList<>();
   private AccountCreator accountCreator;
@@ -34,13 +34,13 @@ public class UploadReceiptsController {
    * Constructs Controller by injecting Beans of
    * OrganisatorService, SignatureService and Emailservice.
    *
-   * @param organisatorService Service for parsing files
-   * @param signatureService   Service for signing files
+   * @param fileService      Service for parsing files
+   * @param signatureService Service for signing files
    */
-  public UploadReceiptsController(OrganisatorService organisatorService,
+  public UploadReceiptsController(FileService fileService,
                                   SignatureService signatureService) {
     accountCreator = new AccountCreator();
-    this.organisatorService = organisatorService;
+    this.fileService = fileService;
     this.signatureService = signatureService;
   }
 
@@ -75,7 +75,7 @@ public class UploadReceiptsController {
     boolean firstError = true;
     for (MultipartFile rec : receiptMultipartFile) {
 
-      List<String> receiptLines = organisatorService.processTXTUpload(rec);
+      List<String> receiptLines = fileService.processTXTUpload(rec);
 
       if (rec.isEmpty() || receiptLines == null) {
 
@@ -89,7 +89,7 @@ public class UploadReceiptsController {
         }
 
       } else {
-        receiptDataList.add(organisatorService.readReceiptContent(
+        receiptDataList.add(fileService.readReceiptContent(
             receiptLines.get(0),
             receiptLines.get(1)));
       }
@@ -107,8 +107,8 @@ public class UploadReceiptsController {
             data.getEmail(),
             data.getName(),
             data.getForeName());
-        organisatorService.storeReceipt(student,
-            organisatorService.createFileFromSubmittedReceipt(data, data.getSignature()));
+        fileService.storeReceipt(student,
+            fileService.createFileFromSubmittedReceipt(data, data.getSignature()));
       }
       verifiedReceipts.add(data);
       if (!valid) {

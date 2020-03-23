@@ -1,7 +1,7 @@
 package mops.zulassung2.controller;
 
 import com.c4_soft.springaddons.test.security.context.support.WithMockKeycloackAuth;
-import mops.zulassung2.services.OrganisatorService;
+import mops.zulassung2.services.FileService;
 import mops.zulassung2.services.SignatureService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ class UploadReceiptsControllerTest {
   @Autowired
   MockMvc mvc;
   @MockBean
-  OrganisatorService organisatorService;
+  FileService fileService;
   @MockBean
   SignatureService signatureService;
 
@@ -47,7 +47,7 @@ class UploadReceiptsControllerTest {
         "text/plain",
         "MockData".getBytes(StandardCharsets.UTF_8));
 
-    when(organisatorService.processTXTUpload(mockMultipartFile)).thenReturn(null);
+    when(fileService.processTXTUpload(mockMultipartFile)).thenReturn(null);
   }
 
   @Test
@@ -81,8 +81,8 @@ class UploadReceiptsControllerTest {
         "text/plain",
         "MockData2".getBytes(StandardCharsets.UTF_8));
 
-    when(organisatorService.processTXTUpload(mockMultipartFile1)).thenReturn(null);
-    when(organisatorService.processTXTUpload(mockMultipartFile2)).thenReturn(null);
+    when(fileService.processTXTUpload(mockMultipartFile1)).thenReturn(null);
+    when(fileService.processTXTUpload(mockMultipartFile2)).thenReturn(null);
 
     mvc.perform(multipart("/zulassung2/upload-receipt")
         .file(mockMultipartFile)

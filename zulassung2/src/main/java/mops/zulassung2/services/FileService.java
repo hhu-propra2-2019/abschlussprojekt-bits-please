@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @Service
-public class OrganisatorService {
+public class FileService {
 
   private NameCreator nameCreator;
   private MinIoImplementation minIo;
@@ -28,7 +28,7 @@ public class OrganisatorService {
   @Value("${secret_key}")
   private String secretKey;
 
-  public OrganisatorService() {
+  public FileService() {
     nameCreator = new CustomNameCreator();
   }
 
@@ -100,6 +100,14 @@ public class OrganisatorService {
     minIo.putObject(bucketName, file.getName(), file.getPath(), file.length(),
         new HashMap<String, String>(), ".txt");
   }
+
+  /**
+   * creates a File from a MultiPartFile that was uploaded by user
+   *
+   * @param receiptData Student Information
+   * @param signature   Signature of the receipt
+   * @return redirect
+   */
 
   public File createFileFromSubmittedReceipt(ReceiptData receiptData, String signature) {
     String data = receiptData.create();

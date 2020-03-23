@@ -3,7 +3,7 @@ package mops.zulassung2.controller;
 import com.c4_soft.springaddons.test.security.context.support.WithMockKeycloackAuth;
 import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.services.EmailService;
-import mops.zulassung2.services.OrganisatorService;
+import mops.zulassung2.services.FileService;
 import mops.zulassung2.services.SignatureService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,7 +42,7 @@ class UploadApprovedStudentsControllerTest {
   @MockBean
   EmailService emailService;
   @MockBean
-  OrganisatorService organisatorService;
+  FileService fileService;
   @MockBean
   SignatureService signatureService;
 
@@ -62,7 +62,7 @@ class UploadApprovedStudentsControllerTest {
     MockHttpSession mockHttpSession = new MockHttpSession();
     List<Student> students = new ArrayList<>();
     students.add(mock(Student.class));
-    when(organisatorService.processCSVUpload(mockCsvFile)).thenReturn(students);
+    when(fileService.processCSVUpload(mockCsvFile)).thenReturn(students);
 
     // Act and Assert
     mvc.perform(get("/zulassung2/upload-approved-students"))
@@ -118,7 +118,7 @@ class UploadApprovedStudentsControllerTest {
     List<Student> students = new ArrayList<>();
     // Student student = new Student("2727912", "tigeu100@hhu.de", "geuer", "tim");
     students.add(mock(Student.class));
-    when(organisatorService.processCSVUpload(mockCsvFile)).thenReturn(students);
+    when(fileService.processCSVUpload(mockCsvFile)).thenReturn(students);
 
     mvc.perform(multipart("/zulassung2/upload-approved-students")
         .file(mockCsvFile)
