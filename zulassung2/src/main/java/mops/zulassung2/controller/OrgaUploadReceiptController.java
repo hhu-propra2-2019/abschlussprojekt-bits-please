@@ -26,7 +26,7 @@ public class OrgaUploadReceiptController {
   private List<ReceiptData> verifiedReceipts = new ArrayList<>();
   private AccountCreator accountCreator;
   private String dangerMessage;
-  private String errorMessage;
+  private String warningMessage;
   private String successMessage;
 
   /**
@@ -81,8 +81,8 @@ public class OrgaUploadReceiptController {
 
         if (firstError) {
           setDangerMessage("Folgende übergebene Quittungen haben ein falsches Format "
-                  + "und konnten daher nicht geprüft werden: "
-                  + rec.getOriginalFilename());
+              + "und konnten daher nicht geprüft werden: "
+              + rec.getOriginalFilename());
           firstError = false;
         } else {
           setDangerMessage(dangerMessage.concat(", " + rec.getOriginalFilename()));
@@ -90,8 +90,8 @@ public class OrgaUploadReceiptController {
 
       } else {
         receipts.add(organisatorService.readReceiptContent(
-                receiptLines.get(0),
-                receiptLines.get(1)));
+            receiptLines.get(0),
+            receiptLines.get(1)));
       }
     }
 
@@ -114,23 +114,23 @@ public class OrgaUploadReceiptController {
       if (allReceiptsValid) { // all files and signatures are valid
         setSuccessMessage("Alle neu hochgeladenen Quittungen wurden geprüft und sind gültig.");
       } else { // all files but not all signatures are valid
-        setErrorMessage("Alle hochgeladenen Quittungen wurden geprüft. "
-                + "Bitte überprüfen Sie die Gültigkeit anhand der Tabelle.");
+        setWarningMessage("Alle hochgeladenen Quittungen wurden geprüft. "
+            + "Bitte überprüfen Sie die Gültigkeit anhand der Tabelle.");
       }
 
     } else if (checkRun) {
 
       if (allReceiptsValid) { // not all files but all signatures are valid
         setSuccessMessage(" Neu hochgeladene Quittungen im korrekten Format wurden geprüft. "
-                + "Die korrekt formatierten Quittungen sind gültig.");
+            + "Die korrekt formatierten Quittungen sind gültig.");
       } else { // not all files and not all signatures are valid
-        setErrorMessage(" Quittungen im korrekten Format wurden geprüft. "
-                + "Bitte überprüfen Sie die Gültigkeit anhand der Tabelle.");
+        setWarningMessage(" Quittungen im korrekten Format wurden geprüft. "
+            + "Bitte überprüfen Sie die Gültigkeit anhand der Tabelle.");
       }
 
     } else {
-      setErrorMessage("Es wurden keine neuen Quittungen geprüft,"
-              + " da keine dem geforderten Format entsprach.");
+      setWarningMessage("Es wurden keine neuen Quittungen geprüft,"
+          + " da keine dem geforderten Format entsprach.");
     }
     return "redirect:/zulassung2/orga/upload-receipt";
   }
@@ -138,12 +138,13 @@ public class OrgaUploadReceiptController {
   /**
    * Set Error and Success Messages for the frontend.
    *
-   * @param errorMessage   Describe error
+   * @param dangerMessage  Describe danger
+   * @param warningMessage Describe warning
    * @param successMessage Send a joyful message to the user
    */
-  private void setMessages(String dangerMessage, String errorMessage, String successMessage) {
+  private void setMessages(String dangerMessage, String warningMessage, String successMessage) {
     this.dangerMessage = dangerMessage;
-    this.errorMessage = errorMessage;
+    this.warningMessage = warningMessage;
     this.successMessage = successMessage;
   }
 
@@ -159,10 +160,10 @@ public class OrgaUploadReceiptController {
   /**
    * Set Error Message for the frontend.
    *
-   * @param errorMessage Describe error
+   * @param warningMessage Describe warning
    */
-  private void setErrorMessage(String errorMessage) {
-    this.errorMessage = errorMessage;
+  private void setWarningMessage(String warningMessage) {
+    this.warningMessage = warningMessage;
   }
 
   /**
@@ -186,9 +187,9 @@ public class OrgaUploadReceiptController {
     return dangerMessage;
   }
 
-  @ModelAttribute("error")
-  String getError() {
-    return errorMessage;
+  @ModelAttribute("warning")
+  String getWarning() {
+    return warningMessage;
   }
 
   @ModelAttribute("success")
