@@ -23,12 +23,12 @@
     <nav class="navigation navigation-secondary" is="mops-navigation" th:fragment="navigation">
         <ul>
             <li sec:authorize="hasRole('orga')">
-                <a th:href="@{/zulassung2/orga/upload-csv}">
+                <a th:href="@{/zulassung2/upload-csv}">
                     Zulassungsliste hochladen
                 </a>
             </li>
             <li sec:authorize="hasRole('orga')">
-                <a th:href="@{/zulassung2/orga/upload-receipt}">
+                <a th:href="@{/zulassung2/upload-receipt}">
                     Quittungen validieren
                 </a>
             </li>
