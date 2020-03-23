@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.SessionScope;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +63,27 @@ public class UploadReceiptsController {
   }
 
   /**
+   * Stores the receipt from a single student in MinIO
+   *
+   * @param count the selected student
+   * @return redirect to /zulassung2/upload-receipt
+   */
+  @PostMapping("/submit-receipt/individual")
+  @Secured({"ROLE_orga", "ROLE_studentin"})
+  public String submitIndividualReceipt(@RequestParam("count") int count) {
+    ReceiptData receiptData = verifiedReceipts.get(count);
+    File file = fileService.createFileFromSubmittedReceipt(receiptData);
+    Student student = new Student(
+        receiptData.getMatriculationNumber(),
+        receiptData.getEmail(),
+        receiptData.getName(),
+        receiptData.getForeName());
+
+    fileService.storeReceipt(student, file);
+    return "redirect:/zulassung2/upload-receipt";
+  }
+
+  /**
    * This method is called for a POST request to /orga/upload-receipt.
    *
    * @param receiptMultipartFile Textfile provided by user
@@ -101,15 +123,6 @@ public class UploadReceiptsController {
 
       boolean valid = signatureService.verify(new Receipt(data.create(), data.getSignature()));
       data.setValid(valid);
-      if (valid) {
-        Student student = new Student(
-            data.getMatriculationNumber(),
-            data.getEmail(),
-            data.getName(),
-            data.getForeName());
-        fileService.storeReceipt(student,
-            fileService.createFileFromSubmittedReceipt(data, data.getSignature()));
-      }
       verifiedReceipts.add(data);
       if (!valid) {
         allReceiptsValid = false;

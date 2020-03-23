@@ -51,6 +51,7 @@
                     <th>Modul</th>
                     <th>Erworben</th>
                     <th>Gültig</th>
+                    <th>Aktionen</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -64,6 +65,16 @@
                     <td th:text="${receipt.semester}">2010SoSe</td>
                     <td th:if="${receipt.valid}">&#10004;</td>
                     <td th:if="${not receipt.valid}">&#10060;</td>
+                    <td th:if="${receipt.valid}">
+                        <form class="inline-form"
+                              method="POST"
+                              th:action="@{/zulassung2/submit-receipt/individual(count=${iterationStatus.index})}">
+                            <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
+                            <button class="btn btn-primary" type="submit">Zulassungsnachweis einreichen
+                            </button>
+                        </form>
+                    </td>
+                    <td th:if="${not receipt.valid}"></td>
                 </tr>
                 </tbody>
             </table>

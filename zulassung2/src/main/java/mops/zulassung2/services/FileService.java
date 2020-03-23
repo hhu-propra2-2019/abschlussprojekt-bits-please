@@ -105,11 +105,10 @@ public class FileService {
    * creates a File from a MultiPartFile that was uploaded by user.
    *
    * @param receiptData Student Information
-   * @param signature   Signature of the receipt
    * @return redirect
    */
 
-  public File createFileFromSubmittedReceipt(ReceiptData receiptData, String signature) {
+  public File createFileFromSubmittedReceipt(ReceiptData receiptData) {
     String data = receiptData.create();
     File file = new File(System.getProperty("user.dir")
         + "token_" + receiptData.getModule()
@@ -119,7 +118,7 @@ public class FileService {
     try {
       writer = new FileWriter(file, StandardCharsets.UTF_8);
       writer.write(data + "\n");
-      writer.write(signature);
+      writer.write(receiptData.getSignature());
       writer.close();
     } catch (IOException e) {
       e.printStackTrace();
