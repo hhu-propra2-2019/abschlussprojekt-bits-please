@@ -38,7 +38,7 @@ public class MinIoRepository implements MinIoRepositoryInterface {
    */
   public boolean bucketExists(String bucketName) {
     try {
-      return minioClient.bucketExists(bucketName);
+      return minioClient.bucketExists(bucketName.toLowerCase());
     } catch (InvalidBucketNameException | NoSuchAlgorithmException | InsufficientDataException
             | IOException | InvalidKeyException | NoResponseException
             | XmlPullParserException | ErrorResponseException | InternalException
@@ -94,7 +94,7 @@ public class MinIoRepository implements MinIoRepositoryInterface {
   public void putObject(String bucketName, String objectName, String fileName, Long size,
                         Map<String, String> headerMap, String contentType) {
     try {
-      minioClient.putObject(bucketName, objectName, fileName, size, headerMap,
+      minioClient.putObject(bucketName.toLowerCase(), objectName, fileName, size, headerMap,
               null, contentType); //no encryption necessary
     } catch (InvalidBucketNameException | NoSuchAlgorithmException | IOException
             | InvalidKeyException | NoResponseException | XmlPullParserException
@@ -112,7 +112,7 @@ public class MinIoRepository implements MinIoRepositoryInterface {
    */
   public void removeObject(String bucketName, String objectName) {
     try {
-      minioClient.removeObject(bucketName, objectName);
+      minioClient.removeObject(bucketName.toLowerCase(), objectName);
     } catch (InvalidBucketNameException | NoSuchAlgorithmException | IOException
             | InvalidKeyException | NoResponseException | XmlPullParserException
             | ErrorResponseException | InternalException | InvalidArgumentException
@@ -147,7 +147,7 @@ public class MinIoRepository implements MinIoRepositoryInterface {
    */
   public Iterable<Result<Item>> listObjects(String bucketName) {
     try {
-      return minioClient.listObjects(bucketName);
+      return minioClient.listObjects(bucketName.toLowerCase());
     } catch (XmlPullParserException e) {
       e.printStackTrace();
     }
@@ -165,7 +165,7 @@ public class MinIoRepository implements MinIoRepositoryInterface {
   public Date getCreateTime(String bucketName, String objectName) {
     Date date = null;
     try {
-      ObjectStat objectStat = minioClient.statObject(bucketName, objectName);
+      ObjectStat objectStat = minioClient.statObject(bucketName.toLowerCase(), objectName);
       date = objectStat.createdTime();
     } catch (InvalidBucketNameException | NoSuchAlgorithmException | InsufficientDataException
             | IOException | InvalidKeyException | NoResponseException
