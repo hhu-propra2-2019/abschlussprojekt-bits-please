@@ -102,7 +102,7 @@ public class FileService {
   }
 
   /**
-   * creates a File from a MultiPartFile that was uploaded by user
+   * creates a File from a MultiPartFile that was uploaded by user.
    *
    * @param receiptData Student Information
    * @param signature   Signature of the receipt
