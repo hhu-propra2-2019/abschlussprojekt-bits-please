@@ -35,12 +35,6 @@
                    placeholder="z.B. 2019WiSe"
                    required th:value="${semester}" type="text">
             <br>
-            <label class="lead" for="optionAnzeige">Wählen Sie bitte aus ob Sie die Zugelassenen oder nicht
-                Zugelassenen Studenten anzeigen möchten.</label>
-            <select class="form-control" id="optionAnzeige">
-                <option>Zugelassen</option>
-                <option>Nicht zugelassen</option>
-            </select>
             <hr>
 
             <button class="btn btn-primary" type="submit">Hochladen</button>
@@ -56,12 +50,13 @@
         Some success message
     </div>
 
+    <div class
 
     <!-- <div class="table-responsive" th:if="${students!=null and not students.isEmpty()}"> -->
     <div class="table-responsive" th:if="${notallowed!=null and not notallowed.isEmpty()}">
         <div class="lead">Nicht Zugelassene Teilnehmer zur Veranstaltung <span th:text="${subject}">Subject</span> im
             <span
-                    th:text="${semester}">Semester</span> asdsad
+                    th:text="${semester}">Semester</span>
         </div>
         <br>
         <div class="scrollable">
@@ -73,7 +68,6 @@
                     <th>Vorname</th>
                     <th>Nachname</th>
                     <th>E-Mail</th>
-                    <th>Gültig</th>
                     <th>Individuell versenden</th>
                 </tr>
                 </thead>
@@ -104,9 +98,9 @@
         </div>
     </div>
     <div class="table-responsive" th:if="${allowed!=null and not allowed.isEmpty()}">
-        <div class="lead">Nicht Zugelassene Teilnehmer zur Veranstaltung <span th:text="${subject}">Subject</span> im
+        <div class="lead">Zugelassene Teilnehmer zur Veranstaltung <span th:text="${subject}">Subject</span> im
             <span
-                    th:text="${semester}">Semester</span> asdsad
+                    th:text="${semester}">Semester</span>
         </div>
         <div class="scrollable">
             <table class="table">
@@ -117,17 +111,15 @@
                     <th>Vorname</th>
                     <th>Nachname</th>
                     <th>E-Mail</th>
-                    <th>Gültig</th>
-                    <th>Individuell versenden</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="allowed, iterationStatus : ${allowed}">
+                <tr th:each="allowedStudent, iterationStatus : ${allowed}">
                     <td th:text="${iterationStatus.count}">1</td>
-                    <td th:text="${allowed.matriculationNumber}">123456</td>
-                    <td th:text="${allowed.name}">Meier</td>
-                    <td th:text="${allowed.foreName}">Brunhilde</td>
-                    <td th:text="${allowed.email}">brundhilde.meier@mops.de</td>
+                    <td th:text="${allowedStudent.matriculationNumber}">123456</td>
+                    <td th:text="${allowedStudent.name}">Meier</td>
+                    <td th:text="${allowedStudent.foreName}">Brunhilde</td>
+                    <td th:text="${allowedStudent.email}">brundhilde.meier@mops.de</td>
                 </tbody>
             </table>
         </div>
