@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 @Service
 public class EmailService {
@@ -93,7 +94,11 @@ public class EmailService {
     String mail = student.getEmail();
     String subject = "Ihr Zulassungsnachweis zum Fach: ";
     sendMessage(mail, subject + currentSubject, emailText, file, file.getName());
-    file.deleteOnExit();
+    try {
+      Files.deleteIfExists(file.toPath());
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   private String createCustomizedEmailBodyText(Student student, String currentSubject) {
