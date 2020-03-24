@@ -110,7 +110,7 @@ public class OrgaUploadRegistrationListController {
 
 
   /**
-   * This method is called for a POST request to /orga/sendmail.
+   * This method is called for a POST request to /orga/sendmailreglist.
    * It calls "createFilesAndMails" in the EmailService to create emails and then send them.
    *
    * @return Redirects to view orga-upload-registrationlist
@@ -146,7 +146,7 @@ public class OrgaUploadRegistrationListController {
 
 
   /**
-   * This method is called for a POST request to /orga/sendmail/individual.
+   * This method is called for a POST request to /orga/sendmailreglist/individual.
    * It calls "createFilesAndMails" in the EmailService to create emails and then send them.
    * In doing so, it uses the provided counter to get to the student from the list of students.
    *

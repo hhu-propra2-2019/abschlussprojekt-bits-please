@@ -36,27 +36,6 @@ public class EmailService {
     return validator.isValid(email);
   }
 
-  /**
-   * Sends an email with attachment (File).
-   *
-   * @param to       receiver of the mail
-   * @param subject  subject of the mail
-   * @param attach   file to be attached
-   * @param filename name of the attached file
-   */
-  public void sendMessage(String to, String subject, String text, File attach, String filename)
-      throws MessagingException {
-    MimeMessage message = emailSender.createMimeMessage();
-    MimeMessageHelper helper = new MimeMessageHelper(message, true);
-    if (!isValidEmailAddress(to)) {
-      throw new MessagingException();
-    }
-    helper.setTo(to);
-    helper.setSubject(subject);
-    helper.setText(text);
-    helper.addAttachment(filename, attach);
-    emailSender.send(message);
-  }
 
   /**
    * Diese Methode wird vom OrganisatorController (Methode: sendMail) aufgerufen.
@@ -85,10 +64,32 @@ public class EmailService {
   }
 
   /**
-   * Sendet eine E-Mail mit den Informationen.
+   * Sends an email with attachment (File).
    *
-   * @param student        Gibt einen Student in die Methode hinein.
-   * @param currentSubject Gibt das Studienfach des Students mit in die Methode hinein.
+   * @param to       receiver of the mail
+   * @param subject  subject of the mail
+   * @param attach   file to be attached
+   * @param filename name of the attached file
+   */
+  public void sendMessage(String to, String subject, String text, File attach, String filename)
+      throws MessagingException {
+    MimeMessage message = emailSender.createMimeMessage();
+    MimeMessageHelper helper = new MimeMessageHelper(message, true);
+    if (!isValidEmailAddress(to)) {
+      throw new MessagingException();
+    }
+    helper.setTo(to);
+    helper.setSubject(subject);
+    helper.setText(text);
+    helper.addAttachment(filename, attach);
+    emailSender.send(message);
+  }
+
+  /**
+   * Sends an E-mail with the information.
+   *
+   * @param student        Gives an Student into the method.
+   * @param currentSubject Gives the Subject of the Student into the method.
    */
   public void sendMail(Student student, String currentSubject, File file)
       throws MessagingException {
@@ -109,6 +110,13 @@ public class EmailService {
   }
 
 
+  /**
+   * Sends an email without attachment.
+   *
+   * @param to      receiver of the mail
+   * @param subject subject of the mail
+   * @param text    Is setting up the Text for the mail
+   */
   public void sendSimpleMessage(String to, String subject, String text)
       throws MessagingException {
     MimeMessage message = emailSender.createMimeMessage();
@@ -122,7 +130,12 @@ public class EmailService {
     emailSender.send(message);
   }
 
-
+  /**
+   * Sends an E-Mail with the Information.
+   *
+   * @param student        Is setting the Student´s name.
+   * @param currentSubject Is setting the Student´s subject.
+   */
   public void sendWarningMail(Student student, String currentSubject)
       throws MessagingException {
     String emailText = createWarningEmailBodyText(student, currentSubject);
