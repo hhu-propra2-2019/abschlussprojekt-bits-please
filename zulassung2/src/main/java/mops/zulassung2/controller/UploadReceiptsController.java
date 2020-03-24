@@ -72,6 +72,15 @@ public class UploadReceiptsController {
   @Secured({"ROLE_orga", "ROLE_studentin"})
   public String submitIndividualReceipt(@RequestParam("count") int count) {
     ReceiptData receiptData = verifiedReceipts.get(count);
+    if (!receiptData.isValid()) {
+      setDangerMessage("Zulassung von "
+          + receiptData.getForeName()
+          + " " + receiptData.getName()
+          + " zur Veranstaltung "
+          + receiptData.getModule()
+          + " ist ungültig und konnte daher nicht eingereicht werden.");
+      return "redirect:/zulassung2/upload-receipt";
+    }
     File file = fileService.createFileFromSubmittedReceipt(receiptData);
     Student student = new Student(
         receiptData.getMatriculationNumber(),
@@ -80,6 +89,13 @@ public class UploadReceiptsController {
         receiptData.getForeName());
 
     fileService.storeReceipt(student, file);
+    //TODO: Fehlermeldungen von MinIO anzeigen
+    setSuccessMessage("Zulassung von "
+        + receiptData.getForeName()
+        + " " + receiptData.getName()
+        + " zur Veranstaltung "
+        + receiptData.getModule()
+        + " wurde erfolgreich eingereicht.");
     return "redirect:/zulassung2/upload-receipt";
   }
 

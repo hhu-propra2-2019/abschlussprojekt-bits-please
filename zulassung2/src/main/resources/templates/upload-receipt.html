@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"
       th:replace="~{base :: html(content=~{:: mycontent})}"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
       xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
@@ -39,6 +40,8 @@
         Some success message
     </div>
     <div class="table-responsive" th:if="${not receipts.isEmpty()}">
+        <p class="lead" sec:authorize="hasRole('studentin')">Bitte reichen Sie die Zulassungen für die Klausuren, für
+            die Sie sich anmelden möchten, ein:</p>
         <div class="scrollable">
             <table class="table">
                 <thead>
