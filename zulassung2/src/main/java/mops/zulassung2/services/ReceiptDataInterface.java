@@ -17,5 +17,7 @@ public interface ReceiptDataInterface {
 
   String getSignature();
 
+  boolean isValid();
+
   void setValid(boolean b);
 }
