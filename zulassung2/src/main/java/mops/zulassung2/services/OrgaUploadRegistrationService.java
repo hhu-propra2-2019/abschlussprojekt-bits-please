@@ -18,7 +18,7 @@ public class OrgaUploadRegistrationService {
   private String secretKey;
 
   public OrgaUploadRegistrationService() {
-    nameCreator = new CustomNameCreator();
+    nameCreator = new NameCreator(new BucketNameValidator());
   }
 
   /**
@@ -31,7 +31,6 @@ public class OrgaUploadRegistrationService {
   public boolean test(Student student, String subject) {
     if (minIo == null) {
       MinIoRepositoryInterface repo = new MinIoRepository(endpoint, accessKey, secretKey);
-      NameCreator nameCreator = new CustomNameCreator();
       minIo = new MinIoImplementation(repo, nameCreator);
     }
     return minIo.isAuthorized(student, subject);

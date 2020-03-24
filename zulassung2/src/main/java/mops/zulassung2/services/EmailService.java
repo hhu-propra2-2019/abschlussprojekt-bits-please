@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 
 @Service
 public class EmailService {
@@ -45,12 +44,12 @@ public class EmailService {
    */
 
   public File createFile(Student student, String currentSubject, String currentSemester) {
-    ReceiptData receiptData = new CustomReceiptData(student, currentSubject, currentSemester);
-    String data = receiptData.create();
+    ReceiptDataInterface receiptDataInterface = new ReceiptData(student, currentSubject, currentSemester);
+    String data = receiptDataInterface.create();
     Receipt receipt = signatureService.sign(data);
     File file = new File(System.getProperty("user.dir")
-        + "token_" + receiptData.getModule()
-        + "_" + receiptData.getName() + ".txt");
+        + "token_" + receiptDataInterface.getModule()
+        + "_" + receiptDataInterface.getName() + ".txt");
     FileWriter writer;
 
     try {
@@ -98,11 +97,7 @@ public class EmailService {
     String mail = student.getEmail();
     String subject = "Ihr Zulassungsnachweis zum Fach: ";
     sendMessage(mail, subject + currentSubject, emailText, file, file.getName());
-    try {
-      Files.deleteIfExists(file.toPath());
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+
   }
 
 

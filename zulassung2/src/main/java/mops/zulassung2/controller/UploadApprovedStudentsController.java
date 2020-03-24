@@ -15,6 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,12 +112,17 @@ public class UploadApprovedStudentsController {
       } catch (MessagingException e) {
         if (firstError) {
           setDangerMessage("An folgende Studenten konnte keine Email versendet werden: "
-              + student.getForeName() + " " + student.getName());
+                  + student.getForeName() + " " + student.getName());
           firstError = false;
         } else {
           setDangerMessage(dangerMessage.concat(", "
-              + student.getForeName() + " " + student.getName()));
+                  + student.getForeName() + " " + student.getName()));
         }
+      }
+      try {
+        Files.deleteIfExists(file.toPath());
+      } catch (IOException e) {
+        e.printStackTrace();
       }
 
     }
@@ -144,12 +151,17 @@ public class UploadApprovedStudentsController {
       emailService.sendMail(selectedStudent, currentSubject, file);
       fileService.storeReceipt(selectedStudent, file);
       setSuccessMessage("Email an " + selectedStudent.getForeName() + " "
-          + selectedStudent.getName()
-          + " wurde erfolgreich versendet.");
+              + selectedStudent.getName()
+              + " wurde erfolgreich versendet.");
     } catch (MessagingException e) {
       setDangerMessage("Email an " + selectedStudent.getForeName()
-          + " " + selectedStudent.getName()
-          + " konnte nicht versendet werden!");
+              + " " + selectedStudent.getName()
+              + " konnte nicht versendet werden!");
+    }
+    try {
+      Files.deleteIfExists(file.toPath());
+    } catch (IOException e) {
+      e.printStackTrace();
     }
     return "redirect:/zulassung2/upload-approved-students";
   }
