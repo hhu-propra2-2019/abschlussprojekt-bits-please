@@ -97,7 +97,6 @@ public class EmailService {
     String mail = student.getEmail();
     String subject = "Ihr Zulassungsnachweis zum Fach: ";
     sendMessage(mail, subject + currentSubject, emailText, file, file.getName());
-
   }
 
 

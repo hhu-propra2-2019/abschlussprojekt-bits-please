@@ -1,5 +1,6 @@
 package mops.zulassung2.controller;
 
+import mops.zulassung2.model.OrgaUploadCSVForm;
 import mops.zulassung2.model.dataobjects.AccountCreator;
 import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.services.EmailService;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.SessionScope;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import java.io.File;
@@ -60,10 +60,11 @@ public class UploadApprovedStudentsController {
    */
   @GetMapping("/upload-approved-students")
   @Secured("ROLE_orga")
-  public String orga(KeycloakAuthenticationToken token, Model model) {
+  public String orga(KeycloakAuthenticationToken token, Model model, @ModelAttribute("form") OrgaUploadCSVForm form) {
     resetMessages();
     model.addAttribute("account", accountCreator.createFromPrincipal(token));
     model.addAttribute("students", students);
+    model.addAttribute("form", form);
 
     return "upload-approved-students";
   }
@@ -72,20 +73,21 @@ public class UploadApprovedStudentsController {
   /**
    * This method is called for a POST request to /upload-approved-students.
    *
-   * @param file File that was uploaded
+   * @param form form to be injected
    * @return Redirects to view orga-upload-csv
    */
 
   @PostMapping("/upload-approved-students")
   @Secured("ROLE_orga")
-  public String submit(@RequestParam("file") MultipartFile file, String subject, String semester) {
-    if (!FilenameUtils.isExtension(file.getOriginalFilename(), "csv")) {
+  public String submit(@ModelAttribute("form") OrgaUploadCSVForm form) {
+    if (!FilenameUtils.isExtension(form.getMultipartFile().getOriginalFilename(), "csv")) {
       setDangerMessage("Die Datei muss im .csv Format sein!");
       return "redirect:/zulassung2/upload-approved-students";
     }
-    currentSubject = subject.replaceAll("[: ]", "-");
-    currentSemester = semester.replaceAll("[: ]", "-");
-    students = fileService.processCSVUpload(file);
+    currentSubject = form.getSubject().replaceAll("[: ]", "-");
+    currentSemester = form.getSemester().replaceAll("[: ]", "-");
+
+    students = fileService.processCSVUpload(form.getMultipartFile());
     if (students == null) {
       setDangerMessage("Die Datei konnte nicht gelesen werden!");
       return "redirect:/zulassung2/upload-approved-students";
@@ -124,7 +126,6 @@ public class UploadApprovedStudentsController {
       } catch (IOException e) {
         e.printStackTrace();
       }
-
     }
     if (firstError) {
       setSuccessMessage("Alle Emails wurden erfolgreich versendet.");
@@ -163,6 +164,7 @@ public class UploadApprovedStudentsController {
     } catch (IOException e) {
       e.printStackTrace();
     }
+
     return "redirect:/zulassung2/upload-approved-students";
   }
 

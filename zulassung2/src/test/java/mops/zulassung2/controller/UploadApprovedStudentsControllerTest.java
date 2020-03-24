@@ -1,6 +1,7 @@
 package mops.zulassung2.controller;
 
 import com.c4_soft.springaddons.test.security.context.support.WithMockKeycloackAuth;
+import mops.zulassung2.model.OrgaUploadCSVForm;
 import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.services.EmailService;
 import mops.zulassung2.services.FileService;
@@ -94,10 +95,15 @@ class UploadApprovedStudentsControllerTest {
   @Test
   @WithMockKeycloackAuth("orga")
   void testSubmitCsvFile() throws Exception {
+    // Arrange
+    OrgaUploadCSVForm form = new OrgaUploadCSVForm();
+    form.setMultipartFile(mockCsvFile);
+    form.setSubject("Propra");
+    form.setSemester("WS1920");
+    // Act and Assert
     mvc.perform(multipart("/zulassung2/upload-approved-students")
             .file(mockCsvFile)
-            .param("subject", "Propra")
-            .param("semester", "WS1920")
+            .flashAttr("form", form)
             .with(csrf()))
             .andExpect(redirectedUrl("/zulassung2/upload-approved-students"));
 
@@ -117,15 +123,18 @@ class UploadApprovedStudentsControllerTest {
     // Arrange
     MockHttpSession mockHttpSession = new MockHttpSession();
     List<Student> students = new ArrayList<>();
+    OrgaUploadCSVForm form = new OrgaUploadCSVForm();
+    form.setMultipartFile(mockCsvFile);
+    form.setSubject("Propra");
+    form.setSemester("WS1920");
     students.add(mock(Student.class));
-    File file = new File("test.txt");
+    File file = new File("Test.txt");
     when(emailService.createFile(students.get(0), "Propra", "WS1920")).thenReturn(file);
     when(fileService.processCSVUpload(mockCsvFile)).thenReturn(students);
 
     mvc.perform(multipart("/zulassung2/upload-approved-students")
             .file(mockCsvFile)
-            .param("subject", "Propra")
-            .param("semester", "WS1920")
+            .flashAttr("form", form)
             .session(mockHttpSession)
             .with(csrf()));
 
