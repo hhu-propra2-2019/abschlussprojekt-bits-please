@@ -51,8 +51,6 @@
         Some success message
     </div>
 
-
-    <!-- <div class="table-responsive" th:if="${students!=null and not students.isEmpty()}"> -->
     <div class="table-responsive" th:if="${notallowed!=null and not notallowed.isEmpty()}">
         <span class="lead">Nicht zugelassene Teilnehmer zur Veranstaltung <span th:text="${subject}">Subject</span> im
             <span
@@ -97,9 +95,9 @@
             </button>
         </form>
         <br>
-        <hr>
     </div>
 
+    <hr th:if="${allowed!=null and not allowed.isEmpty() and notallowed!=null and not notallowed.isEmpty()}">
 
     <div class="table-responsive" th:if="${allowed!=null and not allowed.isEmpty()}">
         <span class="lead">Zugelassene Teilnehmer zur Veranstaltung <span th:text="${subject}">Subject</span> im
