@@ -12,7 +12,7 @@ public class NameCreator implements NameCreatorInterface {
 
   @Override
   public String createBucketName(Student student) {
-    String bucketName = student.getMatriculationNumber() + "-" + student.getName();
+    String bucketName = student.getMatriculationNumber() + "-" + student.getName().toLowerCase();
     if (bucketNameValidator.isValidBucketName(bucketName)) {
       return bucketName;
     } else {
