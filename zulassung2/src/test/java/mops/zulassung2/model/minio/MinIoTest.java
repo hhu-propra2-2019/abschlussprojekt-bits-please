@@ -73,7 +73,7 @@ public class MinIoTest {
     when(repo.listObjects(getBucketName(0))).thenReturn(objects);
     when(repo.getObjectName(objects.get(0))).thenReturn(getObjectName(0));
 
-    NameCreator nameCreator = new CustomNameCreator();
+    NameCreator nameCreator = new CustomNameCreator(new BucketNameValidator());
     MinIoImplementation minIo = new MinIoImplementation(repo, nameCreator);
 
     // Act
@@ -99,7 +99,7 @@ public class MinIoTest {
     when(repo.getObjectName(objects.get(0))).thenReturn(getObjectName(0));
     when(repo.getObjectName(objects.get(1))).thenReturn(getObjectName(1));
 
-    NameCreator nameCreator = new CustomNameCreator();
+    NameCreator nameCreator = new CustomNameCreator(new BucketNameValidator());
     MinIoImplementation minIo = new MinIoImplementation(repo, nameCreator);
 
     // Act
@@ -130,7 +130,7 @@ public class MinIoTest {
     when(repo.getObjectName(bucketObjects.get(0))).thenReturn(getObjectName(0));
     when(repo.getObjectName(bucket2Objects.get(0))).thenReturn(getObjectName(0));
 
-    NameCreator nameCreator = new CustomNameCreator();
+    NameCreator nameCreator = new CustomNameCreator(new BucketNameValidator());
     MinIoImplementation minIo = new MinIoImplementation(repo, nameCreator);
 
     // Act
@@ -163,7 +163,7 @@ public class MinIoTest {
     when(repo.getObjectName(bucket2Objects.get(0))).thenReturn(getObjectName(0));
     when(repo.getObjectName(bucket2Objects.get(1))).thenReturn(getObjectName(1));
 
-    NameCreator nameCreator = new CustomNameCreator();
+    NameCreator nameCreator = new CustomNameCreator(new BucketNameValidator());
     MinIoImplementation minIo = new MinIoImplementation(repo, nameCreator);
 
     // Act
@@ -182,7 +182,7 @@ public class MinIoTest {
 
     List<Result<Item>> objects = createObjects(0);
     MinIoRepositoryInterface repo = mock(MinIoRepository.class);
-    NameCreator nameCreator = new CustomNameCreator();
+    NameCreator nameCreator = new CustomNameCreator(new BucketNameValidator());
     MinIoImplementation minIo = new MinIoImplementation(repo, nameCreator);
     when(bucket.name()).thenReturn(getBucketName(0));
     when(repo.listBuckets()).thenReturn(buckets);
@@ -205,7 +205,7 @@ public class MinIoTest {
 
     List<Result<Item>> objects = createObjects(1);
     MinIoRepositoryInterface repo = mock(MinIoRepository.class);
-    NameCreator nameCreator = new CustomNameCreator();
+    NameCreator nameCreator = new CustomNameCreator(new BucketNameValidator());
     MinIoImplementation minIo = new MinIoImplementation(repo, nameCreator);
     when(bucket.name()).thenReturn(getBucketName(0));
     when(repo.listBuckets()).thenReturn(buckets);
@@ -228,7 +228,7 @@ public class MinIoTest {
 
     List<Result<Item>> objects = createObjects(2);
     MinIoRepositoryInterface repo = mock(MinIoRepository.class);
-    NameCreator nameCreator = new CustomNameCreator();
+    NameCreator nameCreator = new CustomNameCreator(new BucketNameValidator());
     MinIoImplementation minIo = new MinIoImplementation(repo, nameCreator);
     when(bucket.name()).thenReturn(getBucketName(0));
     when(repo.listBuckets()).thenReturn(buckets);

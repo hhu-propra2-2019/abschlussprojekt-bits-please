@@ -29,7 +29,7 @@ public class FileService {
   private String secretKey;
 
   public FileService() {
-    nameCreator = new CustomNameCreator();
+    nameCreator = new CustomNameCreator(new BucketNameValidator());
   }
 
   /**
@@ -65,15 +65,15 @@ public class FileService {
 
     String[] dataObjects = receiptContent.split(" ");
     Student student = new Student(
-        dataObjects[0].split(":")[1], // Matriculationnumber
-        dataObjects[1].split(":")[1], // Email
-        dataObjects[2].split(":")[1], // Name
-        dataObjects[3].split(":")[1]); // Forename
+            dataObjects[0].split(":")[1], // Matriculationnumber
+            dataObjects[1].split(":")[1], // Email
+            dataObjects[2].split(":")[1], // Name
+            dataObjects[3].split(":")[1]); // Forename
 
     ReceiptData receiptData = new CustomReceiptData(student,
-        dataObjects[4].split(":")[1], // Module
-        dataObjects[5].split(":")[1], // Semester
-        signature);                         // Signature
+            dataObjects[4].split(":")[1], // Module
+            dataObjects[5].split(":")[1], // Semester
+            signature);                         // Signature
 
     return receiptData;
   }
@@ -89,7 +89,7 @@ public class FileService {
 
     if (minIo == null) {
       MinIoRepositoryInterface repo = new MinIoRepository(endpoint, accessKey, secretKey);
-      NameCreator nameCreator = new CustomNameCreator();
+      NameCreator nameCreator = new CustomNameCreator(new BucketNameValidator());
       minIo = new MinIoImplementation(repo, nameCreator);
     }
     String bucketName = nameCreator.createBucketName(student);
@@ -98,7 +98,7 @@ public class FileService {
     }
 
     minIo.putObject(bucketName, file.getName(), file.getPath(), file.length(),
-        new HashMap<String, String>(), ".txt");
+            new HashMap<String, String>(), ".txt");
   }
 
   /**
@@ -112,8 +112,8 @@ public class FileService {
   public File createFileFromSubmittedReceipt(ReceiptData receiptData, String signature) {
     String data = receiptData.create();
     File file = new File(System.getProperty("user.dir")
-        + "token_" + receiptData.getModule()
-        + "_" + receiptData.getName() + ".txt");
+            + "token_" + receiptData.getModule()
+            + "_" + receiptData.getName() + ".txt");
     FileWriter writer;
 
     try {
