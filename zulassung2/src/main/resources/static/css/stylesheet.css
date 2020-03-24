@@ -5,7 +5,7 @@
 
 
 .scrollable {
-    height: 600px;
+    max-height: 542px;
     overflow: auto;
 }
 

@@ -23,6 +23,11 @@
     <nav class="navigation navigation-secondary" is="mops-navigation" th:fragment="navigation">
         <ul>
             <li sec:authorize="hasRole('orga')">
+                <a th:href="@{/zulassung2/upload-registrationlist}">
+                    Anmeldeliste hochladen
+                </a>
+            </li>
+            <li sec:authorize="hasRole('orga')">
                 <a th:href="@{/zulassung2/upload-approved-students}">
                     Zulassungsliste hochladen
                 </a>
@@ -30,6 +35,11 @@
             <li sec:authorize="hasRole('ROLE_orga') or hasRole('ROLE_studentin')">
                 <a th:href="@{/zulassung2/upload-receipt}">
                     Quittungen validieren
+                </a>
+            </li>
+            <li sec:authorize="hasRole('studentin')">
+                <a th:href="@{/zulassung2/studi}">
+                    Studiseite
                 </a>
             </li>
         </ul>
