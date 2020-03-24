@@ -15,6 +15,8 @@ import org.springframework.web.context.annotation.SessionScope;
 
 import javax.mail.MessagingException;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -117,7 +119,11 @@ public class UploadApprovedStudentsController {
                   + student.getForeName() + " " + student.getName()));
         }
       }
-
+      try {
+        Files.deleteIfExists(file.toPath());
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
     if (firstError) {
       setSuccessMessage("Alle Emails wurden erfolgreich versendet.");
@@ -151,6 +157,12 @@ public class UploadApprovedStudentsController {
               + " " + selectedStudent.getName()
               + " konnte nicht versendet werden!");
     }
+    try {
+      Files.deleteIfExists(file.toPath());
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
     return "redirect:/zulassung2/upload-approved-students";
   }
 

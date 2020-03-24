@@ -20,6 +20,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -98,7 +99,7 @@ class UploadApprovedStudentsControllerTest {
     OrgaUploadCSVForm form = new OrgaUploadCSVForm();
     form.setMultipartFile(mockCsvFile);
     form.setSubject("Propra");
-    form.setSemester("WS2019");
+    form.setSemester("WS1920");
     // Act and Assert
     mvc.perform(multipart("/zulassung2/upload-approved-students")
             .file(mockCsvFile)
@@ -125,9 +126,10 @@ class UploadApprovedStudentsControllerTest {
     OrgaUploadCSVForm form = new OrgaUploadCSVForm();
     form.setMultipartFile(mockCsvFile);
     form.setSubject("Propra");
-    form.setSemester("WS2019");
-    // Student student = new Student("2727912", "tigeu100@hhu.de", "geuer", "tim");
+    form.setSemester("WS1920");
     students.add(mock(Student.class));
+    File file = new File("Test.txt");
+    when(emailService.createFile(students.get(0), "Propra", "WS1920")).thenReturn(file);
     when(fileService.processCSVUpload(mockCsvFile)).thenReturn(students);
 
     mvc.perform(multipart("/zulassung2/upload-approved-students")
