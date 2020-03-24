@@ -1,6 +1,32 @@
 [[section-architecture-constraints]]
 == Randbedingungen
 
+Diese WebApplikation entsteht als Projektarbeit im Rahmen der Veranstaltung "Softwareentwicklung im Team" der HHU. Die Vorgaben durch die Dozenten können folgender Tabelle entnommen werden:
+
+=== 2.1 Technische Rahmenbedingungen
+[cols="1,3" options="header"]
+|===
+| Titel                     | Erläuterung
+| Self Contained System     | Das System wird als Self Contained System im Zusammenhang mit anderen Projekten der Veranstaltung umgesetzt.
+| Integration               | Eventuelle Integration mit anderen Systemen erfolgt über das UI.
+| Datenreplikation          | Datenreplikation erfolgt niemals im Request/Response Cycle
+| Docker                    | Das System soll automatisiert als Docker Image ausgeliefert werden
+| Reverse Proxy             | Alle Systeme liegen später hinter einem NGINX Reverse Proxy
+| Styleguide                | Alle Systeme verwenden ein einheitliches Layout: http://mops.style
+| Authentifizierung         | Zur Authentifizierung soll KeyCloak verwendet werden. Die Absicherung der Anwendung erfolgt mit Spring Security.
+| Monitoring                | Für das Monitoring wird Spring Boot Actuator verwendet. Das Einbinden erfolgt per Gradle (Spring Boot Starter). Zusätzlich zu den standardmäßig freigegebenen Endpunkten muss der Prometheus Endpunkt per Konfiguration freigegeben werden. Alle Endpoints müssen abgesichert werden (Rolle: monitoring)
+|===
+
+=== 2.1 Organisatorische Rahmenbedingungen
+[cols="1,3" options="header"]
+|===
+| Titel             | Erläuterung
+| Team              | Das Team besteht aus Studenten der HHU mit sehr unterschiedlichen Kenntnissen und Erfahrungen.
+| Zeitplan          | Die Anwendung soll innerhalb von 4 Wochen fertiggestellt und ausgeliefert werden.
+|===
+
+
+
 [role="arc42help"]
 ****
 .Inhalt
