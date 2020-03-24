@@ -6,8 +6,6 @@ services:
     image: minio/minio:latest
     ports:
       - 9000:9000
-    expose:
-      - 9000
     volumes:
       - ./minio_data:/data
     environment:
