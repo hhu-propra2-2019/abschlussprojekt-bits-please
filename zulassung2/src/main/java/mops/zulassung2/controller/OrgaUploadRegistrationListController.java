@@ -27,7 +27,6 @@ public class OrgaUploadRegistrationListController {
   private final FileService fileService;
   private final EmailService emailService;
   private final OrgaUploadRegistrationService orgaUploadRegistrationService;
-  public List<Student> students = new ArrayList<>();
   public List<Student> notAllowed = new ArrayList<>();
   public List<Student> allowed = new ArrayList<>();
   public String currentSubject = "";
@@ -91,15 +90,15 @@ public class OrgaUploadRegistrationListController {
     }
     currentSubject = subject.replaceAll("[: ]", "-");
     currentSemester = semester.replaceAll("[: ]", "-");
-    students = fileService.processCSVUpload(file);
+    List<Student> students = fileService.processCSVUpload(file);
     if (students == null) {
       setDangerMessage("Die Datei konnte nicht gelesen werden!");
       return "redirect:/zulassung2/registrationlist";
     }
     notAllowed.clear();
     allowed.clear();
-    for (Student student : students) {
-      if (orgaUploadRegistrationService.test(student, subject) == false) {
+    for (Student student : notAllowed) {
+      if (!orgaUploadRegistrationService.test(student, subject)) {
         notAllowed.add(student);
       } else {
         allowed.add(student);
@@ -119,7 +118,7 @@ public class OrgaUploadRegistrationListController {
   @Secured("ROLE_orga")
   public String sendWarningMail() {
     boolean firstError = true;
-    for (Student student : students) {
+    for (Student student : notAllowed) {
       File file = emailService.createFile(student, currentSubject, currentSemester);
       try {
         emailService.sendWarningMail(student, currentSubject);
@@ -155,7 +154,7 @@ public class OrgaUploadRegistrationListController {
   @PostMapping("/sendmailreglist/individual")
   @Secured("ROLE_orga")
   public String sendWarningMail(@RequestParam("count") int count) {
-    Student selectedStudent = students.get(count);
+    Student selectedStudent = notAllowed.get(count);
     File file = emailService.createFile(selectedStudent, currentSubject, currentSemester);
     try {
       emailService.sendWarningMail(selectedStudent, currentSubject);
