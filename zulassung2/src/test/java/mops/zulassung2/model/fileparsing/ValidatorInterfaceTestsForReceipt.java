@@ -1,8 +1,8 @@
 package mops.zulassung2.model.fileparsing;
 
 import mops.zulassung2.model.dataobjects.Student;
-import mops.zulassung2.services.CustomReceiptData;
 import mops.zulassung2.services.ReceiptData;
+import mops.zulassung2.services.ReceiptDataInterface;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,12 +17,12 @@ import java.util.stream.Collectors;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ValidatorTestsForReceipt {
+public class ValidatorInterfaceTestsForReceipt {
 
   private File file;
   private FileWriter writer;
-  private Validator customValidator;
-  private ReceiptData customReceiptData;
+  private ValidatorInterface customValidatorInterface;
+  private ReceiptDataInterface customReceiptDataInterface;
 
   @BeforeEach
   void setup() {
@@ -30,8 +30,8 @@ public class ValidatorTestsForReceipt {
     String subject = "informatik";
     String semester = "zwei";
 
-    customValidator = new CustomValidator();
-    customReceiptData = new CustomReceiptData(student, subject, semester);
+    customValidatorInterface = new Validator();
+    customReceiptDataInterface = new ReceiptData(student, subject, semester);
     file = new File("file.txt");
     try {
       writer = new FileWriter(file, UTF_8);
@@ -48,129 +48,129 @@ public class ValidatorTestsForReceipt {
   @Test
   public void checkValidReceipt() throws IOException {
 
-    writer.write(customReceiptData.create());
+    writer.write(customReceiptDataInterface.create());
     writer.write("\nSignature");
     writer.close();
 
     String receiptContent = Files.readString(file.toPath(), UTF_8);
     List<String> lines = receiptContent.lines().collect(Collectors.toList());
 
-    assertThat(customValidator.validateTXT(lines)).isTrue();
+    assertThat(customValidatorInterface.validateTXT(lines)).isTrue();
   }
 
   @Test
   public void checkInvalidIdentifierMatrNumber() throws IOException {
 
-    writer.write(customReceiptData.create().replace("matriculationnumber", "matriculationnumbe"));
+    writer.write(customReceiptDataInterface.create().replace("matriculationnumber", "matriculationnumbe"));
     writer.write("\nSignature");
     writer.close();
 
     String receiptContent = Files.readString(file.toPath(), UTF_8);
     List<String> lines = receiptContent.lines().collect(Collectors.toList());
 
-    assertThat(customValidator.validateTXT(lines)).isFalse();
+    assertThat(customValidatorInterface.validateTXT(lines)).isFalse();
   }
 
   @Test
   public void checkInvalidIdentifierEmail() throws IOException {
 
-    writer.write(customReceiptData.create().replace("email", "emil"));
+    writer.write(customReceiptDataInterface.create().replace("email", "emil"));
     writer.write("\nSignature");
     writer.close();
 
     String receiptContent = Files.readString(file.toPath(), UTF_8);
     List<String> lines = receiptContent.lines().collect(Collectors.toList());
 
-    assertThat(customValidator.validateTXT(lines)).isFalse();
+    assertThat(customValidatorInterface.validateTXT(lines)).isFalse();
   }
 
   @Test
   public void checkInvalidIdentifierName() throws IOException {
 
-    writer.write(customReceiptData.create().replace(" name", " nae"));
+    writer.write(customReceiptDataInterface.create().replace(" name", " nae"));
     writer.write("\nSignature");
     writer.close();
 
     String receiptContent = Files.readString(file.toPath(), UTF_8);
     List<String> lines = receiptContent.lines().collect(Collectors.toList());
 
-    assertThat(customValidator.validateTXT(lines)).isFalse();
+    assertThat(customValidatorInterface.validateTXT(lines)).isFalse();
   }
 
   @Test
   public void checkInvalidIdentifierForeName() throws IOException {
 
-    writer.write(customReceiptData.create().replace("forename", "forname"));
+    writer.write(customReceiptDataInterface.create().replace("forename", "forname"));
     writer.write("\nSignature");
     writer.close();
 
     String receiptContent = Files.readString(file.toPath(), UTF_8);
     List<String> lines = receiptContent.lines().collect(Collectors.toList());
 
-    assertThat(customValidator.validateTXT(lines)).isFalse();
+    assertThat(customValidatorInterface.validateTXT(lines)).isFalse();
   }
 
   @Test
   public void checkInvalidIdentifierModule() throws IOException {
 
-    writer.write(customReceiptData.create().replace("module", "modul"));
+    writer.write(customReceiptDataInterface.create().replace("module", "modul"));
     writer.write("\nSignature");
     writer.close();
 
     String receiptContent = Files.readString(file.toPath(), UTF_8);
     List<String> lines = receiptContent.lines().collect(Collectors.toList());
 
-    assertThat(customValidator.validateTXT(lines)).isFalse();
+    assertThat(customValidatorInterface.validateTXT(lines)).isFalse();
   }
 
   @Test
   public void checkInvalidIdentifierSemester() throws IOException {
 
-    writer.write(customReceiptData.create().replace("semester", "semestr"));
+    writer.write(customReceiptDataInterface.create().replace("semester", "semestr"));
     writer.write("\nSignature");
     writer.close();
 
     String receiptContent = Files.readString(file.toPath(), UTF_8);
     List<String> lines = receiptContent.lines().collect(Collectors.toList());
 
-    assertThat(customValidator.validateTXT(lines)).isFalse();
+    assertThat(customValidatorInterface.validateTXT(lines)).isFalse();
   }
 
   @Test
   public void checkInvalidIdentifierColon() throws IOException {
 
-    writer.write(customReceiptData.create().replace(":", "-"));
+    writer.write(customReceiptDataInterface.create().replace(":", "-"));
     writer.write("\nSignature");
     writer.close();
 
     String receiptContent = Files.readString(file.toPath(), UTF_8);
     List<String> lines = receiptContent.lines().collect(Collectors.toList());
 
-    assertThat(customValidator.validateTXT(lines)).isFalse();
+    assertThat(customValidatorInterface.validateTXT(lines)).isFalse();
   }
 
   @Test
   public void checkInvalidIdentifierSpace() throws IOException {
 
-    writer.write(customReceiptData.create().replace(" ", "-"));
+    writer.write(customReceiptDataInterface.create().replace(" ", "-"));
     writer.write("\nSignature");
     writer.close();
 
     String receiptContent = Files.readString(file.toPath(), UTF_8);
     List<String> lines = receiptContent.lines().collect(Collectors.toList());
 
-    assertThat(customValidator.validateTXT(lines)).isFalse();
+    assertThat(customValidatorInterface.validateTXT(lines)).isFalse();
   }
 
   @Test
   public void checkInvalidSignatureMissing() throws IOException {
 
-    writer.write(customReceiptData.create());
+    writer.write(customReceiptDataInterface.create());
     writer.close();
 
     String receiptContent = Files.readString(file.toPath(), UTF_8);
     List<String> lines = receiptContent.lines().collect(Collectors.toList());
 
-    assertThat(customValidator.validateTXT(lines)).isFalse();
+    assertThat(customValidatorInterface.validateTXT(lines)).isFalse();
   }
 }

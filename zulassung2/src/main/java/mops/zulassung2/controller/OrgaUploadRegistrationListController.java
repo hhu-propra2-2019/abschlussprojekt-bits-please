@@ -4,6 +4,7 @@ import mops.zulassung2.model.dataobjects.AccountCreator;
 import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.services.EmailService;
 import mops.zulassung2.services.FileService;
+import mops.zulassung2.services.OrgaUploadRegistrationService;
 import org.apache.commons.io.FilenameUtils;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.access.annotation.Secured;
@@ -15,19 +16,20 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
 @SessionScope
 @RequestMapping("/zulassung2")
 @Controller
-public class UploadApprovedStudentsController {
+public class OrgaUploadRegistrationListController {
 
   private final FileService fileService;
   private final EmailService emailService;
+  private final OrgaUploadRegistrationService orgaUploadRegistrationService;
   public List<Student> students = new ArrayList<>();
+  public List<Student> notAllowed = new ArrayList<>();
+  public List<Student> allowed = new ArrayList<>();
   public String currentSubject = "";
   public String currentSemester = "";
   private AccountCreator accountCreator;
@@ -38,91 +40,99 @@ public class UploadApprovedStudentsController {
 
   /**
    * Constructs OrganisatorController by injecting Beans of
-   * OrganisatorService, SignatureService and Emailservice.
+   * FileService, SignatureService and Emailservice.
    *
    * @param fileService  Service for parsing files
    * @param emailService Service for sending emails
    */
-  public UploadApprovedStudentsController(FileService fileService,
-                                          EmailService emailService) {
+  public OrgaUploadRegistrationListController(FileService fileService,
+                                              EmailService emailService,
+                                              OrgaUploadRegistrationService orgaUploadRegistrationService) {
     accountCreator = new AccountCreator();
+    this.orgaUploadRegistrationService = orgaUploadRegistrationService;
     this.fileService = fileService;
     this.emailService = emailService;
   }
 
 
   /**
-   * This method is called for a GET request to /orga/upload-csv.
+   * This method is called for a GET request to /upload-registrationlist.
    *
    * @param token contains account data
    * @param model Spring object that is used as a container to supply the variables
-   * @return Returns view orga-upload-csv
+   * @return Returns view upload-registrationlist
    */
-  @GetMapping("/upload-approved-students")
+  @GetMapping("/upload-registrationlist")
   @Secured("ROLE_orga")
   public String orga(KeycloakAuthenticationToken token, Model model) {
     resetMessages();
     model.addAttribute("account", accountCreator.createFromPrincipal(token));
-    model.addAttribute("students", students);
+    model.addAttribute("notallowed", notAllowed);
+    model.addAttribute("allowed", allowed);
+    model.addAttribute("orgauploadregistrationservice", new OrgaUploadRegistrationService());
 
-    return "upload-approved-students";
+    return "orga-upload-registrationlist";
   }
 
-
   /**
-   * This method is called for a POST request to /upload-approved-students.
+   * This method is called for a POST request to /upload-registrationlist.
    *
    * @param file File that was uploaded
-   * @return Redirects to view orga-upload-csv
+   * @return Redirects to view orga-upload-registrationlist
    */
 
-  @PostMapping("/upload-approved-students")
+  @PostMapping("/upload-registrationlist")
   @Secured("ROLE_orga")
-  public String submit(@RequestParam("file") MultipartFile file, String subject, String semester) {
+  public String submit(@RequestParam("file") MultipartFile file, String subject, String semester,
+                       Model model) {
     if (!FilenameUtils.isExtension(file.getOriginalFilename(), "csv")) {
       setDangerMessage("Die Datei muss im .csv Format sein!");
-      return "redirect:/zulassung2/upload-approved-students";
+      return "redirect:/zulassung2/upload-registrationlist";
     }
     currentSubject = subject.replaceAll("[: ]", "-");
     currentSemester = semester.replaceAll("[: ]", "-");
     students = fileService.processCSVUpload(file);
     if (students == null) {
       setDangerMessage("Die Datei konnte nicht gelesen werden!");
-      return "redirect:/zulassung2/upload-approved-students";
+      return "redirect:/zulassung2/registrationlist";
     }
-
-    return "redirect:/zulassung2/upload-approved-students";
+    notAllowed.clear();
+    allowed.clear();
+    for (Student student : students) {
+      if (orgaUploadRegistrationService.test(student, subject) == false) {
+        notAllowed.add(student);
+      } else {
+        allowed.add(student);
+      }
+    }
+    return "redirect:/zulassung2/upload-registrationlist";
   }
 
+
   /**
-   * This method is called for a POST request to /orga/sendmail.
+   * This method is called for a POST request to /sendmailreglist.
    * It calls "createFilesAndMails" in the EmailService to create emails and then send them.
    *
-   * @return Redirects to view upload-approved-students
+   * @return Redirects to view upload-registrationlist
    */
-  @PostMapping("/sendmail")
+  @PostMapping("/sendmailreglist")
   @Secured("ROLE_orga")
-  public String sendMail() {
+  public String sendWarningMail() {
     boolean firstError = true;
     for (Student student : students) {
       File file = emailService.createFile(student, currentSubject, currentSemester);
       try {
-        emailService.sendMail(student, currentSubject, file);
+        emailService.sendWarningMail(student, currentSubject);
         fileService.storeReceipt(student, file);
       } catch (MessagingException e) {
         if (firstError) {
           setDangerMessage("An folgende Studenten konnte keine Email versendet werden: "
-                  + student.getForeName() + " " + student.getName());
+              + student.getForeName() + " " + student.getName());
           firstError = false;
         } else {
           setDangerMessage(dangerMessage.concat(", "
-                  + student.getForeName() + " " + student.getName()));
+              + student.getForeName() + " " + student.getName()));
         }
-      }
-      try {
-        Files.deleteIfExists(file.toPath());
-      } catch (IOException e) {
-        e.printStackTrace();
       }
 
     }
@@ -131,39 +141,34 @@ public class UploadApprovedStudentsController {
     } else {
       setWarningMessage("Es wurden nicht alle Emails korrekt versendet.");
     }
-    return "redirect:/zulassung2/upload-approved-students";
+    return "redirect:/zulassung2/upload-registrationlist";
   }
 
 
   /**
-   * This method is called for a POST request to /orga/sendmail/individual.
+   * This method is called for a POST request to /sendmailreglist/individual.
    * It calls "createFilesAndMails" in the EmailService to create emails and then send them.
    * In doing so, it uses the provided counter to get to the student from the list of students.
    *
-   * @return Redirects to view upload-approved-students
+   * @return Redirects to view upload-registrationlist
    */
-  @PostMapping("/sendmail/individual")
+  @PostMapping("/sendmailreglist/individual")
   @Secured("ROLE_orga")
-  public String sendMail(@RequestParam("count") int count) {
+  public String sendWarningMail(@RequestParam("count") int count) {
     Student selectedStudent = students.get(count);
     File file = emailService.createFile(selectedStudent, currentSubject, currentSemester);
     try {
-      emailService.sendMail(selectedStudent, currentSubject, file);
+      emailService.sendWarningMail(selectedStudent, currentSubject);
       fileService.storeReceipt(selectedStudent, file);
       setSuccessMessage("Email an " + selectedStudent.getForeName() + " "
-              + selectedStudent.getName()
-              + " wurde erfolgreich versendet.");
+          + selectedStudent.getName()
+          + " wurde erfolgreich versendet.");
     } catch (MessagingException e) {
       setDangerMessage("Email an " + selectedStudent.getForeName()
-              + " " + selectedStudent.getName()
-              + " konnte nicht versendet werden!");
+          + " " + selectedStudent.getName()
+          + " konnte nicht versendet werden!");
     }
-    try {
-      Files.deleteIfExists(file.toPath());
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return "redirect:/zulassung2/upload-approved-students";
+    return "redirect:/zulassung2/upload-registrationlist";
   }
 
   /**

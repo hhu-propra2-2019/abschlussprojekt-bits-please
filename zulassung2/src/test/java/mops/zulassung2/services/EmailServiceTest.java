@@ -77,18 +77,18 @@ class EmailServiceTest {
   @Test
   void createFile() throws IOException {
     // Arrange
-    ReceiptData receiptData = mock(ReceiptData.class);
+    ReceiptDataInterface receiptDataInterface = mock(ReceiptDataInterface.class);
     String data = "matriculationnumber:" + douglas.getMatriculationNumber()
-        + " email:" + douglas.getEmail()
-        + " name:" + douglas.getName()
-        + " forename:" + douglas.getForeName()
-        + " module:" + "informatik"
-        + " semester:" + "2019SoSe"
-        + "\n"
-        + "signatur";
+            + " email:" + douglas.getEmail()
+            + " name:" + douglas.getName()
+            + " forename:" + douglas.getForeName()
+            + " module:" + "informatik"
+            + " semester:" + "2019SoSe"
+            + "\n"
+            + "signatur";
     Receipt receipt = mock(Receipt.class);
-    when(receiptData.getModule()).thenReturn("informatik");
-    when(receiptData.getName()).thenReturn("blank");
+    when(receiptDataInterface.getModule()).thenReturn("informatik");
+    when(receiptDataInterface.getName()).thenReturn("blank");
     when(receipt.getSignature()).thenReturn("signatur");
     Receipt receipt1 = new Receipt(data, "signatur");
     when(signatureService.sign(anyString())).thenReturn(receipt1);

@@ -4,7 +4,7 @@ import mops.zulassung2.model.crypto.Receipt;
 import mops.zulassung2.model.dataobjects.AccountCreator;
 import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.services.FileService;
-import mops.zulassung2.services.ReceiptData;
+import mops.zulassung2.services.ReceiptDataInterface;
 import mops.zulassung2.services.SignatureService;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.access.annotation.Secured;
@@ -25,7 +25,7 @@ public class UploadReceiptsController {
 
   private final FileService fileService;
   private final SignatureService signatureService;
-  private List<ReceiptData> verifiedReceipts = new ArrayList<>();
+  private List<ReceiptDataInterface> verifiedReceipts = new ArrayList<>();
   private AccountCreator accountCreator;
   private String dangerMessage;
   private String warningMessage;
@@ -71,7 +71,7 @@ public class UploadReceiptsController {
   @PostMapping("/submit-receipt/individual")
   @Secured({"ROLE_orga", "ROLE_studentin"})
   public String submitIndividualReceipt(@RequestParam("count") int count) {
-    ReceiptData receiptData = verifiedReceipts.get(count);
+    ReceiptDataInterface receiptData = verifiedReceipts.get(count);
     if (!receiptData.isValid()) {
       setDangerMessage("Zulassung von "
           + receiptData.getForeName()
@@ -108,7 +108,7 @@ public class UploadReceiptsController {
   @PostMapping("/upload-receipt")
   @Secured({"ROLE_orga", "ROLE_studentin"})
   public String uploadReceipt(@RequestParam("receipt") MultipartFile... receiptMultipartFile) {
-    List<ReceiptData> receiptDataList = new ArrayList<>();
+    List<ReceiptDataInterface> receiptDataInterfaceList = new ArrayList<>();
 
     boolean firstError = true;
     for (MultipartFile rec : receiptMultipartFile) {
@@ -127,7 +127,7 @@ public class UploadReceiptsController {
         }
 
       } else {
-        receiptDataList.add(fileService.readReceiptContent(
+        receiptDataInterfaceList.add(fileService.readReceiptContent(
             receiptLines.get(0),
             receiptLines.get(1)));
       }
@@ -135,7 +135,7 @@ public class UploadReceiptsController {
 
     boolean checkRun = false;
     boolean allReceiptsValid = true;
-    for (ReceiptData data : receiptDataList) {
+    for (ReceiptDataInterface data : receiptDataInterfaceList) {
 
       boolean valid = signatureService.verify(new Receipt(data.create(), data.getSignature()));
       data.setValid(valid);
