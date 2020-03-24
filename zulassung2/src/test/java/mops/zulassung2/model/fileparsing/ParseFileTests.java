@@ -12,18 +12,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ParseFileTests {
 
-  static FileParser parser = new FileParser(new CustomValidator(), new CustomCSVLineParser());
+  static FileParser parser = new FileParser(new Validator(), new CSVLineParser());
   private Student tim = new Student("2727912", "tigeu100@hhu.de", "geuer", "tim");
   private Student markus = new Student("2757144", "masie@hhu.de", "siewert", "markus");
   private String header = "matriculationnumber,email,name,forename\n";
   private String student1Data = "2727912,tigeu100@hhu.de,geuer,tim\n";
   private String student2Data = "2757144,masie@hhu.de,siewert,markus\n";
   private String txt1Data = "matriculationnumber:2727912"
-      + " email:tigeu100@hhu.de"
-      + " name:geuer"
-      + " forename:tim"
-      + " module:Propra"
-      + " semester:WS2019";
+          + " email:tigeu100@hhu.de"
+          + " name:geuer"
+          + " forename:tim"
+          + " module:Propra"
+          + " semester:WS2019";
 
   /**
    * This method provides the test's general information and variables for the CSV parser.
