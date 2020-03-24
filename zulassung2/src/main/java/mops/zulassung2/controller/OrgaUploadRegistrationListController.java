@@ -117,12 +117,12 @@ public class OrgaUploadRegistrationListController {
    */
   @PostMapping("/sendmailreglist")
   @Secured("ROLE_orga")
-  public String sendMail() {
+  public String sendWarningMail() {
     boolean firstError = true;
     for (Student student : students) {
       File file = emailService.createFile(student, currentSubject, currentSemester);
       try {
-        emailService.sendMail(student, currentSubject, file);
+        emailService.sendWarningMail(student, currentSubject);
         organisatorService.storeReceipt(student, file);
       } catch (MessagingException e) {
         if (firstError) {
@@ -154,11 +154,11 @@ public class OrgaUploadRegistrationListController {
    */
   @PostMapping("/sendmailreglist/individual")
   @Secured("ROLE_orga")
-  public String sendMail(@RequestParam("count") int count) {
+  public String sendWarningMail(@RequestParam("count") int count) {
     Student selectedStudent = students.get(count);
     File file = emailService.createFile(selectedStudent, currentSubject, currentSemester);
     try {
-      emailService.sendMail(selectedStudent, currentSubject, file);
+      emailService.sendWarningMail(selectedStudent, currentSubject);
       organisatorService.storeReceipt(selectedStudent, file);
       setSuccessMessage("Email an " + selectedStudent.getForeName() + " "
           + selectedStudent.getName()

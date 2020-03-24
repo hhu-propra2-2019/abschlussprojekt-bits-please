@@ -34,6 +34,7 @@
             <input class="form-control form-control-sm" id="semesterControlInput" name="semester"
                    placeholder="z.B. 2019WiSe"
                    required th:value="${semester}" type="text">
+
             <br>
             <hr>
 
@@ -71,12 +72,12 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="notallowed, iterationStatus : ${notallowed}">
+                <tr th:each="notAllowedStudent, iterationStatus : ${notallowed}">
                     <td th:text="${iterationStatus.count}">1</td>
-                    <td th:text="${notallowed.matriculationNumber}">123456</td>
-                    <td th:text="${notallowed.name}">Meier</td>
-                    <td th:text="${notallowed.foreName}">Brunhilde</td>
-                    <td th:text="${notallowed.email}">brundhilde.meier@mops.de</td>
+                    <td th:text="${notAllowedStudent.matriculationNumber}">123456</td>
+                    <td th:text="${notAllowedStudent.name}">Meier</td>
+                    <td th:text="${notAllowedStudent.foreName}">Brunhilde</td>
+                    <td th:text="${notAllowedStudent.email}">brundhilde.meier@mops.de</td>
                     <td>
                         <form class="inline-form"
                               method="POST"

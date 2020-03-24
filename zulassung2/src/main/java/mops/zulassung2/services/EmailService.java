@@ -23,6 +23,9 @@ public class EmailService {
   @Value("${email_body_text}")
   private String emailBodyText;
 
+  @Value("${warning_email_body_text}")
+  private String warningEmailBodyText;
+
   public EmailService(JavaMailSender emailSender, SignatureService signatureService) {
     this.emailSender = emailSender;
     this.signatureService = signatureService;
@@ -42,7 +45,7 @@ public class EmailService {
    * @param filename name of the attached file
    */
   public void sendMessage(String to, String subject, String text, File attach, String filename)
-          throws MessagingException {
+      throws MessagingException {
     MimeMessage message = emailSender.createMimeMessage();
     MimeMessageHelper helper = new MimeMessageHelper(message, true);
     if (!isValidEmailAddress(to)) {
@@ -66,8 +69,8 @@ public class EmailService {
     String data = receiptData.create();
     Receipt receipt = signatureService.sign(data);
     File file = new File(System.getProperty("user.dir")
-            + "token_" + receiptData.getModule()
-            + "_" + receiptData.getName() + ".txt");
+        + "token_" + receiptData.getModule()
+        + "_" + receiptData.getName() + ".txt");
     FileWriter writer;
 
     try {
@@ -88,13 +91,14 @@ public class EmailService {
    * @param currentSubject Gibt das Studienfach des Students mit in die Methode hinein.
    */
   public void sendMail(Student student, String currentSubject, File file)
-          throws MessagingException {
+      throws MessagingException {
     String emailText = createCustomizedEmailBodyText(student, currentSubject);
     String mail = student.getEmail();
     String subject = "Ihr Zulassungsnachweis zum Fach: ";
     sendMessage(mail, subject + currentSubject, emailText, file, file.getName());
     file.deleteOnExit();
   }
+
 
   private String createCustomizedEmailBodyText(Student student, String currentSubject) {
     String customizedEmailBodyText = emailBodyText;
@@ -103,4 +107,36 @@ public class EmailService {
     customizedEmailBodyText = customizedEmailBodyText.replace(":break", "\n");
     return customizedEmailBodyText;
   }
+
+
+  public void sendSimpleMessage(String to, String subject, String text)
+      throws MessagingException {
+    MimeMessage message = emailSender.createMimeMessage();
+    MimeMessageHelper helper = new MimeMessageHelper(message, true);
+    if (!isValidEmailAddress(to)) {
+      throw new MessagingException();
+    }
+    helper.setTo(to);
+    helper.setSubject(subject);
+    helper.setText(text);
+    emailSender.send(message);
+  }
+
+
+  public void sendWarningMail(Student student, String currentSubject)
+      throws MessagingException {
+    String emailText = createWarningEmailBodyText(student, currentSubject);
+    String mail = student.getEmail();
+    sendSimpleMessage(mail, currentSubject, emailText);
+  }
+
+  private String createWarningEmailBodyText(Student student, String currentSubject) {
+    String customizedWarningEmailBodyText = warningEmailBodyText;
+    customizedWarningEmailBodyText = customizedWarningEmailBodyText.replace(":name", student.getName());
+    customizedWarningEmailBodyText = customizedWarningEmailBodyText.replace(":modul", currentSubject);
+    customizedWarningEmailBodyText = customizedWarningEmailBodyText.replace(":break", "\n");
+    return customizedWarningEmailBodyText;
+  }
+
+
 }
