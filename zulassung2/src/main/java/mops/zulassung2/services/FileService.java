@@ -2,8 +2,8 @@ package mops.zulassung2.services;
 
 import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.model.fileparsing.CSVLineParser;
-import mops.zulassung2.model.fileparsing.Validator;
 import mops.zulassung2.model.fileparsing.FileParser;
+import mops.zulassung2.model.fileparsing.Validator;
 import mops.zulassung2.model.minio.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -65,15 +65,15 @@ public class FileService {
 
     String[] dataObjects = receiptContent.split(" ");
     Student student = new Student(
-            dataObjects[0].split(":")[1], // Matriculationnumber
-            dataObjects[1].split(":")[1], // Email
-            dataObjects[2].split(":")[1], // Name
-            dataObjects[3].split(":")[1]); // Forename
+        dataObjects[0].split(":")[1], // Matriculationnumber
+        dataObjects[1].split(":")[1], // Email
+        dataObjects[2].split(":")[1], // Name
+        dataObjects[3].split(":")[1]); // Forename
 
     ReceiptDataInterface receiptDataInterface = new ReceiptData(student,
-            dataObjects[4].split(":")[1], // Module
-            dataObjects[5].split(":")[1], // Semester
-            signature);                         // Signature
+        dataObjects[4].split(":")[1], // Module
+        dataObjects[5].split(":")[1], // Semester
+        signature);                         // Signature
 
     return receiptDataInterface;
   }
@@ -98,28 +98,26 @@ public class FileService {
     }
 
     minIo.putObject(bucketName, file.getName(), file.getPath(), file.length(),
-            new HashMap<String, String>(), ".txt");
+        new HashMap<String, String>(), ".txt");
   }
 
   /**
    * creates a File from a MultiPartFile that was uploaded by user.
    *
    * @param receiptDataInterface Student Information
-   * @param signature            Signature of the receipt
    * @return redirect
    */
-
-  public File createFileFromSubmittedReceipt(ReceiptDataInterface receiptDataInterface, String signature) {
+  public File createFileFromSubmittedReceipt(ReceiptDataInterface receiptDataInterface) {
     String data = receiptDataInterface.create();
     File file = new File(System.getProperty("user.dir")
-            + "token_" + receiptDataInterface.getModule()
-            + "_" + receiptDataInterface.getName() + ".txt");
+        + "token_" + receiptDataInterface.getModule()
+        + "_" + receiptDataInterface.getName() + ".txt");
     FileWriter writer;
 
     try {
       writer = new FileWriter(file, StandardCharsets.UTF_8);
       writer.write(data + "\n");
-      writer.write(signature);
+      writer.write(receiptDataInterface.getSignature());
       writer.close();
     } catch (IOException e) {
       e.printStackTrace();

@@ -55,11 +55,11 @@ public class ReceiptData implements ReceiptDataInterface {
   @Override
   public String create() {
     String data = "matriculationnumber:" + matriculationNumber
-            + " email:" + email
-            + " name:" + name
-            + " forename:" + foreName
-            + " module:" + module
-            + " semester:" + semester;
+        + " email:" + email
+        + " name:" + name
+        + " forename:" + foreName
+        + " module:" + module
+        + " semester:" + semester;
     return data;
   }
 }

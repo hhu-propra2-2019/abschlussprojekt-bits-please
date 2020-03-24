@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.SessionScope;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +63,43 @@ public class UploadReceiptsController {
   }
 
   /**
+   * Stores the receipt from a single student in MinIO.
+   *
+   * @param count the selected student
+   * @return redirect to /zulassung2/upload-receipt
+   */
+  @PostMapping("/submit-receipt/individual")
+  @Secured({"ROLE_orga", "ROLE_studentin"})
+  public String submitIndividualReceipt(@RequestParam("count") int count) {
+    ReceiptDataInterface receiptData = verifiedReceipts.get(count);
+    if (!receiptData.isValid()) {
+      setDangerMessage("Zulassung von "
+          + receiptData.getForeName()
+          + " " + receiptData.getName()
+          + " zur Veranstaltung "
+          + receiptData.getModule()
+          + " ist ungültig und konnte daher nicht eingereicht werden.");
+      return "redirect:/zulassung2/upload-receipt";
+    }
+    File file = fileService.createFileFromSubmittedReceipt(receiptData);
+    Student student = new Student(
+        receiptData.getMatriculationNumber(),
+        receiptData.getEmail(),
+        receiptData.getName(),
+        receiptData.getForeName());
+
+    fileService.storeReceipt(student, file);
+    //TODO: Fehlermeldungen von MinIO anzeigen
+    setSuccessMessage("Zulassung von "
+        + receiptData.getForeName()
+        + " " + receiptData.getName()
+        + " zur Veranstaltung "
+        + receiptData.getModule()
+        + " wurde erfolgreich eingereicht.");
+    return "redirect:/zulassung2/upload-receipt";
+  }
+
+  /**
    * This method is called for a POST request to /orga/upload-receipt.
    *
    * @param receiptMultipartFile Textfile provided by user
@@ -81,8 +119,8 @@ public class UploadReceiptsController {
 
         if (firstError) {
           setDangerMessage("Folgende übergebene Quittungen haben ein falsches Format "
-                  + "und konnten daher nicht geprüft werden: "
-                  + rec.getOriginalFilename());
+              + "und konnten daher nicht geprüft werden: "
+              + rec.getOriginalFilename());
           firstError = false;
         } else {
           setDangerMessage(dangerMessage.concat(", " + rec.getOriginalFilename()));
@@ -90,8 +128,8 @@ public class UploadReceiptsController {
 
       } else {
         receiptDataInterfaceList.add(fileService.readReceiptContent(
-                receiptLines.get(0),
-                receiptLines.get(1)));
+            receiptLines.get(0),
+            receiptLines.get(1)));
       }
     }
 
@@ -101,15 +139,6 @@ public class UploadReceiptsController {
 
       boolean valid = signatureService.verify(new Receipt(data.create(), data.getSignature()));
       data.setValid(valid);
-      if (valid) {
-        Student student = new Student(
-                data.getMatriculationNumber(),
-                data.getEmail(),
-                data.getName(),
-                data.getForeName());
-        fileService.storeReceipt(student,
-                fileService.createFileFromSubmittedReceipt(data, data.getSignature()));
-      }
       verifiedReceipts.add(data);
       if (!valid) {
         allReceiptsValid = false;
@@ -124,22 +153,22 @@ public class UploadReceiptsController {
         setSuccessMessage("Alle neu hochgeladenen Quittungen wurden geprüft und sind gültig.");
       } else { // all files but not all signatures are valid
         setWarningMessage("Alle hochgeladenen Quittungen wurden geprüft. "
-                + "Bitte überprüfen Sie die Gültigkeit anhand der Tabelle.");
+            + "Bitte überprüfen Sie die Gültigkeit anhand der Tabelle.");
       }
 
     } else if (checkRun) {
 
       if (allReceiptsValid) { // not all files but all signatures are valid
         setSuccessMessage(" Neu hochgeladene Quittungen im korrekten Format wurden geprüft. "
-                + "Die korrekt formatierten Quittungen sind gültig.");
+            + "Die korrekt formatierten Quittungen sind gültig.");
       } else { // not all files and not all signatures are valid
         setWarningMessage(" Quittungen im korrekten Format wurden geprüft. "
-                + "Bitte überprüfen Sie die Gültigkeit anhand der Tabelle.");
+            + "Bitte überprüfen Sie die Gültigkeit anhand der Tabelle.");
       }
 
     } else {
       setWarningMessage("Es wurden keine neuen Quittungen geprüft,"
-              + " da keine dem geforderten Format entsprach.");
+          + " da keine dem geforderten Format entsprach.");
     }
     return "redirect:/zulassung2/upload-receipt";
   }
