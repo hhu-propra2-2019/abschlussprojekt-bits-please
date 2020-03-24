@@ -15,7 +15,6 @@ import org.springframework.web.context.annotation.SessionScope;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,8 +81,7 @@ public class OrgaUploadRegistrationListController {
 
   @PostMapping("/upload-registrationlist")
   @Secured("ROLE_orga")
-  public String submit(@RequestParam("file") MultipartFile file, String subject, String semester,
-                       Model model) {
+  public String submit(@RequestParam("file") MultipartFile file, String subject, String semester) {
     if (!FilenameUtils.isExtension(file.getOriginalFilename(), "csv")) {
       setDangerMessage("Die Datei muss im .csv Format sein!");
       return "redirect:/zulassung2/upload-registrationlist";
@@ -104,6 +102,15 @@ public class OrgaUploadRegistrationListController {
         allowed.add(student);
       }
     }
+    if (notAllowed.isEmpty()) {
+      setSuccessMessage("Alle Angemeldeten verfügen über eine gültige Zulassung!");
+    } else if (!allowed.isEmpty()) {
+      setWarningMessage("Es konnte nicht für alle Angemeldeten eine gültige Zulassung gefunden werden."
+          + " Bitte lassen Sie den Betroffenen über untenstehendes Formular eine Nachricht zukommen.");
+    } else {
+      setDangerMessage("Es konnte für keinen Angemeldeten eine gültige Zulassung gefunden werden."
+          + " Haben Sie die korrekte Anmeldeliste hochgeladen?");
+    }
     return "redirect:/zulassung2/upload-registrationlist";
   }
 
@@ -119,10 +126,8 @@ public class OrgaUploadRegistrationListController {
   public String sendWarningMail() {
     boolean firstError = true;
     for (Student student : notAllowed) {
-      File file = emailService.createFile(student, currentSubject, currentSemester);
       try {
         emailService.sendWarningMail(student, currentSubject);
-        fileService.storeReceipt(student, file);
       } catch (MessagingException e) {
         if (firstError) {
           setDangerMessage("An folgende Studenten konnte keine Email versendet werden: "
@@ -155,10 +160,8 @@ public class OrgaUploadRegistrationListController {
   @Secured("ROLE_orga")
   public String sendWarningMail(@RequestParam("count") int count) {
     Student selectedStudent = notAllowed.get(count);
-    File file = emailService.createFile(selectedStudent, currentSubject, currentSemester);
     try {
       emailService.sendWarningMail(selectedStudent, currentSubject);
-      fileService.storeReceipt(selectedStudent, file);
       setSuccessMessage("Email an " + selectedStudent.getForeName() + " "
           + selectedStudent.getName()
           + " wurde erfolgreich versendet.");
