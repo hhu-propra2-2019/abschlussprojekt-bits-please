@@ -97,7 +97,7 @@ public class OrgaUploadRegistrationListController {
     }
     notAllowed.clear();
     allowed.clear();
-    for (Student student : notAllowed) {
+    for (Student student : students) {
       if (!orgaUploadRegistrationService.test(student, subject)) {
         notAllowed.add(student);
       } else {
