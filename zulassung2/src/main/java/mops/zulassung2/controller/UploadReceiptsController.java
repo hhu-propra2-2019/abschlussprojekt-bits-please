@@ -63,7 +63,7 @@ public class UploadReceiptsController {
   }
 
   /**
-   * Stores the receipt from a single student in MinIO
+   * Stores the receipt from a single student in MinIO.
    *
    * @param count the selected student
    * @return redirect to /zulassung2/upload-receipt
