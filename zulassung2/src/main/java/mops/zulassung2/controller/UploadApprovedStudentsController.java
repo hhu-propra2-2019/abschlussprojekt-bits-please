@@ -69,14 +69,13 @@ public class UploadApprovedStudentsController {
   /**
    * This method is called for a POST request to /upload-approved-students.
    *
-   * @param model model to be injected
-   * @param form  form to be injected
+   * @param form form to be injected
    * @return Redirects to view orga-upload-csv
    */
 
   @PostMapping("/upload-approved-students")
   @Secured("ROLE_orga")
-  public String submit(Model model, @ModelAttribute("form") OrgaUploadCSVForm form) {
+  public String submit(@ModelAttribute("form") OrgaUploadCSVForm form) {
     if (!FilenameUtils.isExtension(form.getMultipartFile().getOriginalFilename(), "csv")) {
       setDangerMessage("Die Datei muss im .csv Format sein!");
       return "redirect:/zulassung2/upload-approved-students";
