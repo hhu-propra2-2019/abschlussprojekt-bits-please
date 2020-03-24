@@ -62,12 +62,12 @@ public class EmailService {
    */
 
   public File createFile(Student student, String currentSubject, String currentSemester) {
-    ReceiptData receiptData = new CustomReceiptData(student, currentSubject, currentSemester);
-    String data = receiptData.create();
+    ReceiptDataInterface receiptDataInterface = new ReceiptData(student, currentSubject, currentSemester);
+    String data = receiptDataInterface.create();
     Receipt receipt = signatureService.sign(data);
     File file = new File(System.getProperty("user.dir")
-            + "token_" + receiptData.getModule()
-            + "_" + receiptData.getName() + ".txt");
+            + "token_" + receiptDataInterface.getModule()
+            + "_" + receiptDataInterface.getName() + ".txt");
     FileWriter writer;
 
     try {

@@ -12,11 +12,11 @@ import java.util.Map;
 
 public class MinIoImplementation {
   private MinIoRepositoryInterface minIo;
-  private NameCreator nameCreator;
+  private NameCreatorInterface nameCreatorInterface;
 
-  public MinIoImplementation(MinIoRepositoryInterface minIo, NameCreator nameCreator) {
+  public MinIoImplementation(MinIoRepositoryInterface minIo, NameCreatorInterface nameCreatorInterface) {
     this.minIo = minIo;
-    this.nameCreator = nameCreator;
+    this.nameCreatorInterface = nameCreatorInterface;
   }
 
   /**
@@ -107,7 +107,7 @@ public class MinIoImplementation {
    * @return
    */
   public boolean isAuthorized(Student student, String subject) {
-    String bucketName = nameCreator.createBucketName(student);
+    String bucketName = nameCreatorInterface.createBucketName(student);
     if (minIo.bucketExists(bucketName)) {
       Iterable<Result<Item>> objects = minIo.listObjects(bucketName);
       for (Result<Item> object : objects) {

@@ -18,17 +18,17 @@ import java.util.stream.Collectors;
 
 public class FileParser {
 
-  private Validator validator;
-  private CSVLineParser csvLineParser;
+  private ValidatorInterface validatorInterface;
+  private CSVLineParserInterface csvLineParserInterface;
 
-  public FileParser(Validator validator) {
-    this.validator = validator;
-    this.csvLineParser = new CustomCSVLineParser();
+  public FileParser(ValidatorInterface validatorInterface) {
+    this.validatorInterface = validatorInterface;
+    this.csvLineParserInterface = new CSVLineParser();
   }
 
-  public FileParser(Validator validator, CSVLineParser csvLineParser) {
-    this.validator = validator;
-    this.csvLineParser = csvLineParser;
+  public FileParser(ValidatorInterface validatorInterface, CSVLineParserInterface csvLineParserInterface) {
+    this.validatorInterface = validatorInterface;
+    this.csvLineParserInterface = csvLineParserInterface;
   }
 
   /**
@@ -52,7 +52,7 @@ public class FileParser {
       e.printStackTrace();
     }
 
-    boolean csvIsValid = validator.validateCSV(csvParser);
+    boolean csvIsValid = validatorInterface.validateCSV(csvParser);
 
     if (!csvIsValid) {
       deleteFile(studentFile);
@@ -60,7 +60,7 @@ public class FileParser {
     }
 
     for (CSVRecord csvRecord : csvParser) {
-      Student currentStudent = csvLineParser.parseLine(csvRecord);
+      Student currentStudent = csvLineParserInterface.parseLine(csvRecord);
       studentList.add(currentStudent);
     }
 
@@ -86,7 +86,7 @@ public class FileParser {
       String receiptContent = Files.readString(receipt.toPath(), StandardCharsets.UTF_8);
       List<String> lines = receiptContent.lines().collect(Collectors.toList());
 
-      boolean txtIsValid = validator.validateTXT(lines);
+      boolean txtIsValid = validatorInterface.validateTXT(lines);
 
       if (!txtIsValid) {
         deleteFile(receipt);

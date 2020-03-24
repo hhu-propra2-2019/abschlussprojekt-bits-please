@@ -54,6 +54,7 @@ dependencies {
     compile 'org.thymeleaf.extras:thymeleaf-extras-springsecurity4:3.0.4.RELEASE'
     compile "org.apache.commons:commons-csv:1.5"
     compile "io.minio:minio:6.0.13"
+    compile group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.11.749'
     testCompile group: 'org.assertj', name: 'assertj-core', version: '3.14.0'
     implementation 'com.c4-soft.springaddons:spring-security-test-keycloack-addons:1.2.0'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
