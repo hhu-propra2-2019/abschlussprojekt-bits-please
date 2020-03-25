@@ -114,11 +114,11 @@ public class UploadApprovedStudentsController {
       } catch (MessagingException e) {
         if (firstError) {
           setDangerMessage("An folgende Studenten konnte keine Email versendet werden: "
-                  + student.getForeName() + " " + student.getName());
+              + student.getForeName() + " " + student.getName());
           firstError = false;
         } else {
           setDangerMessage(dangerMessage.concat(", "
-                  + student.getForeName() + " " + student.getName()));
+              + student.getForeName() + " " + student.getName()));
         }
       }
       try {
@@ -152,12 +152,12 @@ public class UploadApprovedStudentsController {
       emailService.sendMail(selectedStudent, currentSubject, file);
       fileService.storeReceipt(selectedStudent, file);
       setSuccessMessage("Email an " + selectedStudent.getForeName() + " "
-              + selectedStudent.getName()
-              + " wurde erfolgreich versendet.");
+          + selectedStudent.getName()
+          + " wurde erfolgreich versendet.");
     } catch (MessagingException e) {
       setDangerMessage("Email an " + selectedStudent.getForeName()
-              + " " + selectedStudent.getName()
-              + " konnte nicht versendet werden!");
+          + " " + selectedStudent.getName()
+          + " konnte nicht versendet werden!");
     }
     try {
       Files.deleteIfExists(file.toPath());
@@ -166,18 +166,6 @@ public class UploadApprovedStudentsController {
     }
 
     return "redirect:/zulassung2/upload-approved-students";
-  }
-
-  /**
-   * Set Warning and Success Messages for the frontend.
-   *
-   * @param warningMessage Describe warning
-   * @param successMessage Send a joyful message to the user
-   */
-  private void setMessages(String dangerMessage, String warningMessage, String successMessage) {
-    this.dangerMessage = dangerMessage;
-    this.warningMessage = warningMessage;
-    this.successMessage = successMessage;
   }
 
   /**
@@ -211,7 +199,9 @@ public class UploadApprovedStudentsController {
    * Reset UI Messages.
    */
   private void resetMessages() {
-    setMessages(null, null, null);
+    this.dangerMessage = dangerMessage;
+    this.warningMessage = warningMessage;
+    this.successMessage = successMessage;
   }
 
   @ModelAttribute("danger")
