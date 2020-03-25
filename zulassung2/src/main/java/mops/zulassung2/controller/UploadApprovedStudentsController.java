@@ -109,7 +109,7 @@ public class UploadApprovedStudentsController {
   public String sendMail() {
     boolean noErrorsOcurredWhileSendingMessages = true;
     for (Student student : students) {
-      File file = emailService.createFile(student, currentSubject, currentSemester);
+      File file = fileService.createFile(student, currentSubject, currentSemester);
       try {
         emailService.sendMail(student, currentSubject, file);
         fileService.storeReceipt(student, file);
@@ -131,18 +131,6 @@ public class UploadApprovedStudentsController {
     return "redirect:/zulassung2/upload-approved-students";
   }
 
-  private void createDangerMessageMultipleStudents(boolean noErrorsOcurredWhileSendingMessages, Student student) {
-    // noErrosOcurredWhileSendingMessages is only true when this method is called for the first time
-    if (noErrorsOcurredWhileSendingMessages) {
-      setDangerMessage("An folgende Studenten konnte keine Email versendet werden: "
-          + student.getForeName() + " " + student.getName());
-    } else {
-      setDangerMessage(dangerMessage.concat(", "
-          + student.getForeName() + " " + student.getName()));
-    }
-  }
-
-
   /**
    * This method is called for a POST request to /orga/sendmail/individual.
    * It calls "createFilesAndMails" in the EmailService to create emails and then send them.
@@ -154,7 +142,7 @@ public class UploadApprovedStudentsController {
   @Secured("ROLE_orga")
   public String sendMail(@RequestParam("count") int count) {
     Student selectedStudent = students.get(count);
-    File file = emailService.createFile(selectedStudent, currentSubject, currentSemester);
+    File file = fileService.createFile(selectedStudent, currentSubject, currentSemester);
     try {
       emailService.sendMail(selectedStudent, currentSubject, file);
       fileService.storeReceipt(selectedStudent, file);
@@ -169,6 +157,18 @@ public class UploadApprovedStudentsController {
     }
     return "redirect:/zulassung2/upload-approved-students";
   }
+
+  private void createDangerMessageMultipleStudents(boolean noErrorsOcurredWhileSendingMessages, Student student) {
+    // noErrosOcurredWhileSendingMessages is only true when this method is called for the first time
+    if (noErrorsOcurredWhileSendingMessages) {
+      setDangerMessage("An folgende Studenten konnte keine Email versendet werden: "
+          + student.getForeName() + " " + student.getName());
+    } else {
+      setDangerMessage(dangerMessage.concat(", "
+          + student.getForeName() + " " + student.getName()));
+    }
+  }
+
 
   private void createSuccessMethodSingleStudent(Student selectedStudent) {
     setSuccessMessage("Email an " + selectedStudent.getForeName() + " "

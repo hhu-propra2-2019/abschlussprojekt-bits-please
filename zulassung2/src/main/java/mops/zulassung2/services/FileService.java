@@ -1,5 +1,6 @@
 package mops.zulassung2.services;
 
+import mops.zulassung2.model.crypto.Receipt;
 import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.model.fileparsing.CSVLineParser;
 import mops.zulassung2.model.fileparsing.FileParser;
@@ -21,6 +22,8 @@ public class FileService {
 
   private NameCreatorInterface nameCreatorInterface;
   private MinIoImplementation minIo;
+  private SignatureService signatureService;
+
   @Value("${endpoint}")
   private String endpoint;
   @Value("${access_key}")
@@ -28,8 +31,9 @@ public class FileService {
   @Value("${secret_key}")
   private String secretKey;
 
-  public FileService() {
+  public FileService(SignatureService signatureService) {
     nameCreatorInterface = new NameCreator(new BucketNameValidator());
+    this.signatureService = signatureService;
   }
 
   /**
@@ -124,4 +128,31 @@ public class FileService {
     }
     return userFile;
   }
+
+  /**
+   * Diese Methode wird vom OrganisatorController (Methode: sendMail) aufgerufen.
+   * *
+   * Diese Methode erstellt benutzerdefinierte Files und ruft sendMessage auf.
+   */
+
+  public File createFile(Student student, String currentSubject, String currentSemester) {
+    ReceiptDataInterface receiptDataInterface = new ReceiptData(student, currentSubject, currentSemester);
+    String studentData = receiptDataInterface.create();
+    Receipt receipt = signatureService.sign(studentData);
+    File userFile = new File(System.getProperty("user.dir")
+        + "token_" + receiptDataInterface.getModule()
+        + "_" + receiptDataInterface.getName() + ".txt");
+    FileWriter writer;
+
+    try {
+      writer = new FileWriter(userFile, StandardCharsets.UTF_8);
+      writer.write(studentData + "\n");
+      writer.write(receipt.getSignature());
+      writer.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return userFile;
+  }
+
 }

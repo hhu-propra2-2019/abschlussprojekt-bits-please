@@ -1,25 +1,31 @@
 package mops.zulassung2.services;
 
+import mops.zulassung2.model.crypto.Receipt;
 import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.model.fileparsing.CSVLineParser;
 import mops.zulassung2.model.fileparsing.FileParser;
 import mops.zulassung2.model.fileparsing.Validator;
-import mops.zulassung2.model.minio.*;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class FileServiceTests {
+
+  static SignatureService signatureService = mock(SignatureService.class);
+  private Student douglas = new Student("2729350", "dobla101@hhu.de", "blank", "douglas");
+
   private FileService fileService;
   private Validator validator;
   private CSVLineParser csvLineParser;
@@ -31,11 +37,10 @@ public class FileServiceTests {
   private String student2Data = "2757144,masie@hhu.de,siewert,markus\n";
 
 
-
   @Test
   public void processCSVUploadTest() throws IOException {
     // Arrange
-    fileService = new FileService();
+    fileService = new FileService(mock(SignatureService.class));
     validator = new Validator();
     csvLineParser = new CSVLineParser();
     List<Student> students = new ArrayList<>();
@@ -57,7 +62,7 @@ public class FileServiceTests {
   @Test
   public void checkprocessTXTUploadTest() {
     // Arrange
-    fileService = new FileService();
+    fileService = new FileService(mock(SignatureService.class));
     validator = new Validator();
     List<Student> students = new ArrayList<>();
     students.add(louis);
@@ -78,7 +83,7 @@ public class FileServiceTests {
   @Test
   public void readReceiptContentTest() {
     //Arrange
-    fileService = new FileService();
+    fileService = new FileService(mock(SignatureService.class));
     String expectedMatriculationnumber = "9999999";
     String expectedEmail = "test@uni-duesseldorf.de";
     String expectedName = "meier";
@@ -101,6 +106,34 @@ public class FileServiceTests {
 
   }
 
+  @Test
+  void test_createFile() throws IOException {
+    // Arrange
+    fileService = new FileService(signatureService);
+    ReceiptDataInterface receiptDataInterface = mock(ReceiptDataInterface.class);
+    String data = "matriculationnumber:" + douglas.getMatriculationNumber()
+        + " email:" + douglas.getEmail()
+        + " name:" + douglas.getName()
+        + " forename:" + douglas.getForeName()
+        + " module:" + "informatik"
+        + " semester:" + "2019SoSe"
+        + "\n"
+        + "signatur";
+    Receipt receipt = mock(Receipt.class);
+    when(receiptDataInterface.getModule()).thenReturn("informatik");
+    when(receiptDataInterface.getName()).thenReturn("blank");
+    when(receipt.getSignature()).thenReturn("signatur");
+    Receipt receipt1 = new Receipt(data, "signatur");
+    when(signatureService.sign(anyString())).thenReturn(receipt1);
+
+    // Act
+    File file = fileService.createFile(douglas, "informatik", "2019SoSe");
+    String content = Files.readString(file.toPath());
+
+    // Assert
+    assertEquals(data, content);
+    Files.deleteIfExists(file.toPath());
+  }
 
 
 }
