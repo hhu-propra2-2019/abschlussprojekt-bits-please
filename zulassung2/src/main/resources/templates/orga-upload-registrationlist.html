@@ -23,26 +23,19 @@
             <div class="lead">Wählen Sie eine CSV-Datei aus:</div>
             <div class="input-group mb-3">
                 <div class="custom-file" id="custom-filecsv">
-                    <input accept=".csv" id="csvhochladen" name="file" required type="file">
+                    <input accept=".csv" id="csvhochladen" name="multipartFile" required type="file">
                 </div>
             </div>
             <label class="lead" for="subjectControlInput">Fach:</label>
             <input class="form-control form-control-sm" id="subjectControlInput" name="subject"
                    placeholder="Name des Fachs"
                    required th:value="${subject}" type="text">
-            <label class="lead" for="semesterControlInput">Semester:</label>
-            <input class="form-control form-control-sm" id="semesterControlInput" name="semester"
-                   placeholder="z.B. 2019WiSe"
-                   required th:value="${semester}" type="text">
-
-
-            <label class="lead" for="deadLineInput">Abgabefrist:</label>
-            <input class="form-control" id="deadLineInput" name="deadline" required th:date="${deadline}"
-                   type="date">
-
-
             <br>
+            <label class="lead" for="deadLineInput">Abgabefrist:</label>
+            <input class="form-control" id="deadLineInput" name="deadline" required
+                   th:value="${deadline}" type="datetime-local">
             <hr>
+
 
             <button class="btn btn-primary" type="submit">Hochladen</button>
         </form>
@@ -60,12 +53,12 @@
 
     <!-- <div class="table-responsive" th:if="${students!=null and not students.isEmpty()}"> -->
     <div class="table-responsive" th:if="${notallowed!=null and not notallowed.isEmpty()}">
-        <span class="lead">Nicht Zugelassene Teilnehmer zur Veranstaltung <span th:text="${subject}">Subject</span> im
-            <span
-                    th:text="${semester}">Semester</span>
-        </span>
+        <span class="lead">Nicht Zugelassene Teilnehmer zur Veranstaltung <span
+                th:text="${subject}">Subject</span></span>
+
 
         <div class="scrollable">
+
             <table class="table">
                 <thead>
                 <tr>
@@ -99,6 +92,7 @@
                 <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
                 <button class="btn btn-primary" type="submit">Warnungsnachricht an alle Betroffenen senden
                 </button>
+
             </form>
         </div>
     </div>
@@ -107,9 +101,7 @@
     <div class="table-responsive" th:if="${allowed!=null and not allowed.isEmpty()}">
         <br>
         <hr>
-        <span class="lead">Zugelassene Teilnehmer zur Veranstaltung <span th:text="${subject}">Subject</span> im
-            <span
-                    th:text="${semester}">Semester</span>
+        <span class="lead">Zugelassene Teilnehmer zur Veranstaltung <span th:text="${subject}">Subject</span>
         </span>
         <br>
         <div class="scrollable">

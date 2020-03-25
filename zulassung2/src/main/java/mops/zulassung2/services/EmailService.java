@@ -14,18 +14,19 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
 
 @Service
 public class EmailService {
 
+
   private final JavaMailSender emailSender;
   private final SignatureService signatureService;
+
   @Value("${email_body_text}")
   private String emailBodyText;
-
   @Value("${warning_email_body_text}")
   private String warningEmailBodyText;
+
 
   public EmailService(JavaMailSender emailSender, SignatureService signatureService) {
     this.emailSender = emailSender;
@@ -36,7 +37,6 @@ public class EmailService {
     EmailValidator validator = EmailValidator.getInstance();
     return validator.isValid(email);
   }
-
 
   /**
    * Diese Methode wird vom OrganisatorController (Methode: sendMail) aufgerufen.
@@ -100,7 +100,6 @@ public class EmailService {
     sendMessage(mail, subject + currentSubject, emailText, file, file.getName());
   }
 
-
   private String createCustomizedEmailBodyText(Student student, String currentSubject) {
     String customizedEmailBodyText = emailBodyText;
     customizedEmailBodyText = customizedEmailBodyText.replace(":name", student.getName());
@@ -108,7 +107,6 @@ public class EmailService {
     customizedEmailBodyText = customizedEmailBodyText.replace(":break", "\n");
     return customizedEmailBodyText;
   }
-
 
   /**
    * Sends an email without attachment.
@@ -136,21 +134,23 @@ public class EmailService {
    * @param student        Is setting the Student´s name.
    * @param currentSubject Is setting the Student´s subject.
    */
-  public void sendWarningMail(Student student, String currentSubject, Date currentDeadLine)
+  public void sendWarningMail(Student student, String currentSubject, String currentDeadLine)
       throws MessagingException {
     String emailText = createWarningEmailBodyText(student, currentSubject, currentDeadLine);
     String mail = student.getEmail();
-    sendSimpleMessage(mail, currentSubject, emailText);
+    String subject = "Ihre fehlende Zulassung zur Klausur im Fach: ";
+    sendSimpleMessage(mail, subject + currentSubject, emailText);
   }
 
-  private String createWarningEmailBodyText(Student student, String currentSubject, Date currentDeadLine) {
+  private String createWarningEmailBodyText(Student student, String currentSubject, String currentDeadLine) {
+
+
     String customizedWarningEmailBodyText = warningEmailBodyText;
     customizedWarningEmailBodyText = customizedWarningEmailBodyText.replace(":name", student.getName());
     customizedWarningEmailBodyText = customizedWarningEmailBodyText.replace(":modul", currentSubject);
-    customizedWarningEmailBodyText = customizedWarningEmailBodyText.replace(":abgabefrist", currentDeadLine.toString());
+    customizedWarningEmailBodyText = customizedWarningEmailBodyText.replace(":abgabefrist", currentDeadLine.replace('T', ' '));
     customizedWarningEmailBodyText = customizedWarningEmailBodyText.replace(":break", "\n");
     return customizedWarningEmailBodyText;
   }
-
 
 }

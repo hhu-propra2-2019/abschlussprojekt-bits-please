@@ -16,7 +16,6 @@ import org.springframework.web.context.annotation.SessionScope;
 
 import javax.mail.MessagingException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @SessionScope
@@ -31,8 +30,7 @@ public class OrgaUploadRegistrationListController {
   public List<Student> notAllowed = new ArrayList<>();
   public List<Student> allowed = new ArrayList<>();
   public String currentSubject = "";
-  public String currentSemester = "";
-  public Date currentDeadLine;
+  public String currentDeadLine;
   private AccountCreator accountCreator;
   private String dangerMessage;
   private String warningMessage;
@@ -65,11 +63,12 @@ public class OrgaUploadRegistrationListController {
    */
   @GetMapping("/upload-registrationlist")
   @Secured("ROLE_orga")
-  public String orga(KeycloakAuthenticationToken token, Model model) {
+  public String orga(KeycloakAuthenticationToken token, Model model, @ModelAttribute("form") OrgaUploadCSVForm form) {
     resetMessages();
     model.addAttribute("account", accountCreator.createFromPrincipal(token));
     model.addAttribute("notallowed", notAllowed);
     model.addAttribute("allowed", allowed);
+    model.addAttribute("form", form);
     model.addAttribute("orgauploadregistrationservice", new OrgaUploadRegistrationService());
 
     return "orga-upload-registrationlist";
@@ -89,7 +88,7 @@ public class OrgaUploadRegistrationListController {
       return "redirect:/zulassung2/upload-registrationlist";
     }
     currentSubject = form.getSubject().replaceAll("[: ]", "-");
-    currentSemester = form.getSemester().replaceAll("[: ]", "-");
+    currentDeadLine = form.getDeadline();
 
     students = fileService.processCSVUpload(form.getMultipartFile());
     if (students == null) {
@@ -236,12 +235,9 @@ public class OrgaUploadRegistrationListController {
   }
 
   @ModelAttribute("deadline")
-  Date getCurrentDeadLine() {
+  String getCurrentDeadLine() {
     return currentDeadLine;
   }
 
-  @ModelAttribute("semester")
-  String getCurrentSemester() {
-    return currentSemester;
-  }
 }
+
