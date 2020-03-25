@@ -28,6 +28,8 @@ public class EmailService {
   private String emailBodyText;
   @Value("${warning_email_body_text}")
   private String warningEmailBodyText;
+  @Value("receipt_storage_duration")
+  private String receiptStorageDuration;
 
 
   public EmailService(JavaMailSender emailSender, SignatureService signatureService) {
@@ -106,6 +108,7 @@ public class EmailService {
     String customizedEmailBodyText = emailBodyText;
     customizedEmailBodyText = customizedEmailBodyText.replace(":name", student.getName());
     customizedEmailBodyText = customizedEmailBodyText.replace(":modul", currentSubject);
+    customizedEmailBodyText = customizedEmailBodyText.replace(":duration", receiptStorageDuration);
     customizedEmailBodyText = customizedEmailBodyText.replace(":break", "\n");
     return customizedEmailBodyText;
   }
