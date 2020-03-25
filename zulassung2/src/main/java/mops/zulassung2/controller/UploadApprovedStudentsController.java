@@ -60,7 +60,9 @@ public class UploadApprovedStudentsController {
    */
   @GetMapping("/upload-approved-students")
   @Secured("ROLE_orga")
-  public String orga(KeycloakAuthenticationToken token, Model model, @ModelAttribute("form") OrgaUploadCSVForm form) {
+  public String orga(KeycloakAuthenticationToken token,
+                     Model model,
+                     @ModelAttribute("form") OrgaUploadCSVForm form) {
     resetMessages();
     model.addAttribute("account", accountCreator.createFromPrincipal(token));
     model.addAttribute("students", students);
@@ -112,7 +114,7 @@ public class UploadApprovedStudentsController {
         emailService.sendMail(student, currentSubject, file);
         fileService.storeReceipt(student, file);
       } catch (MessagingException e) {
-        createDangerMessage(noErrorsOcurredWhileSendingMessages, student);
+        createDangerMessageMultipleStudents(noErrorsOcurredWhileSendingMessages, student);
         noErrorsOcurredWhileSendingMessages = false;
       }
       try {
@@ -129,7 +131,8 @@ public class UploadApprovedStudentsController {
     return "redirect:/zulassung2/upload-approved-students";
   }
 
-  private void createDangerMessage(boolean noErrorsOcurredWhileSendingMessages, Student student) {
+  private void createDangerMessageMultipleStudents(boolean noErrorsOcurredWhileSendingMessages, Student student) {
+    // noErrosOcurredWhileSendingMessages is only true when this method is called for the first time
     if (noErrorsOcurredWhileSendingMessages) {
       setDangerMessage("An folgende Studenten konnte keine Email versendet werden: "
           + student.getForeName() + " " + student.getName());
@@ -155,21 +158,28 @@ public class UploadApprovedStudentsController {
     try {
       emailService.sendMail(selectedStudent, currentSubject, file);
       fileService.storeReceipt(selectedStudent, file);
-      setSuccessMessage("Email an " + selectedStudent.getForeName() + " "
-          + selectedStudent.getName()
-          + " wurde erfolgreich versendet.");
+      createSuccessMethodSingleStudent(selectedStudent);
     } catch (MessagingException e) {
-      setDangerMessage("Email an " + selectedStudent.getForeName()
-          + " " + selectedStudent.getName()
-          + " konnte nicht versendet werden!");
+      createDangerMethodSingleStudent(selectedStudent);
     }
     try {
       Files.deleteIfExists(file.toPath());
     } catch (IOException e) {
       e.printStackTrace();
     }
-
     return "redirect:/zulassung2/upload-approved-students";
+  }
+
+  private void createSuccessMethodSingleStudent(Student selectedStudent) {
+    setSuccessMessage("Email an " + selectedStudent.getForeName() + " "
+        + selectedStudent.getName()
+        + " wurde erfolgreich versendet.");
+  }
+
+  private void createDangerMethodSingleStudent(Student selectedStudent) {
+    setDangerMessage("Email an " + selectedStudent.getForeName()
+        + " " + selectedStudent.getName()
+        + " konnte nicht versendet werden!");
   }
 
   /**
