@@ -1,5 +1,6 @@
 package mops.zulassung2.controller;
 
+import mops.zulassung2.model.OrgaUploadCSVForm;
 import mops.zulassung2.model.dataobjects.AccountCreator;
 import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.services.EmailService;
@@ -12,11 +13,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.SessionScope;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
-import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @SessionScope
@@ -32,6 +32,7 @@ public class OrgaUploadRegistrationListController {
   public List<Student> allowed = new ArrayList<>();
   public String currentSubject = "";
   public String currentSemester = "";
+  public Date currentDeadLine;
   private AccountCreator accountCreator;
   private String dangerMessage;
   private String warningMessage;
@@ -77,29 +78,30 @@ public class OrgaUploadRegistrationListController {
   /**
    * This method is called for a POST request to /upload-registrationlist.
    *
-   * @param file File that was uploaded
    * @return Redirects to view orga-upload-registrationlist
    */
 
   @PostMapping("/upload-registrationlist")
   @Secured("ROLE_orga")
-  public String submit(@RequestParam("file") MultipartFile file, String subject, String semester,
-                       Model model) {
-    if (!FilenameUtils.isExtension(file.getOriginalFilename(), "csv")) {
+  public String submit(@ModelAttribute("form") OrgaUploadCSVForm form) {
+    if (!FilenameUtils.isExtension(form.getMultipartFile().getOriginalFilename(), "csv")) {
       setDangerMessage("Die Datei muss im .csv Format sein!");
       return "redirect:/zulassung2/upload-registrationlist";
     }
-    currentSubject = subject.replaceAll("[: ]", "-");
-    currentSemester = semester.replaceAll("[: ]", "-");
-    students = fileService.processCSVUpload(file);
+    currentSubject = form.getSubject().replaceAll("[: ]", "-");
+    currentSemester = form.getSemester().replaceAll("[: ]", "-");
+
+    students = fileService.processCSVUpload(form.getMultipartFile());
     if (students == null) {
       setDangerMessage("Die Datei konnte nicht gelesen werden!");
       return "redirect:/zulassung2/registrationlist";
     }
+
+
     notAllowed.clear();
     allowed.clear();
     for (Student student : students) {
-      if (orgaUploadRegistrationService.test(student, subject) == false) {
+      if (orgaUploadRegistrationService.test(student, form.getSubject()) == false) {
         notAllowed.add(student);
       } else {
         allowed.add(student);
@@ -120,10 +122,8 @@ public class OrgaUploadRegistrationListController {
   public String sendWarningMail() {
     boolean firstError = true;
     for (Student student : students) {
-      File file = emailService.createFile(student, currentSubject, currentSemester);
       try {
-        emailService.sendWarningMail(student, currentSubject);
-        fileService.storeReceipt(student, file);
+        emailService.sendWarningMail(student, currentSubject, currentDeadLine);
       } catch (MessagingException e) {
         if (firstError) {
           setDangerMessage("An folgende Studenten konnte keine Email versendet werden: "
@@ -156,10 +156,8 @@ public class OrgaUploadRegistrationListController {
   @Secured("ROLE_orga")
   public String sendWarningMail(@RequestParam("count") int count) {
     Student selectedStudent = students.get(count);
-    File file = emailService.createFile(selectedStudent, currentSubject, currentSemester);
     try {
-      emailService.sendWarningMail(selectedStudent, currentSubject);
-      fileService.storeReceipt(selectedStudent, file);
+      emailService.sendWarningMail(selectedStudent, currentSubject, currentDeadLine);
       setSuccessMessage("Email an " + selectedStudent.getForeName() + " "
           + selectedStudent.getName()
           + " wurde erfolgreich versendet.");
@@ -235,6 +233,11 @@ public class OrgaUploadRegistrationListController {
   @ModelAttribute("subject")
   String getCurrentSubject() {
     return currentSubject;
+  }
+
+  @ModelAttribute("deadline")
+  Date getCurrentDeadLine() {
+    return currentDeadLine;
   }
 
   @ModelAttribute("semester")

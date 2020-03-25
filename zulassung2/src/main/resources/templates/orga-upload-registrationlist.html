@@ -35,6 +35,12 @@
                    placeholder="z.B. 2019WiSe"
                    required th:value="${semester}" type="text">
 
+
+            <label class="lead" for="deadLineInput">Abgabefrist:</label>
+            <input class="form-control" id="deadLineInput" name="deadline" required th:date="${deadline}"
+                   type="date">
+
+
             <br>
             <hr>
 

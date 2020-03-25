@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 
 @Service
 public class EmailService {
@@ -135,17 +136,18 @@ public class EmailService {
    * @param student        Is setting the Student´s name.
    * @param currentSubject Is setting the Student´s subject.
    */
-  public void sendWarningMail(Student student, String currentSubject)
+  public void sendWarningMail(Student student, String currentSubject, Date currentDeadLine)
       throws MessagingException {
-    String emailText = createWarningEmailBodyText(student, currentSubject);
+    String emailText = createWarningEmailBodyText(student, currentSubject, currentDeadLine);
     String mail = student.getEmail();
     sendSimpleMessage(mail, currentSubject, emailText);
   }
 
-  private String createWarningEmailBodyText(Student student, String currentSubject) {
+  private String createWarningEmailBodyText(Student student, String currentSubject, Date currentDeadLine) {
     String customizedWarningEmailBodyText = warningEmailBodyText;
     customizedWarningEmailBodyText = customizedWarningEmailBodyText.replace(":name", student.getName());
     customizedWarningEmailBodyText = customizedWarningEmailBodyText.replace(":modul", currentSubject);
+    customizedWarningEmailBodyText = customizedWarningEmailBodyText.replace(":abgabefrist", currentDeadLine.toString());
     customizedWarningEmailBodyText = customizedWarningEmailBodyText.replace(":break", "\n");
     return customizedWarningEmailBodyText;
   }
