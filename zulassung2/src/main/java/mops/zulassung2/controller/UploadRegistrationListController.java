@@ -1,5 +1,6 @@
 package mops.zulassung2.controller;
 
+import mops.zulassung2.model.OrgaUploadCSVForm;
 import mops.zulassung2.model.dataobjects.AccountCreator;
 import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.services.EmailService;
@@ -10,18 +11,23 @@ import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.SessionScope;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @SessionScope
 @RequestMapping("/zulassung2")
 @Controller
-public class OrgaUploadRegistrationListController {
+public class UploadRegistrationListController {
 
   private final FileService fileService;
   private final EmailService emailService;
@@ -29,7 +35,7 @@ public class OrgaUploadRegistrationListController {
   public List<Student> notAllowed = new ArrayList<>();
   public List<Student> allowed = new ArrayList<>();
   public String currentSubject = "";
-  public String currentSemester = "";
+  public String currentDeadLine;
   private AccountCreator accountCreator;
   private String dangerMessage;
   private String warningMessage;
@@ -43,9 +49,9 @@ public class OrgaUploadRegistrationListController {
    * @param fileService  Service for parsing files
    * @param emailService Service for sending emails
    */
-  public OrgaUploadRegistrationListController(FileService fileService,
-                                              EmailService emailService,
-                                              OrgaUploadRegistrationService orgaUploadRegistrationService) {
+  public UploadRegistrationListController(FileService fileService,
+                                          EmailService emailService,
+                                          OrgaUploadRegistrationService orgaUploadRegistrationService) {
     accountCreator = new AccountCreator();
     this.orgaUploadRegistrationService = orgaUploadRegistrationService;
     this.fileService = fileService;
@@ -62,41 +68,44 @@ public class OrgaUploadRegistrationListController {
    */
   @GetMapping("/upload-registrationlist")
   @Secured("ROLE_orga")
-  public String orga(KeycloakAuthenticationToken token, Model model) {
+  public String orga(KeycloakAuthenticationToken token, Model model, @ModelAttribute("form") OrgaUploadCSVForm form) {
     resetMessages();
     model.addAttribute("account", accountCreator.createFromPrincipal(token));
     model.addAttribute("notallowed", notAllowed);
     model.addAttribute("allowed", allowed);
+    model.addAttribute("form", form);
     model.addAttribute("orgauploadregistrationservice", new OrgaUploadRegistrationService());
 
-    return "orga-upload-registrationlist";
+    return "upload-registrationlist";
   }
 
   /**
    * This method is called for a POST request to /upload-registrationlist.
    *
-   * @param file File that was uploaded
    * @return Redirects to view orga-upload-registrationlist
    */
 
   @PostMapping("/upload-registrationlist")
   @Secured("ROLE_orga")
-  public String submit(@RequestParam("file") MultipartFile file, String subject, String semester) {
-    if (!FilenameUtils.isExtension(file.getOriginalFilename(), "csv")) {
+  public String submit(@ModelAttribute("form") OrgaUploadCSVForm form) {
+    if (!FilenameUtils.isExtension(form.getMultipartFile().getOriginalFilename(), "csv")) {
       setDangerMessage("Die Datei muss im .csv Format sein!");
       return "redirect:/zulassung2/upload-registrationlist";
     }
-    currentSubject = subject.replaceAll("[: ]", "-");
-    currentSemester = semester.replaceAll("[: ]", "-");
-    List<Student> students = fileService.processCSVUpload(file);
+    currentSubject = form.getSubject().replaceAll("[: ]", "-");
+    currentDeadLine = form.getDeadline();
+
+    List<Student> students = fileService.processCSVUpload(form.getMultipartFile());
     if (students == null) {
       setDangerMessage("Die Datei konnte nicht gelesen werden!");
       return "redirect:/zulassung2/registrationlist";
     }
+
+
     notAllowed.clear();
     allowed.clear();
     for (Student student : students) {
-      if (!orgaUploadRegistrationService.test(student, subject)) {
+      if (!orgaUploadRegistrationService.test(student, form.getSubject())) {
         notAllowed.add(student);
       } else {
         allowed.add(student);
@@ -127,7 +136,7 @@ public class OrgaUploadRegistrationListController {
     boolean firstError = true;
     for (Student student : notAllowed) {
       try {
-        emailService.sendWarningMail(student, currentSubject);
+        emailService.sendWarningMail(student, currentSubject, currentDeadLine);
       } catch (MessagingException e) {
         if (firstError) {
           setDangerMessage("An folgende Studenten konnte keine Email versendet werden: "
@@ -161,7 +170,7 @@ public class OrgaUploadRegistrationListController {
   public String sendWarningMail(@RequestParam("count") int count) {
     Student selectedStudent = notAllowed.get(count);
     try {
-      emailService.sendWarningMail(selectedStudent, currentSubject);
+      emailService.sendWarningMail(selectedStudent, currentSubject, currentDeadLine);
       setSuccessMessage("Email an " + selectedStudent.getForeName() + " "
           + selectedStudent.getName()
           + " wurde erfolgreich versendet.");
@@ -171,6 +180,40 @@ public class OrgaUploadRegistrationListController {
           + " konnte nicht versendet werden!");
     }
     return "redirect:/zulassung2/upload-registrationlist";
+  }
+
+  /**
+   * This method is called for a POST request to /export-allowed.
+   * It creates a CSV-file which contains the approved students and
+   * offers the user a dialog to download the file.
+   */
+  @PostMapping("/export-allowed")
+  @Secured("ROLE_orga")
+  public void exportCSVFile(HttpServletResponse response) {
+    try {
+      File csvOutput = new File("allowed.csv");
+      FileWriter writer = new FileWriter(csvOutput, UTF_8);
+      writer.write("matriculationnumber,email,name,forename");
+      for (Student student : allowed) {
+        writer.write("\n" + student.getMatriculationNumber() + ","
+            + student.getEmail() + ","
+            + student.getName() + ","
+            + student.getForeName());
+      }
+      writer.close();
+
+      response.setContentType("text/csv");
+      response.setHeader("Content-Disposition",
+          "attachment; filename=" + currentSubject + "_zugelassen.csv");
+
+      response.setContentLength((int) csvOutput.length());
+      InputStream inputStream = new BufferedInputStream(new FileInputStream(csvOutput));
+      FileCopyUtils.copy(inputStream, response.getOutputStream());
+
+      Files.deleteIfExists(csvOutput.toPath());
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -239,8 +282,10 @@ public class OrgaUploadRegistrationListController {
     return currentSubject;
   }
 
-  @ModelAttribute("semester")
-  String getCurrentSemester() {
-    return currentSemester;
+  @ModelAttribute("deadline")
+  String getCurrentDeadLine() {
+    return currentDeadLine;
   }
+
 }
+

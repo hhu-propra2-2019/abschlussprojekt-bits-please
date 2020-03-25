@@ -112,7 +112,7 @@ public class MinIoImplementation implements MinIoImplementationInterface {
    *
    * @param student student that needs to be checked
    * @param subject subject that student needs to be authorized for
-   * @return
+   * @return true if student is authorized, else false
    */
   @Override
   public boolean isAuthorized(Student student, String subject) {
@@ -121,7 +121,8 @@ public class MinIoImplementation implements MinIoImplementationInterface {
       Iterable<Result<Item>> objects = minIo.listObjects(bucketName);
       for (Result<Item> object : objects) {
         String objectName = minIo.getObjectName(object);
-        if (objectName.contains(subject)) {
+        String[] splittedString = objectName.split("_");
+        if (splittedString.length > 1 && splittedString[1].equals(subject)) {
           return true;
         }
       }

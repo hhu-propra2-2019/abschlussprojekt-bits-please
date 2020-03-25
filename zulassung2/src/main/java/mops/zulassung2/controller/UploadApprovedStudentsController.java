@@ -114,11 +114,11 @@ public class UploadApprovedStudentsController {
       } catch (MessagingException e) {
         if (firstError) {
           setDangerMessage("An folgende Studenten konnte keine Email versendet werden: "
-                  + student.getForeName() + " " + student.getName());
+              + student.getForeName() + " " + student.getName());
           firstError = false;
         } else {
           setDangerMessage(dangerMessage.concat(", "
-                  + student.getForeName() + " " + student.getName()));
+              + student.getForeName() + " " + student.getName()));
         }
       }
       try {
@@ -152,12 +152,12 @@ public class UploadApprovedStudentsController {
       emailService.sendMail(selectedStudent, currentSubject, file);
       fileService.storeReceipt(selectedStudent, file);
       setSuccessMessage("Email an " + selectedStudent.getForeName() + " "
-              + selectedStudent.getName()
-              + " wurde erfolgreich versendet.");
+          + selectedStudent.getName()
+          + " wurde erfolgreich versendet.");
     } catch (MessagingException e) {
       setDangerMessage("Email an " + selectedStudent.getForeName()
-              + " " + selectedStudent.getName()
-              + " konnte nicht versendet werden!");
+          + " " + selectedStudent.getName()
+          + " konnte nicht versendet werden!");
     }
     try {
       Files.deleteIfExists(file.toPath());

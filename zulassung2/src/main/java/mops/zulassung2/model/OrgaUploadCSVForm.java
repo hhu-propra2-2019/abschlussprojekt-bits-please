@@ -9,6 +9,7 @@ public class OrgaUploadCSVForm {
   private MultipartFile multipartFile;
   private String subject;
   private String semester;
+  private String deadline;
 
 
 }
