@@ -199,9 +199,9 @@ public class UploadApprovedStudentsController {
    * Reset UI Messages.
    */
   private void resetMessages() {
-    this.dangerMessage = dangerMessage;
-    this.warningMessage = warningMessage;
-    this.successMessage = successMessage;
+    this.dangerMessage = null;
+    this.warningMessage = null;
+    this.successMessage = null;
   }
 
   @ModelAttribute("danger")
