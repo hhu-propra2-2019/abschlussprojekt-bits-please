@@ -14,6 +14,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class EmailService {
@@ -144,11 +146,16 @@ public class EmailService {
 
   private String createWarningEmailBodyText(Student student, String currentSubject, String currentDeadLine) {
 
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+    LocalDateTime dateTime = LocalDateTime.parse(currentDeadLine, formatter);
+
+    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy' um 'HH:mm' Uhr'");
+    String formattedDateTime = dateTime.format(dateTimeFormatter);
 
     String customizedWarningEmailBodyText = warningEmailBodyText;
     customizedWarningEmailBodyText = customizedWarningEmailBodyText.replace(":name", student.getName());
     customizedWarningEmailBodyText = customizedWarningEmailBodyText.replace(":modul", currentSubject);
-    customizedWarningEmailBodyText = customizedWarningEmailBodyText.replace(":abgabefrist", currentDeadLine.replace('T', ' '));
+    customizedWarningEmailBodyText = customizedWarningEmailBodyText.replace(":abgabefrist", formattedDateTime);
     customizedWarningEmailBodyText = customizedWarningEmailBodyText.replace(":break", "\n");
     return customizedWarningEmailBodyText;
   }
