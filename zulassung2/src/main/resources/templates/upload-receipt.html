@@ -40,6 +40,8 @@
         Some success message
     </div>
     <div class="table-responsive" th:if="${not receipts.isEmpty()}">
+        <p class="lead" sec:authorize="hasRole('orga')">Gültige Quittungen können über die entsprechende Schaltfläche im
+            System hinterlegt werden.</p>
         <p class="lead" sec:authorize="hasRole('studentin')">Bitte reichen Sie die Zulassungen für die Klausuren, für
             die Sie sich anmelden möchten, ein:</p>
         <div class="scrollable">
@@ -73,7 +75,11 @@
                               method="POST"
                               th:action="@{/zulassung2/submit-receipt/individual(count=${iterationStatus.index})}">
                             <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
-                            <button class="btn btn-primary" type="submit">Zulassungsnachweis einreichen
+                            <button class="btn btn-primary" sec:authorize="hasRole('orga')" type="submit">
+                                Im System speichern
+                            </button>
+                            <button class="btn btn-primary" sec:authorize="hasRole('studentin')" type="submit">
+                                Zulassungsnachweis einreichen
                             </button>
                         </form>
                     </td>
@@ -82,6 +88,13 @@
                 </tbody>
             </table>
         </div>
+        <form class="inline-form" method="POST" sec:authorize="hasRole('orga')"
+              th:action="@{/zulassung2/submit-receipt}">
+            <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
+            <button class="btn btn-primary" type="submit">
+                Alle gültigen Nachweise im System speichern
+            </button>
+        </form>
     </div>
 </div>
 </body>
