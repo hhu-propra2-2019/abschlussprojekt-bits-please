@@ -76,7 +76,7 @@ public class OrgaUploadRegistrationListController {
   /**
    * This method is called for a POST request to /upload-registrationlist.
    *
-   * @param file File that was uploaded
+   * @param form form to be injected
    * @return Redirects to view orga-upload-registrationlist
    */
 
