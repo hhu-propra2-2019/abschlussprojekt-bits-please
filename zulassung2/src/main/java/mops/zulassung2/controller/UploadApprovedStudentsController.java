@@ -105,21 +105,15 @@ public class UploadApprovedStudentsController {
   @PostMapping("/sendmail")
   @Secured("ROLE_orga")
   public String sendMail() {
-    boolean firstError = true;
+    boolean noErrorsOcurredWhileSendingMessages = true;
     for (Student student : students) {
       File file = emailService.createFile(student, currentSubject, currentSemester);
       try {
         emailService.sendMail(student, currentSubject, file);
         fileService.storeReceipt(student, file);
       } catch (MessagingException e) {
-        if (firstError) {
-          setDangerMessage("An folgende Studenten konnte keine Email versendet werden: "
-              + student.getForeName() + " " + student.getName());
-          firstError = false;
-        } else {
-          setDangerMessage(dangerMessage.concat(", "
-              + student.getForeName() + " " + student.getName()));
-        }
+        createDangerMessage(noErrorsOcurredWhileSendingMessages, student);
+        noErrorsOcurredWhileSendingMessages = false;
       }
       try {
         Files.deleteIfExists(file.toPath());
@@ -127,12 +121,22 @@ public class UploadApprovedStudentsController {
         e.printStackTrace();
       }
     }
-    if (firstError) {
+    if (noErrorsOcurredWhileSendingMessages) {
       setSuccessMessage("Alle Emails wurden erfolgreich versendet.");
     } else {
       setWarningMessage("Es wurden nicht alle Emails korrekt versendet.");
     }
     return "redirect:/zulassung2/upload-approved-students";
+  }
+
+  private void createDangerMessage(boolean noErrorsOcurredWhileSendingMessages, Student student) {
+    if (noErrorsOcurredWhileSendingMessages) {
+      setDangerMessage("An folgende Studenten konnte keine Email versendet werden: "
+          + student.getForeName() + " " + student.getName());
+    } else {
+      setDangerMessage(dangerMessage.concat(", "
+          + student.getForeName() + " " + student.getName()));
+    }
   }
 
 
