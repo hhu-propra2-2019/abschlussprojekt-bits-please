@@ -95,7 +95,32 @@ public class UploadReceiptsController {
         + " " + receiptData.getName()
         + " zur Veranstaltung "
         + receiptData.getModule()
-        + " wurde erfolgreich eingereicht.");
+        + " wurde erfolgreich gespeichert.");
+    return "redirect:/zulassung2/upload-receipt";
+  }
+
+  /**
+   * Stores the receipt from a single student in MinIO.
+   *
+   * @return redirect to /zulassung2/upload-receipt
+   */
+  @PostMapping("/submit-receipt")
+  @Secured("ROLE_orga")
+  public String submitReceipts() {
+    for (ReceiptDataInterface receiptData : verifiedReceipts) {
+      if (receiptData.isValid()) {
+        File file = fileService.createFileFromSubmittedReceipt(receiptData);
+        Student student = new Student(
+            receiptData.getMatriculationNumber(),
+            receiptData.getEmail(),
+            receiptData.getName(),
+            receiptData.getForeName());
+
+        //TODO: Fehlermeldungen von MinIO anzeigen
+        fileService.storeReceipt(student, file);
+      }
+    }
+    setSuccessMessage("Alle gültigen Nachweise wurden erfolgreich gespeichert.");
     return "redirect:/zulassung2/upload-receipt";
   }
 
