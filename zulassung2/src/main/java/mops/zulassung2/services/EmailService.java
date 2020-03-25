@@ -45,40 +45,40 @@ public class EmailService {
 
   public File createFile(Student student, String currentSubject, String currentSemester) {
     ReceiptDataInterface receiptDataInterface = new ReceiptData(student, currentSubject, currentSemester);
-    String data = receiptDataInterface.create();
-    Receipt receipt = signatureService.sign(data);
-    File file = new File(System.getProperty("user.dir")
+    String studentData = receiptDataInterface.create();
+    Receipt receipt = signatureService.sign(studentData);
+    File userFile = new File(System.getProperty("user.dir")
         + "token_" + receiptDataInterface.getModule()
         + "_" + receiptDataInterface.getName() + ".txt");
     FileWriter writer;
 
     try {
-      writer = new FileWriter(file, StandardCharsets.UTF_8);
-      writer.write(data + "\n");
+      writer = new FileWriter(userFile, StandardCharsets.UTF_8);
+      writer.write(studentData + "\n");
       writer.write(receipt.getSignature());
       writer.close();
     } catch (IOException e) {
       e.printStackTrace();
     }
-    return file;
+    return userFile;
   }
 
   /**
    * Sends an email with attachment (File).
    *
-   * @param to       receiver of the mail
+   * @param receiver receiver of the mail
    * @param subject  subject of the mail
    * @param attach   file to be attached
    * @param filename name of the attached file
    */
-  public void sendMessage(String to, String subject, String text, File attach, String filename)
+  public void sendMessage(String receiver, String subject, String text, File attach, String filename)
       throws MessagingException {
     MimeMessage message = emailSender.createMimeMessage();
     MimeMessageHelper helper = new MimeMessageHelper(message, true);
-    if (!isValidEmailAddress(to)) {
+    if (!isValidEmailAddress(receiver)) {
       throw new MessagingException();
     }
-    helper.setTo(to);
+    helper.setTo(receiver);
     helper.setSubject(subject);
     helper.setText(text);
     helper.addAttachment(filename, attach);
@@ -112,18 +112,18 @@ public class EmailService {
   /**
    * Sends an email without attachment.
    *
-   * @param to      receiver of the mail
+   * @param receiver receiver of the mail
    * @param subject subject of the mail
    * @param text    Is setting up the Text for the mail
    */
-  public void sendSimpleMessage(String to, String subject, String text)
+  public void sendSimpleMessage(String receiver, String subject, String text)
       throws MessagingException {
     MimeMessage message = emailSender.createMimeMessage();
     MimeMessageHelper helper = new MimeMessageHelper(message, true);
-    if (!isValidEmailAddress(to)) {
+    if (!isValidEmailAddress(receiver)) {
       throw new MessagingException();
     }
-    helper.setTo(to);
+    helper.setTo(receiver);
     helper.setSubject(subject);
     helper.setText(text);
     emailSender.send(message);
