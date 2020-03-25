@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class OrgaUploadRegistrationService {
+public class UploadRegistrationService {
   private NameCreator nameCreator;
   private MinIoImplementationInterface minIo;
   @Value("${endpoint}")
@@ -17,7 +17,7 @@ public class OrgaUploadRegistrationService {
   @Value("${secret_key}")
   private String secretKey;
 
-  public OrgaUploadRegistrationService() {
+  public UploadRegistrationService() {
     nameCreator = new NameCreator(new BucketNameValidator());
   }
 

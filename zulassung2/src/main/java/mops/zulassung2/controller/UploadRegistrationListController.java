@@ -5,7 +5,7 @@ import mops.zulassung2.model.dataobjects.AccountCreator;
 import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.services.EmailService;
 import mops.zulassung2.services.FileService;
-import mops.zulassung2.services.OrgaUploadRegistrationService;
+import mops.zulassung2.services.UploadRegistrationService;
 import org.apache.commons.io.FilenameUtils;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.access.annotation.Secured;
@@ -31,7 +31,7 @@ public class UploadRegistrationListController {
 
   private final FileService fileService;
   private final EmailService emailService;
-  private final OrgaUploadRegistrationService orgaUploadRegistrationService;
+  private final UploadRegistrationService uploadRegistrationService;
   public List<Student> notAllowed = new ArrayList<>();
   public List<Student> allowed = new ArrayList<>();
   public String currentSubject = "";
@@ -51,9 +51,9 @@ public class UploadRegistrationListController {
    */
   public UploadRegistrationListController(FileService fileService,
                                           EmailService emailService,
-                                          OrgaUploadRegistrationService orgaUploadRegistrationService) {
+                                          UploadRegistrationService uploadRegistrationService) {
     accountCreator = new AccountCreator();
-    this.orgaUploadRegistrationService = orgaUploadRegistrationService;
+    this.uploadRegistrationService = uploadRegistrationService;
     this.fileService = fileService;
     this.emailService = emailService;
   }
@@ -74,7 +74,7 @@ public class UploadRegistrationListController {
     model.addAttribute("notallowed", notAllowed);
     model.addAttribute("allowed", allowed);
     model.addAttribute("form", form);
-    model.addAttribute("orgauploadregistrationservice", new OrgaUploadRegistrationService());
+    model.addAttribute("orgauploadregistrationservice", new UploadRegistrationService());
 
     return "upload-registrationlist";
   }
@@ -105,7 +105,7 @@ public class UploadRegistrationListController {
     notAllowed.clear();
     allowed.clear();
     for (Student student : students) {
-      if (!orgaUploadRegistrationService.test(student, form.getSubject())) {
+      if (!uploadRegistrationService.test(student, form.getSubject())) {
         notAllowed.add(student);
       } else {
         allowed.add(student);
