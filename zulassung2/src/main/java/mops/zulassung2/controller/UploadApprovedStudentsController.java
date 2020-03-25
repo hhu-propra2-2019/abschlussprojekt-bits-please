@@ -159,7 +159,7 @@ public class UploadApprovedStudentsController {
   }
 
   private void createDangerMessageMultipleStudents(boolean noErrorsOcurredWhileSendingMessages, Student student) {
-    // noErrosOcurredWhileSendingMessages is only true when this method is called for the first time
+    // noErrorsOcurredWhileSendingMessages is only true when this method is called for the first time
     if (noErrorsOcurredWhileSendingMessages) {
       setDangerMessage("An folgende Studenten konnte keine Email versendet werden: "
           + student.getForeName() + " " + student.getName());

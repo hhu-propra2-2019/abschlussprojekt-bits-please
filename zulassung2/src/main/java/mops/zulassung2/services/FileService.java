@@ -21,7 +21,7 @@ import java.util.List;
 public class FileService {
 
   private NameCreatorInterface nameCreatorInterface;
-  private MinIoImplementation minIo;
+  private MinIoImplementationInterface minIo;
   private SignatureService signatureService;
 
   @Value("${endpoint}")

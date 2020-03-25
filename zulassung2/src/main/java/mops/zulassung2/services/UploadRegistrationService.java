@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class UploadRegistrationService {
   private NameCreator nameCreator;
-  private MinIoImplementation minIo;
+  private MinIoImplementationInterface minIo;
   @Value("${endpoint}")
   private String endpoint;
   @Value("${access_key}")

@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class MinIoImplementation {
+public class MinIoImplementation implements MinIoImplementationInterface {
   private MinIoRepositoryInterface minIo;
   private NameCreatorInterface nameCreatorInterface;
 
@@ -24,6 +24,7 @@ public class MinIoImplementation {
    *
    * @return list of bucket objects
    */
+  @Override
   public List<BucketObject> getAllObjects() {
     List<BucketObject> buckets = new ArrayList<>();
     List<Bucket> bucketList = minIo.listBuckets();
@@ -45,27 +46,33 @@ public class MinIoImplementation {
     }
   }
 
+  @Override
   public void removeBucket(String bucketName) {
     minIo.removeBucket(bucketName);
   }
 
+  @Override
   public void makeBucket(String bucketName) {
     minIo.makeBucket(bucketName);
   }
 
+  @Override
   public boolean bucketExists(String bucketName) {
     return minIo.bucketExists(bucketName);
   }
 
+  @Override
   public void putObject(String bucketName, String objectName, String fileName, Long size,
                         Map<String, String> headerMap, String contentType) {
     minIo.putObject(bucketName, objectName, fileName, size, headerMap, contentType);
   }
 
+  @Override
   public void removeObject(String bucketName, String objectName) {
     minIo.removeObject(bucketName, objectName);
   }
 
+  @Override
   public Date getCreateTime(String bucketName, String objectName) {
     return minIo.getCreateTime(bucketName, objectName);
   }
@@ -76,6 +83,7 @@ public class MinIoImplementation {
    * @param bucketName name of the bucket
    * @return boolean
    */
+  @Override
   public boolean isBucketEmpty(String bucketName) {
     List<Bucket> bucketList;
     bucketList = minIo.listBuckets();
@@ -104,15 +112,17 @@ public class MinIoImplementation {
    *
    * @param student student that needs to be checked
    * @param subject subject that student needs to be authorized for
-   * @return
+   * @return true if student is authorized, else false
    */
+  @Override
   public boolean isAuthorized(Student student, String subject) {
     String bucketName = nameCreatorInterface.createBucketName(student);
     if (minIo.bucketExists(bucketName)) {
       Iterable<Result<Item>> objects = minIo.listObjects(bucketName);
       for (Result<Item> object : objects) {
         String objectName = minIo.getObjectName(object);
-        if (objectName.contains(subject)) {
+        String[] splittedString = objectName.split("_");
+        if (splittedString.length > 1 && splittedString[1].equals(subject)) {
           return true;
         }
       }
