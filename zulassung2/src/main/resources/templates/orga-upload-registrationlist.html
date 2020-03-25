@@ -50,12 +50,17 @@
         Some success message
     </div>
 
-
-    <!-- <div class="table-responsive" th:if="${students!=null and not students.isEmpty()}"> -->
     <div class="table-responsive" th:if="${notallowed!=null and not notallowed.isEmpty()}">
+        <<<<<<< HEAD
         <span class="lead">Nicht Zugelassene Teilnehmer zur Veranstaltung <span
                 th:text="${subject}">Subject</span></span>
 
+        =======
+        <span class="lead">Nicht zugelassene Teilnehmer zur Veranstaltung <span th:text="${subject}">Subject</span> im
+            <span
+                    th:text="${semester}">Semester</span>
+        </span>
+        >>>>>>> development
 
         <div class="scrollable">
 
@@ -88,21 +93,29 @@
                     </td>
                 </tbody>
             </table>
+            <<<<<<< HEAD
             <form action="/zulassung2/sendmailreglist" class="inline-form" method="POST">
                 <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
                 <button class="btn btn-primary" type="submit">Warnungsnachricht an alle Betroffenen senden
                 </button>
 
             </form>
+            =======
+            >>>>>>> development
         </div>
+        <form action="/zulassung2/sendmailreglist" class="inline-form" method="POST">
+            <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
+            <br>
+            <button class="btn btn-primary" type="submit">Warnungsnachricht an alle Betroffenen senden
+            </button>
+        </form>
+        <br>
     </div>
 
+    <hr th:if="${allowed!=null and not allowed.isEmpty() and notallowed!=null and not notallowed.isEmpty()}">
 
     <div class="table-responsive" th:if="${allowed!=null and not allowed.isEmpty()}">
-        <br>
-        <hr>
-        <span class="lead">Zugelassene Teilnehmer zur Veranstaltung <span th:text="${subject}">Subject</span>
-        </span>
+        <p class="lead">Zugelassene Teilnehmer zur Veranstaltung <span th:text="${subject}">Subject</span></p>
         <br>
         <div class="scrollable">
             <table class="table">

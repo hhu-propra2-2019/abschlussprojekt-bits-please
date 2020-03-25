@@ -26,7 +26,6 @@ public class OrgaUploadRegistrationListController {
   private final FileService fileService;
   private final EmailService emailService;
   private final OrgaUploadRegistrationService orgaUploadRegistrationService;
-  public List<Student> students = new ArrayList<>();
   public List<Student> notAllowed = new ArrayList<>();
   public List<Student> allowed = new ArrayList<>();
   public String currentSubject = "";
@@ -90,7 +89,7 @@ public class OrgaUploadRegistrationListController {
     currentSubject = form.getSubject().replaceAll("[: ]", "-");
     currentDeadLine = form.getDeadline();
 
-    students = fileService.processCSVUpload(form.getMultipartFile());
+    List<Student> students = fileService.processCSVUpload(form.getMultipartFile());
     if (students == null) {
       setDangerMessage("Die Datei konnte nicht gelesen werden!");
       return "redirect:/zulassung2/registrationlist";
@@ -100,11 +99,20 @@ public class OrgaUploadRegistrationListController {
     notAllowed.clear();
     allowed.clear();
     for (Student student : students) {
-      if (orgaUploadRegistrationService.test(student, form.getSubject()) == false) {
+      if (!orgaUploadRegistrationService.test(student, form.getSubject())) {
         notAllowed.add(student);
       } else {
         allowed.add(student);
       }
+    }
+    if (notAllowed.isEmpty()) {
+      setSuccessMessage("Alle Angemeldeten verfügen über eine gültige Zulassung!");
+    } else if (!allowed.isEmpty()) {
+      setWarningMessage("Es konnte nicht für alle Angemeldeten eine gültige Zulassung gefunden werden."
+          + " Bitte lassen Sie den Betroffenen über untenstehendes Formular eine Nachricht zukommen.");
+    } else {
+      setDangerMessage("Es konnte für keinen Angemeldeten eine gültige Zulassung gefunden werden."
+          + " Haben Sie die korrekte Anmeldeliste hochgeladen?");
     }
     return "redirect:/zulassung2/upload-registrationlist";
   }
@@ -120,7 +128,7 @@ public class OrgaUploadRegistrationListController {
   @Secured("ROLE_orga")
   public String sendWarningMail() {
     boolean firstError = true;
-    for (Student student : students) {
+    for (Student student : notAllowed) {
       try {
         emailService.sendWarningMail(student, currentSubject, currentDeadLine);
       } catch (MessagingException e) {
@@ -154,7 +162,7 @@ public class OrgaUploadRegistrationListController {
   @PostMapping("/sendmailreglist/individual")
   @Secured("ROLE_orga")
   public String sendWarningMail(@RequestParam("count") int count) {
-    Student selectedStudent = students.get(count);
+    Student selectedStudent = notAllowed.get(count);
     try {
       emailService.sendWarningMail(selectedStudent, currentSubject, currentDeadLine);
       setSuccessMessage("Email an " + selectedStudent.getForeName() + " "
