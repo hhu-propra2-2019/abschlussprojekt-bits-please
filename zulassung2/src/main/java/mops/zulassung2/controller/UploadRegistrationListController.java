@@ -4,7 +4,7 @@ import mops.zulassung2.model.dataobjects.AccountCreator;
 import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.services.EmailService;
 import mops.zulassung2.services.FileService;
-import mops.zulassung2.services.OrgaUploadRegistrationService;
+import mops.zulassung2.services.UploadRegistrationService;
 import org.apache.commons.io.FilenameUtils;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.access.annotation.Secured;
@@ -21,11 +21,11 @@ import java.util.List;
 @SessionScope
 @RequestMapping("/zulassung2")
 @Controller
-public class OrgaUploadRegistrationListController {
+public class UploadRegistrationListController {
 
   private final FileService fileService;
   private final EmailService emailService;
-  private final OrgaUploadRegistrationService orgaUploadRegistrationService;
+  private final UploadRegistrationService uploadRegistrationService;
   public List<Student> notAllowed = new ArrayList<>();
   public List<Student> allowed = new ArrayList<>();
   public String currentSubject = "";
@@ -43,11 +43,11 @@ public class OrgaUploadRegistrationListController {
    * @param fileService  Service for parsing files
    * @param emailService Service for sending emails
    */
-  public OrgaUploadRegistrationListController(FileService fileService,
-                                              EmailService emailService,
-                                              OrgaUploadRegistrationService orgaUploadRegistrationService) {
+  public UploadRegistrationListController(FileService fileService,
+                                          EmailService emailService,
+                                          UploadRegistrationService uploadRegistrationService) {
     accountCreator = new AccountCreator();
-    this.orgaUploadRegistrationService = orgaUploadRegistrationService;
+    this.uploadRegistrationService = uploadRegistrationService;
     this.fileService = fileService;
     this.emailService = emailService;
   }
@@ -67,7 +67,7 @@ public class OrgaUploadRegistrationListController {
     model.addAttribute("account", accountCreator.createFromPrincipal(token));
     model.addAttribute("notallowed", notAllowed);
     model.addAttribute("allowed", allowed);
-    model.addAttribute("orgauploadregistrationservice", new OrgaUploadRegistrationService());
+    model.addAttribute("orgauploadregistrationservice", new UploadRegistrationService());
 
     return "orga-upload-registrationlist";
   }
@@ -96,7 +96,7 @@ public class OrgaUploadRegistrationListController {
     notAllowed.clear();
     allowed.clear();
     for (Student student : students) {
-      if (!orgaUploadRegistrationService.test(student, subject)) {
+      if (!uploadRegistrationService.test(student, subject)) {
         notAllowed.add(student);
       } else {
         allowed.add(student);
