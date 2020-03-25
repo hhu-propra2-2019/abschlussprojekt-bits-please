@@ -20,7 +20,7 @@ import java.util.List;
 public class FileService {
 
   private NameCreatorInterface nameCreatorInterface;
-  private MinIoImplementation minIo;
+  private MinIoImplementationInterface minIo;
   @Value("${endpoint}")
   private String endpoint;
   @Value("${access_key}")
@@ -65,15 +65,15 @@ public class FileService {
 
     String[] dataObjects = receiptContent.split(" ");
     Student student = new Student(
-        dataObjects[0].split(":")[1], // Matriculationnumber
-        dataObjects[1].split(":")[1], // Email
-        dataObjects[2].split(":")[1], // Name
-        dataObjects[3].split(":")[1]); // Forename
+            dataObjects[0].split(":")[1], // Matriculationnumber
+            dataObjects[1].split(":")[1], // Email
+            dataObjects[2].split(":")[1], // Name
+            dataObjects[3].split(":")[1]); // Forename
 
     ReceiptDataInterface receiptDataInterface = new ReceiptData(student,
-        dataObjects[4].split(":")[1], // Module
-        dataObjects[5].split(":")[1], // Semester
-        signature);                         // Signature
+            dataObjects[4].split(":")[1], // Module
+            dataObjects[5].split(":")[1], // Semester
+            signature);                         // Signature
 
     return receiptDataInterface;
   }
@@ -98,7 +98,7 @@ public class FileService {
     }
 
     minIo.putObject(bucketName, file.getName(), file.getPath(), file.length(),
-        new HashMap<String, String>(), ".txt");
+            new HashMap<String, String>(), ".txt");
   }
 
   /**
@@ -110,8 +110,8 @@ public class FileService {
   public File createFileFromSubmittedReceipt(ReceiptDataInterface receiptDataInterface) {
     String data = receiptDataInterface.create();
     File file = new File(System.getProperty("user.dir")
-        + "token_" + receiptDataInterface.getModule()
-        + "_" + receiptDataInterface.getName() + ".txt");
+            + "token_" + receiptDataInterface.getModule()
+            + "_" + receiptDataInterface.getName() + ".txt");
     FileWriter writer;
 
     try {

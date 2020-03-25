@@ -13,7 +13,7 @@ import static org.mockito.Mockito.*;
 
 public class DeleteStorageTaskTest {
 
-  private MinIoImplementation minIo;
+  private MinIoImplementationInterface minIo;
   private CustomDateInterface customDateInterface;
   private DeleteStorageTask deleteStorageTask;
   private List<BucketObject> bucketObjects;
