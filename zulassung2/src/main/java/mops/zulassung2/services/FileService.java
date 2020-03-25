@@ -108,20 +108,20 @@ public class FileService {
    * @return redirect
    */
   public File createFileFromSubmittedReceipt(ReceiptDataInterface receiptDataInterface) {
-    String data = receiptDataInterface.create();
-    File file = new File(System.getProperty("user.dir")
+    String studentData = receiptDataInterface.create();
+    File userFile = new File(System.getProperty("user.dir")
         + "token_" + receiptDataInterface.getModule()
         + "_" + receiptDataInterface.getName() + ".txt");
     FileWriter writer;
 
     try {
-      writer = new FileWriter(file, StandardCharsets.UTF_8);
-      writer.write(data + "\n");
+      writer = new FileWriter(userFile, StandardCharsets.UTF_8);
+      writer.write(studentData + "\n");
       writer.write(receiptDataInterface.getSignature());
       writer.close();
     } catch (IOException e) {
       e.printStackTrace();
     }
-    return file;
+    return userFile;
   }
 }
