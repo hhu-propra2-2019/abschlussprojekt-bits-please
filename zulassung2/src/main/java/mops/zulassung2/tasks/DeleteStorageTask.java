@@ -10,7 +10,7 @@ import java.util.List;
 public class DeleteStorageTask {
 
   private int storageDuration;
-  private MinIoImplementation minIoImplementation;
+  private MinIoImplementationInterface minIoImplementation;
   private CustomDateInterface currentDate;
 
   /**
@@ -21,7 +21,7 @@ public class DeleteStorageTask {
    * @param currentDate   current date
    */
 
-  public DeleteStorageTask(MinIoImplementation impl, int storeDuration, CustomDateInterface currentDate) {
+  public DeleteStorageTask(MinIoImplementationInterface impl, int storeDuration, CustomDateInterface currentDate) {
     this.minIoImplementation = impl;
     this.storageDuration = storeDuration;
     this.currentDate = currentDate;
