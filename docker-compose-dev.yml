@@ -1,7 +1,5 @@
 version: "3.7"
 services:
-  zulassung2:
-    image: alpine:latest
   minio:
     image: minio/minio:latest
     ports:
