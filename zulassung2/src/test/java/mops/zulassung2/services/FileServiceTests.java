@@ -4,10 +4,7 @@ import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.model.fileparsing.CSVLineParser;
 import mops.zulassung2.model.fileparsing.FileParser;
 import mops.zulassung2.model.fileparsing.Validator;
-import mops.zulassung2.model.minio.MinIoImplementation;
-import mops.zulassung2.model.minio.MinIoRepository;
-import mops.zulassung2.model.minio.MinIoRepositoryInterface;
-import mops.zulassung2.model.minio.NameCreator;
+import mops.zulassung2.model.minio.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockMultipartFile;
@@ -26,22 +23,13 @@ public class FileServiceTests {
   private FileService fileService;
   private Validator validator;
   private CSVLineParser csvLineParser;
-  private FileParser csvParser;
-  private NameCreator nameCreator;
-  private String receiptContent;
   private ReceiptData receiptData;
   private Student louis = new Student("2835749", "loalf100@uni-duesseldorf.de", "alfares", "louis");
   private Student markus = new Student("2757144", "masie@hhu.de", "siewert", "markus");
   private String header = "matriculationnumber,email,name,forename\n";
   private String student1Data = "2727912,tigeu100@hhu.de,geuer,tim\n";
   private String student2Data = "2757144,masie@hhu.de,siewert,markus\n";
-  private MinIoImplementation minIo;
-  @Value("${endpoint}")
-  private String endpoint;
-  @Value("${access_key}")
-  private String accessKey;
-  @Value("${secret_key}")
-  private String secretKey;
+
 
 
   @Test
@@ -113,26 +101,6 @@ public class FileServiceTests {
 
   }
 
-  @Test
-  public void storeReceiptTest() {
-    File file = mock(File.class);
-    Student student = new Student("9999999", "test@uni-duesseldorf.de",
-        "meier", "max");
-    MinIoRepositoryInterface repo = mock(MinIoRepository.class);
-    MinIoRepository minIo = mock(MinIoRepository.class);
-    NameCreator nameCreator = mock(NameCreator.class);
-    fileService = new FileService();
-    String bucketName = nameCreator.createBucketName(student);
-    when(nameCreator.createBucketName(student)).thenReturn("test-student");
-    when(file.getName()).thenReturn("test-file-name");
-    when(file.getPath()).thenReturn("");
-    when(file.length()).thenReturn(100L);
-    // Act
-    fileService.storeReceipt(student, file);
-
-// Assert
-
-  }
 
 
 }
