@@ -11,17 +11,23 @@ import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.SessionScope;
 
 import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @SessionScope
 @RequestMapping("/zulassung2")
 @Controller
-public class OrgaUploadRegistrationListController {
+public class UploadRegistrationListController {
 
   private final FileService fileService;
   private final EmailService emailService;
@@ -43,9 +49,9 @@ public class OrgaUploadRegistrationListController {
    * @param fileService  Service for parsing files
    * @param emailService Service for sending emails
    */
-  public OrgaUploadRegistrationListController(FileService fileService,
-                                              EmailService emailService,
-                                              OrgaUploadRegistrationService orgaUploadRegistrationService) {
+  public UploadRegistrationListController(FileService fileService,
+                                          EmailService emailService,
+                                          OrgaUploadRegistrationService orgaUploadRegistrationService) {
     accountCreator = new AccountCreator();
     this.orgaUploadRegistrationService = orgaUploadRegistrationService;
     this.fileService = fileService;
@@ -70,7 +76,7 @@ public class OrgaUploadRegistrationListController {
     model.addAttribute("form", form);
     model.addAttribute("orgauploadregistrationservice", new OrgaUploadRegistrationService());
 
-    return "orga-upload-registrationlist";
+    return "upload-registrationlist";
   }
 
   /**
@@ -174,6 +180,40 @@ public class OrgaUploadRegistrationListController {
           + " konnte nicht versendet werden!");
     }
     return "redirect:/zulassung2/upload-registrationlist";
+  }
+
+  /**
+   * This method is called for a POST request to /export-allowed.
+   * It creates a CSV-file which contains the approved students and
+   * offers the user a dialog to download the file.
+   */
+  @PostMapping("/export-allowed")
+  @Secured("ROLE_orga")
+  public void exportCSVFile(HttpServletResponse response) {
+    try {
+      File csvOutput = new File("allowed.csv");
+      FileWriter writer = new FileWriter(csvOutput, UTF_8);
+      writer.write("matriculationnumber,email,name,forename");
+      for (Student student : allowed) {
+        writer.write("\n" + student.getMatriculationNumber() + ","
+            + student.getEmail() + ","
+            + student.getName() + ","
+            + student.getForeName());
+      }
+      writer.close();
+
+      response.setContentType("text/csv");
+      response.setHeader("Content-Disposition",
+          "attachment; filename=" + currentSubject + "_zugelassen.csv");
+
+      response.setContentLength((int) csvOutput.length());
+      InputStream inputStream = new BufferedInputStream(new FileInputStream(csvOutput));
+      FileCopyUtils.copy(inputStream, response.getOutputStream());
+
+      Files.deleteIfExists(csvOutput.toPath());
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   /**

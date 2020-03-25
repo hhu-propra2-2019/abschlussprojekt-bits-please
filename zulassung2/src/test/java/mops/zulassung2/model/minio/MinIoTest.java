@@ -331,10 +331,10 @@ public class MinIoTest {
     when(repo.listObjects(studentBucketName)).thenReturn(objects);
     when(repo.getObjectName(objects.get(0))).thenReturn(getObjectName(0));
     when(repo.getObjectName(objects.get(1))).thenReturn(getObjectName(1));
-    when(repo.getObjectName(objects.get(2))).thenReturn("test-propra-object");
+    when(repo.getObjectName(objects.get(2))).thenReturn("test_propra-object");
 
     // Act
-    boolean isAuthorized = minIo.isAuthorized(student, "propra");
+    boolean isAuthorized = minIo.isAuthorized(student, "propra-object");
 
     // Assert
     assertThat(isAuthorized).isEqualTo(expected);

@@ -149,6 +149,9 @@ public class EmailService {
 
   private String createWarningEmailBodyText(Student student, String currentSubject, String currentDeadLine) {
 
+    if (currentDeadLine.lastIndexOf(":") > 15) {
+      currentDeadLine = currentDeadLine.substring(0, currentDeadLine.lastIndexOf(":"));
+    }
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
     LocalDateTime dateTime = LocalDateTime.parse(currentDeadLine, formatter);
 
