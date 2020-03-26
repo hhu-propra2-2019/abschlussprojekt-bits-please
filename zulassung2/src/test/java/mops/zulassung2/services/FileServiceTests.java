@@ -1,23 +1,20 @@
 package mops.zulassung2.services;
 
+import mops.zulassung2.model.dataobjects.ReceiptData;
+import mops.zulassung2.model.dataobjects.ReceiptDataInterface;
 import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.model.fileparsing.CSVLineParser;
 import mops.zulassung2.model.fileparsing.FileParser;
 import mops.zulassung2.model.fileparsing.Validator;
-import mops.zulassung2.model.minio.*;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockMultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class FileServiceTests {
   private FileService fileService;
@@ -29,7 +26,6 @@ public class FileServiceTests {
   private String header = "matriculationnumber,email,name,forename\n";
   private String student1Data = "2727912,tigeu100@hhu.de,geuer,tim\n";
   private String student2Data = "2757144,masie@hhu.de,siewert,markus\n";
-
 
 
   @Test
@@ -100,7 +96,6 @@ public class FileServiceTests {
     assertThat(actualData.getForeName()).isEqualTo(expectedForename);
 
   }
-
 
 
 }

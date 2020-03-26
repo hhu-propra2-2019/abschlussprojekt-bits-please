@@ -2,9 +2,9 @@ package mops.zulassung2.controller;
 
 import mops.zulassung2.model.crypto.Receipt;
 import mops.zulassung2.model.dataobjects.AccountCreator;
+import mops.zulassung2.model.dataobjects.ReceiptDataInterface;
 import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.services.FileService;
-import mops.zulassung2.services.ReceiptDataInterface;
 import mops.zulassung2.services.SignatureService;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.access.annotation.Secured;

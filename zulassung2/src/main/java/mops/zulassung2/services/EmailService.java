@@ -1,6 +1,8 @@
 package mops.zulassung2.services;
 
 import mops.zulassung2.model.crypto.Receipt;
+import mops.zulassung2.model.dataobjects.ReceiptData;
+import mops.zulassung2.model.dataobjects.ReceiptDataInterface;
 import mops.zulassung2.model.dataobjects.Student;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Value;
