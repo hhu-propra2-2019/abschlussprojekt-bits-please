@@ -1,8 +1,8 @@
 package mops.zulassung2.controller;
 
-import mops.zulassung2.model.OrgaUploadCSVForm;
 import mops.zulassung2.model.dataobjects.AccountCreator;
 import mops.zulassung2.model.dataobjects.Student;
+import mops.zulassung2.model.dataobjects.UploadCSVForm;
 import mops.zulassung2.services.EmailService;
 import mops.zulassung2.services.FileService;
 import org.apache.commons.io.FilenameUtils;
@@ -27,9 +27,8 @@ public class UploadApprovedStudentsController {
 
   private final FileService fileService;
   private final EmailService emailService;
-  public List<Student> students = new ArrayList<>();
-  public String currentSubject = "";
-  public String currentSemester = "";
+  private List<Student> students = new ArrayList<>();
+  private UploadCSVForm uploadCSVForm = new UploadCSVForm();
   private AccountCreator accountCreator;
   private String dangerMessage;
   private String warningMessage;
@@ -60,11 +59,11 @@ public class UploadApprovedStudentsController {
    */
   @GetMapping("/upload-approved-students")
   @Secured("ROLE_orga")
-  public String orga(KeycloakAuthenticationToken token, Model model, @ModelAttribute("form") OrgaUploadCSVForm form) {
+  public String orga(KeycloakAuthenticationToken token, Model model) {
     resetMessages();
     model.addAttribute("account", accountCreator.createFromPrincipal(token));
     model.addAttribute("students", students);
-    model.addAttribute("form", form);
+    model.addAttribute("form", uploadCSVForm);
 
     return "upload-approved-students";
   }
@@ -79,13 +78,13 @@ public class UploadApprovedStudentsController {
 
   @PostMapping("/upload-approved-students")
   @Secured("ROLE_orga")
-  public String submit(@ModelAttribute("form") OrgaUploadCSVForm form) {
+  public String submit(@ModelAttribute("form") UploadCSVForm form) {
     if (!FilenameUtils.isExtension(form.getMultipartFile().getOriginalFilename(), "csv")) {
       setDangerMessage("Die Datei muss im .csv Format sein!");
       return "redirect:/zulassung2/upload-approved-students";
     }
-    currentSubject = form.getSubject().replaceAll("[: ]", "-");
-    currentSemester = form.getSemester().replaceAll("[: ]", "-");
+    uploadCSVForm.setSubject(form.getSubject().replaceAll("[: ]", "-"));
+    uploadCSVForm.setSemester(form.getSemester().replaceAll("[: ]", "-"));
 
     students = fileService.processCSVUpload(form.getMultipartFile());
     if (students == null) {
@@ -107,9 +106,9 @@ public class UploadApprovedStudentsController {
   public String sendMail() {
     boolean firstError = true;
     for (Student student : students) {
-      File file = emailService.createFile(student, currentSubject, currentSemester);
+      File file = emailService.createFile(student, uploadCSVForm.getSubject(), uploadCSVForm.getSemester());
       try {
-        emailService.sendMail(student, currentSubject, file);
+        emailService.sendMail(student, uploadCSVForm.getSubject(), file);
         fileService.storeReceipt(student, file);
       } catch (MessagingException e) {
         if (firstError) {
@@ -147,9 +146,9 @@ public class UploadApprovedStudentsController {
   @Secured("ROLE_orga")
   public String sendMail(@RequestParam("count") int count) {
     Student selectedStudent = students.get(count);
-    File file = emailService.createFile(selectedStudent, currentSubject, currentSemester);
+    File file = emailService.createFile(selectedStudent, uploadCSVForm.getSubject(), uploadCSVForm.getSemester());
     try {
-      emailService.sendMail(selectedStudent, currentSubject, file);
+      emailService.sendMail(selectedStudent, uploadCSVForm.getSubject(), file);
       fileService.storeReceipt(selectedStudent, file);
       setSuccessMessage("Email an " + selectedStudent.getForeName() + " "
           + selectedStudent.getName()
@@ -166,18 +165,6 @@ public class UploadApprovedStudentsController {
     }
 
     return "redirect:/zulassung2/upload-approved-students";
-  }
-
-  /**
-   * Set Warning and Success Messages for the frontend.
-   *
-   * @param warningMessage Describe warning
-   * @param successMessage Send a joyful message to the user
-   */
-  private void setMessages(String dangerMessage, String warningMessage, String successMessage) {
-    this.dangerMessage = dangerMessage;
-    this.warningMessage = warningMessage;
-    this.successMessage = successMessage;
   }
 
   /**
@@ -211,7 +198,9 @@ public class UploadApprovedStudentsController {
    * Reset UI Messages.
    */
   private void resetMessages() {
-    setMessages(null, null, null);
+    this.dangerMessage = null;
+    this.warningMessage = null;
+    this.successMessage = null;
   }
 
   @ModelAttribute("danger")
@@ -227,15 +216,5 @@ public class UploadApprovedStudentsController {
   @ModelAttribute("success")
   String getSuccess() {
     return successMessage;
-  }
-
-  @ModelAttribute("subject")
-  String getCurrentSubject() {
-    return currentSubject;
-  }
-
-  @ModelAttribute("semester")
-  String getCurrentSemester() {
-    return currentSemester;
   }
 }

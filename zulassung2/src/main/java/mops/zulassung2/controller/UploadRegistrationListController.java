@@ -1,8 +1,8 @@
 package mops.zulassung2.controller;
 
-import mops.zulassung2.model.OrgaUploadCSVForm;
 import mops.zulassung2.model.dataobjects.AccountCreator;
 import mops.zulassung2.model.dataobjects.Student;
+import mops.zulassung2.model.dataobjects.UploadCSVForm;
 import mops.zulassung2.services.EmailService;
 import mops.zulassung2.services.FileService;
 import mops.zulassung2.services.OrgaUploadRegistrationService;
@@ -34,8 +34,7 @@ public class UploadRegistrationListController {
   private final OrgaUploadRegistrationService orgaUploadRegistrationService;
   public List<Student> notAllowed = new ArrayList<>();
   public List<Student> allowed = new ArrayList<>();
-  public String currentSubject = "";
-  public String currentDeadLine;
+  private UploadCSVForm uploadCSVForm = new UploadCSVForm();
   private AccountCreator accountCreator;
   private String dangerMessage;
   private String warningMessage;
@@ -68,13 +67,12 @@ public class UploadRegistrationListController {
    */
   @GetMapping("/upload-registrationlist")
   @Secured("ROLE_orga")
-  public String orga(KeycloakAuthenticationToken token, Model model, @ModelAttribute("form") OrgaUploadCSVForm form) {
+  public String orga(KeycloakAuthenticationToken token, Model model) {
     resetMessages();
     model.addAttribute("account", accountCreator.createFromPrincipal(token));
     model.addAttribute("notallowed", notAllowed);
     model.addAttribute("allowed", allowed);
-    model.addAttribute("form", form);
-    model.addAttribute("orgauploadregistrationservice", new OrgaUploadRegistrationService());
+    model.addAttribute("form", uploadCSVForm);
 
     return "upload-registrationlist";
   }
@@ -87,13 +85,13 @@ public class UploadRegistrationListController {
 
   @PostMapping("/upload-registrationlist")
   @Secured("ROLE_orga")
-  public String submit(@ModelAttribute("form") OrgaUploadCSVForm form) {
+  public String submit(@ModelAttribute("form") UploadCSVForm form) {
     if (!FilenameUtils.isExtension(form.getMultipartFile().getOriginalFilename(), "csv")) {
       setDangerMessage("Die Datei muss im .csv Format sein!");
       return "redirect:/zulassung2/upload-registrationlist";
     }
-    currentSubject = form.getSubject().replaceAll("[: ]", "-");
-    currentDeadLine = form.getDeadline();
+    uploadCSVForm.setSubject(form.getSubject().replaceAll("[: ]", "-"));
+    uploadCSVForm.setDeadline(form.getDeadline());
 
     List<Student> students = fileService.processCSVUpload(form.getMultipartFile());
     if (students == null) {
@@ -133,10 +131,14 @@ public class UploadRegistrationListController {
   @PostMapping("/sendmailreglist")
   @Secured("ROLE_orga")
   public String sendWarningMail() {
+    if (uploadCSVForm.getDeadline() == null) {
+      setDangerMessage("Bitte legen Sie zunächst eine Abgabefrist fest.");
+      return "redirect:/zulassung2/upload-registrationlist";
+    }
     boolean firstError = true;
     for (Student student : notAllowed) {
       try {
-        emailService.sendWarningMail(student, currentSubject, currentDeadLine);
+        emailService.sendWarningMail(student, uploadCSVForm.getSubject(), uploadCSVForm.getDeadline());
       } catch (MessagingException e) {
         if (firstError) {
           setDangerMessage("An folgende Studenten konnte keine Email versendet werden: "
@@ -168,9 +170,13 @@ public class UploadRegistrationListController {
   @PostMapping("/sendmailreglist/individual")
   @Secured("ROLE_orga")
   public String sendWarningMail(@RequestParam("count") int count) {
+    if (uploadCSVForm.getDeadline() == null) {
+      setDangerMessage("Bitte legen Sie zunächst eine Abgabefrist fest.");
+      return "redirect:/zulassung2/upload-registrationlist";
+    }
     Student selectedStudent = notAllowed.get(count);
     try {
-      emailService.sendWarningMail(selectedStudent, currentSubject, currentDeadLine);
+      emailService.sendWarningMail(selectedStudent, uploadCSVForm.getSubject(), uploadCSVForm.getDeadline());
       setSuccessMessage("Email an " + selectedStudent.getForeName() + " "
           + selectedStudent.getName()
           + " wurde erfolgreich versendet.");
@@ -204,7 +210,7 @@ public class UploadRegistrationListController {
 
       response.setContentType("text/csv");
       response.setHeader("Content-Disposition",
-          "attachment; filename=" + currentSubject + "_zugelassen.csv");
+          "attachment; filename=" + uploadCSVForm.getSubject() + "_zugelassen.csv");
 
       response.setContentLength((int) csvOutput.length());
       InputStream inputStream = new BufferedInputStream(new FileInputStream(csvOutput));
@@ -217,15 +223,17 @@ public class UploadRegistrationListController {
   }
 
   /**
-   * Set Warning and Success Messages for the frontend.
+   * This method is called for a POST request to /upload-registrationlist/set-deadline.
+   * It sets the deadline that will be given later in the reminder email to the student.
    *
-   * @param warningMessage Describe warning
-   * @param successMessage Send a joyful message to the user
+   * @return Redirects to view upload-registrationlist
    */
-  private void setMessages(String dangerMessage, String warningMessage, String successMessage) {
-    this.dangerMessage = dangerMessage;
-    this.warningMessage = warningMessage;
-    this.successMessage = successMessage;
+  @PostMapping("/upload-registrationlist/set-deadline")
+  @Secured("ROLE_orga")
+  public String setDeadline(@ModelAttribute("form") UploadCSVForm form) {
+    uploadCSVForm.setDeadline(form.getDeadline());
+    setSuccessMessage("Abgabefrist wurde gespeichert.");
+    return "redirect:/zulassung2/upload-registrationlist";
   }
 
   /**
@@ -259,7 +267,9 @@ public class UploadRegistrationListController {
    * Reset UI Messages.
    */
   private void resetMessages() {
-    setMessages(null, null, null);
+    this.dangerMessage = null;
+    this.warningMessage = null;
+    this.successMessage = null;
   }
 
   @ModelAttribute("danger")
@@ -276,16 +286,5 @@ public class UploadRegistrationListController {
   String getSuccess() {
     return successMessage;
   }
-
-  @ModelAttribute("subject")
-  String getCurrentSubject() {
-    return currentSubject;
-  }
-
-  @ModelAttribute("deadline")
-  String getCurrentDeadLine() {
-    return currentDeadLine;
-  }
-
 }
 

@@ -1,8 +1,8 @@
 package mops.zulassung2.controller;
 
 import com.c4_soft.springaddons.test.security.context.support.WithMockKeycloackAuth;
-import mops.zulassung2.model.OrgaUploadCSVForm;
 import mops.zulassung2.model.dataobjects.Student;
+import mops.zulassung2.model.dataobjects.UploadCSVForm;
 import mops.zulassung2.services.EmailService;
 import mops.zulassung2.services.FileService;
 import mops.zulassung2.services.SignatureService;
@@ -96,7 +96,7 @@ class UploadApprovedStudentsControllerTest {
   @WithMockKeycloackAuth("orga")
   void testSubmitCsvFile() throws Exception {
     // Arrange
-    OrgaUploadCSVForm form = new OrgaUploadCSVForm();
+    UploadCSVForm form = new UploadCSVForm();
     form.setMultipartFile(mockCsvFile);
     form.setSubject("Propra");
     form.setSemester("WS1920");
@@ -123,7 +123,7 @@ class UploadApprovedStudentsControllerTest {
     // Arrange
     MockHttpSession mockHttpSession = new MockHttpSession();
     List<Student> students = new ArrayList<>();
-    OrgaUploadCSVForm form = new OrgaUploadCSVForm();
+    UploadCSVForm form = new UploadCSVForm();
     form.setMultipartFile(mockCsvFile);
     form.setSubject("Propra");
     form.setSemester("WS1920");
