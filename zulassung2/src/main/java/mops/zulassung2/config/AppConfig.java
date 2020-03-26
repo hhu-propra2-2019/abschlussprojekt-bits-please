@@ -1,7 +1,7 @@
 package mops.zulassung2.config;
 
 import mops.zulassung2.model.minio.CustomDate;
-import mops.zulassung2.model.minio.MinIoConfig;
+import mops.zulassung2.model.minio.MinIoEndpoint;
 import mops.zulassung2.tasks.DeleteStorageTask;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -23,7 +23,7 @@ public class AppConfig {
 
   @Bean
   public DeleteStorageTask task() {
-    MinIoConfig minIoConfig = new MinIoConfig(endpoint, accessKey, secretKey);
-    return new DeleteStorageTask(minIoConfig, storageDuration, new CustomDate());
+    MinIoEndpoint minIoEndpoint = new MinIoEndpoint(endpoint, accessKey, secretKey);
+    return new DeleteStorageTask(minIoEndpoint, storageDuration, new CustomDate());
   }
 }
