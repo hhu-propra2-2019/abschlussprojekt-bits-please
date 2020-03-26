@@ -104,21 +104,15 @@ public class UploadApprovedStudentsController {
   @PostMapping("/sendmail")
   @Secured("ROLE_orga")
   public String sendMail() {
-    boolean firstError = true;
+    boolean noErrorsOcurredWhileSendingMessages = true;
     for (Student student : students) {
-      File file = emailService.createFile(student, uploadCSVForm.getSubject(), uploadCSVForm.getSemester());
+      File file = fileService.createFile(student, uploadCSVForm.getSubject(), uploadCSVForm.getSemester());
       try {
         emailService.sendMail(student, uploadCSVForm.getSubject(), file);
         fileService.storeReceipt(student, file);
       } catch (MessagingException e) {
-        if (firstError) {
-          setDangerMessage("An folgende Studenten konnte keine Email versendet werden: "
-              + student.getForeName() + " " + student.getName());
-          firstError = false;
-        } else {
-          setDangerMessage(dangerMessage.concat(", "
-              + student.getForeName() + " " + student.getName()));
-        }
+        createDangerMessageMultipleStudents(noErrorsOcurredWhileSendingMessages, student);
+        noErrorsOcurredWhileSendingMessages = false;
       }
       try {
         Files.deleteIfExists(file.toPath());
@@ -126,14 +120,13 @@ public class UploadApprovedStudentsController {
         e.printStackTrace();
       }
     }
-    if (firstError) {
+    if (noErrorsOcurredWhileSendingMessages) {
       setSuccessMessage("Alle Emails wurden erfolgreich versendet.");
     } else {
       setWarningMessage("Es wurden nicht alle Emails korrekt versendet.");
     }
     return "redirect:/zulassung2/upload-approved-students";
   }
-
 
   /**
    * This method is called for a POST request to /orga/sendmail/individual.
@@ -146,25 +139,44 @@ public class UploadApprovedStudentsController {
   @Secured("ROLE_orga")
   public String sendMail(@RequestParam("count") int count) {
     Student selectedStudent = students.get(count);
-    File file = emailService.createFile(selectedStudent, uploadCSVForm.getSubject(), uploadCSVForm.getSemester());
+    File file = fileService.createFile(selectedStudent, uploadCSVForm.getSubject(), uploadCSVForm.getSemester());
     try {
       emailService.sendMail(selectedStudent, uploadCSVForm.getSubject(), file);
       fileService.storeReceipt(selectedStudent, file);
-      setSuccessMessage("Email an " + selectedStudent.getForeName() + " "
-          + selectedStudent.getName()
-          + " wurde erfolgreich versendet.");
+      createSuccessMethodSingleStudent(selectedStudent);
     } catch (MessagingException e) {
-      setDangerMessage("Email an " + selectedStudent.getForeName()
-          + " " + selectedStudent.getName()
-          + " konnte nicht versendet werden!");
+      createDangerMethodSingleStudent(selectedStudent);
     }
     try {
       Files.deleteIfExists(file.toPath());
     } catch (IOException e) {
       e.printStackTrace();
     }
-
     return "redirect:/zulassung2/upload-approved-students";
+  }
+
+  private void createDangerMessageMultipleStudents(boolean noErrorsOcurredWhileSendingMessages, Student student) {
+    // noErrorsOcurredWhileSendingMessages is only true when this method is called for the first time
+    if (noErrorsOcurredWhileSendingMessages) {
+      setDangerMessage("An folgende Studenten konnte keine Email versendet werden: "
+          + student.getForeName() + " " + student.getName());
+    } else {
+      setDangerMessage(dangerMessage.concat(", "
+          + student.getForeName() + " " + student.getName()));
+    }
+  }
+
+
+  private void createSuccessMethodSingleStudent(Student selectedStudent) {
+    setSuccessMessage("Email an " + selectedStudent.getForeName() + " "
+        + selectedStudent.getName()
+        + " wurde erfolgreich versendet.");
+  }
+
+  private void createDangerMethodSingleStudent(Student selectedStudent) {
+    setDangerMessage("Email an " + selectedStudent.getForeName()
+        + " " + selectedStudent.getName()
+        + " konnte nicht versendet werden!");
   }
 
   /**

@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @WebMvcTest(UploadApprovedStudentsController.class)
 @ComponentScan(basePackageClasses = {KeycloakSecurityComponents.class,
-        KeycloakSpringBootConfigResolver.class})
+    KeycloakSpringBootConfigResolver.class})
 class UploadApprovedStudentsControllerTest {
 
   MockMultipartFile mockCsvFile;
@@ -51,10 +51,10 @@ class UploadApprovedStudentsControllerTest {
   @BeforeEach
   void createFile() {
     mockCsvFile = new MockMultipartFile(
-            "file",
-            "file.csv",
-            "text/csv",
-            "Test Data".getBytes(StandardCharsets.UTF_8));
+        "file",
+        "file.csv",
+        "text/csv",
+        "Test Data".getBytes(StandardCharsets.UTF_8));
   }
 
   @Test
@@ -68,28 +68,28 @@ class UploadApprovedStudentsControllerTest {
 
     // Act and Assert
     mvc.perform(get("/zulassung2/upload-approved-students"))
-            .andExpect(status().isForbidden());
+        .andExpect(status().isForbidden());
     mvc.perform(post("/zulassung2/sendmail")
-            .with(csrf()))
-            .andExpect(status().isForbidden());
+        .with(csrf()))
+        .andExpect(status().isForbidden());
     mvc.perform(post("/zulassung2/sendmail/individual")
-            .param("count", "0")
-            .session(mockHttpSession)
-            .with(csrf()))
-            .andExpect(status().isForbidden());
+        .param("count", "0")
+        .session(mockHttpSession)
+        .with(csrf()))
+        .andExpect(status().isForbidden());
   }
 
   @Test
   @WithMockKeycloackAuth("orga")
   void orgaCSVAsOrgaIsOk() throws Exception {
     mvc.perform(get("/zulassung2/upload-approved-students"))
-            .andExpect(status().isOk());
+        .andExpect(status().isOk());
   }
 
   @Test
   void orgaCSVAsUnauthorizedIsRedirected() throws Exception {
     mvc.perform(get("/zulassung2/upload-approved-students"))
-            .andExpect(status().is(302));
+        .andExpect(status().is(302));
   }
 
   @Test
@@ -102,10 +102,10 @@ class UploadApprovedStudentsControllerTest {
     form.setSemester("WS1920");
     // Act and Assert
     mvc.perform(multipart("/zulassung2/upload-approved-students")
-            .file(mockCsvFile)
-            .flashAttr("form", form)
-            .with(csrf()))
-            .andExpect(redirectedUrl("/zulassung2/upload-approved-students"));
+        .file(mockCsvFile)
+        .flashAttr("form", form)
+        .with(csrf()))
+        .andExpect(redirectedUrl("/zulassung2/upload-approved-students"));
 
   }
 
@@ -113,8 +113,8 @@ class UploadApprovedStudentsControllerTest {
   @WithMockKeycloackAuth("orga")
   void testSendMailsToAllStudents() throws Exception {
     mvc.perform(post("/zulassung2/sendmail")
-            .with(csrf()))
-            .andExpect(redirectedUrl("/zulassung2/upload-approved-students"));
+        .with(csrf()))
+        .andExpect(redirectedUrl("/zulassung2/upload-approved-students"));
   }
 
   @Test
@@ -129,29 +129,29 @@ class UploadApprovedStudentsControllerTest {
     form.setSemester("WS1920");
     students.add(mock(Student.class));
     File file = new File("Test.txt");
-    when(emailService.createFile(students.get(0), "Propra", "WS1920")).thenReturn(file);
+    when(fileService.createFile(students.get(0), "Propra", "WS1920")).thenReturn(file);
     when(fileService.processCSVUpload(mockCsvFile)).thenReturn(students);
 
     mvc.perform(multipart("/zulassung2/upload-approved-students")
-            .file(mockCsvFile)
-            .flashAttr("form", form)
-            .session(mockHttpSession)
-            .with(csrf()));
+        .file(mockCsvFile)
+        .flashAttr("form", form)
+        .session(mockHttpSession)
+        .with(csrf()));
 
     // Act and Assert
     mvc.perform(post("/zulassung2/sendmail/individual")
-            .param("count", "0")
-            .session(mockHttpSession)
-            .with(csrf()))
-            .andExpect(redirectedUrl("/zulassung2/upload-approved-students"));
+        .param("count", "0")
+        .session(mockHttpSession)
+        .with(csrf()))
+        .andExpect(redirectedUrl("/zulassung2/upload-approved-students"));
   }
 
   @Test
   @WithMockKeycloackAuth("orga")
   void testSendMailsWithInvalidCsrfToken() throws Exception {
     mvc.perform(post("/zulassung2/sendmail")
-            .with(csrf().useInvalidToken()))
-            .andExpect(status().isForbidden());
+        .with(csrf().useInvalidToken()))
+        .andExpect(status().isForbidden());
   }
 
 }

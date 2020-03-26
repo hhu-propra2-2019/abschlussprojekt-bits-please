@@ -1,6 +1,12 @@
 [[section-system-scope-and-context]]
 == Kontextabgrenzung
 
+image::../images/process_flowchart_anmeldungen2.jpg[]
+
+Die Nutzer des Systems sind Organisatoren (Dozenten und Mitarbeiter des Lehrstuhls) sowie Studierende.
+Die Eingabe von Daten erfolgt manuell oder per hochladen von Dateien über die UI. Die Ausgabe erfolgt über den Bildschirm oder als Export von Dateien.
+Interaktion mit Fremdsystemen gibt es nicht.
+
 [role="arc42help"]
 ****
 .Inhalt
@@ -20,8 +26,6 @@ Verschiedene Optionen:
 * Listen von Kommunikationsbeziehungen mit deren Schnittstellen
 ****
 
-=== Fachlicher Kontext
-
 [role="arc42help"]
 ****
 .Inhalt
@@ -38,12 +42,6 @@ Alternativ oder ergänzend können Sie eine Tabelle verwenden.
 Der Titel gibt den Namen Ihres Systems wieder; die drei Spalten sind: Kommunikationsbeziehung, Eingabe, Ausgabe.
 ****
 
-**<Diagramm und/oder Tabelle>**
-
-**<optional: Erläuterung der externen fachlichen Schnittstellen>**
-
-=== Technischer Kontext
-
 [role="arc42help"]
 ****
 .Inhalt
@@ -58,9 +56,3 @@ Insbesondere bei der Entwicklung von Infrastruktur oder Hardware sind diese tech
 .Form
 Beispielsweise UML Deployment-Diagramme mit den Kanälen zu Nachbarsystemen, begleitet von einer Tabelle, die Kanäle auf Ein-/Ausgaben abbildet.
 ****
-
-**<Diagramm oder Tabelle>**
-
-**<optional: Erläuterung der externen technischen Schnittstellen>**
-
-**<Mapping fachliche auf technische Schnittstellen>**

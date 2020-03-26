@@ -1,5 +1,6 @@
 package mops.zulassung2.services;
 
+import mops.zulassung2.model.crypto.Receipt;
 import mops.zulassung2.model.dataobjects.ReceiptData;
 import mops.zulassung2.model.dataobjects.ReceiptDataInterface;
 import mops.zulassung2.model.dataobjects.Student;
@@ -23,6 +24,8 @@ public class FileService {
 
   private NameCreatorInterface nameCreatorInterface;
   private MinIoImplementationInterface minIo;
+  private SignatureService signatureService;
+
   @Value("${endpoint}")
   private String endpoint;
   @Value("${access_key}")
@@ -30,8 +33,9 @@ public class FileService {
   @Value("${secret_key}")
   private String secretKey;
 
-  public FileService() {
+  public FileService(SignatureService signatureService) {
     nameCreatorInterface = new NameCreator(new BucketNameValidator());
+    this.signatureService = signatureService;
   }
 
   /**
@@ -67,15 +71,15 @@ public class FileService {
 
     String[] dataObjects = receiptContent.split(" ");
     Student student = new Student(
-            dataObjects[0].split(":")[1], // Matriculationnumber
-            dataObjects[1].split(":")[1], // Email
-            dataObjects[2].split(":")[1], // Name
-            dataObjects[3].split(":")[1]); // Forename
+        dataObjects[0].split(":")[1], // Matriculationnumber
+        dataObjects[1].split(":")[1], // Email
+        dataObjects[2].split(":")[1], // Name
+        dataObjects[3].split(":")[1]); // Forename
 
     ReceiptDataInterface receiptDataInterface = new ReceiptData(student,
-            dataObjects[4].split(":")[1], // Module
-            dataObjects[5].split(":")[1], // Semester
-            signature);                         // Signature
+        dataObjects[4].split(":")[1], // Module
+        dataObjects[5].split(":")[1], // Semester
+        signature);                         // Signature
 
     return receiptDataInterface;
   }
@@ -100,7 +104,7 @@ public class FileService {
     }
 
     minIo.putObject(bucketName, file.getName(), file.getPath(), file.length(),
-            new HashMap<String, String>(), ".txt");
+        new HashMap<String, String>(), ".txt");
   }
 
   /**
@@ -110,20 +114,47 @@ public class FileService {
    * @return redirect
    */
   public File createFileFromSubmittedReceipt(ReceiptDataInterface receiptDataInterface) {
-    String data = receiptDataInterface.create();
-    File file = new File(System.getProperty("user.dir")
-            + "token_" + receiptDataInterface.getModule()
-            + "_" + receiptDataInterface.getName() + ".txt");
+    String studentData = receiptDataInterface.create();
+    File userFile = new File(System.getProperty("user.dir")
+        + "token_" + receiptDataInterface.getModule()
+        + "_" + receiptDataInterface.getName() + ".txt");
     FileWriter writer;
 
     try {
-      writer = new FileWriter(file, StandardCharsets.UTF_8);
-      writer.write(data + "\n");
+      writer = new FileWriter(userFile, StandardCharsets.UTF_8);
+      writer.write(studentData + "\n");
       writer.write(receiptDataInterface.getSignature());
       writer.close();
     } catch (IOException e) {
       e.printStackTrace();
     }
-    return file;
+    return userFile;
   }
+
+  /**
+   * Diese Methode wird vom OrganisatorController (Methode: sendMail) aufgerufen.
+   * *
+   * Diese Methode erstellt benutzerdefinierte Files und ruft sendMessage auf.
+   */
+
+  public File createFile(Student student, String currentSubject, String currentSemester) {
+    ReceiptDataInterface receiptDataInterface = new ReceiptData(student, currentSubject, currentSemester);
+    String studentData = receiptDataInterface.create();
+    Receipt receipt = signatureService.sign(studentData);
+    File userFile = new File(System.getProperty("user.dir")
+        + "token_" + receiptDataInterface.getModule()
+        + "_" + receiptDataInterface.getName() + ".txt");
+    FileWriter writer;
+
+    try {
+      writer = new FileWriter(userFile, StandardCharsets.UTF_8);
+      writer.write(studentData + "\n");
+      writer.write(receipt.getSignature());
+      writer.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return userFile;
+  }
+
 }

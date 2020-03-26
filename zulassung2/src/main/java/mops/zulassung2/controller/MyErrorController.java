@@ -1,6 +1,5 @@
 package mops.zulassung2.controller;
 
-import org.keycloak.authorization.client.util.Http;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;

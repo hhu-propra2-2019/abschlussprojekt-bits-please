@@ -1,6 +1,16 @@
 [[section-solution-strategy]]
 == Lösungsstrategie
 
+. Checkstyle statt PMD
+. Google angepasst
+. keine Datenbank
+. Email: Bean vorgefertigt vs. custom email(definiert in properties oder.xml)
+. Spring boot
+. Telekom Adresse
+. Bereich Klausurzulassung ist Passwortgeschützt
+- Verwendung von Java private/public key pair
+. Speichern des private/public key als environment variable
+
 [role="arc42help"]
 ****
 .Inhalt

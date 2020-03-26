@@ -1,6 +1,17 @@
 [[section-technical-risks]]
 == Risiken und technische Schulden
 
+*Risiko:* Unsichere Verschlüsselung / Verlust des private key
+
+*Einschätzung:* Sehr Hoch
+
+*Erläuterung:* Da das System mit Kryptographie arbeitet besteht immer das Risiko dass der private key geleakt wird.
+Das System ist zum aktuellen Stand darauf ausgelegt, dass nur ein private key benutzt wird der unverändert bleibt.
+Sollte dieser öffentlich werden, sind alle von diesem System ausgestellten Zertifikate als ungültig zu betrachten.
+Es ist dann unmöglich festzustellen, welche Studenten tatsächlich eine gültige Zulassung erhalten haben.
+
+*Mitigation:* Statt eines einzigen private/public key pairs sollte das System für jede Veranstaltung ein eigenes pair erstellen und nur den public key in einem key-value-store speichern. Bei der Authentifizierung kann der richtige key zB über den Namen der Veranstaltung und das Semester identifiziert werden.
+
 [role="arc42help"]
 ****
 .Inhalt

@@ -23,7 +23,7 @@
 
 === Qualitätsziele
 
-[cols="1,1" options="header"]
+[cols="1,2" options="header"]
 |===
 |Qualitätsziel | Motivation und Erläuterung
 | Innerhalb kurzer Zeit (4 Wochen) eine stabile, funktionierende Webanwendung zu realisieren. | Da alle im Programmierteam realtiv unerfahrene Programmierer sind und wir nur einen sehr begrenzten Zeitraum zur realisierung haben ist effektives Zeit- und Ressourcenmanagement eine wesentlicher Erfolgsfaktor
@@ -40,3 +40,7 @@
 | Lehrstuhl für Softwaretechnik | ...
 | Die Entwicklungsteam der anderen Teilsysteme | ...
 |===
+
+==== Visualisierung der Prozesse
+
+image::images/process_flowchart_anmeldungen2.jpg[]
