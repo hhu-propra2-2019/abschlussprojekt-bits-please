@@ -5,6 +5,7 @@ import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.model.dataobjects.UploadCSVForm;
 import mops.zulassung2.services.EmailService;
 import mops.zulassung2.services.FileService;
+import mops.zulassung2.services.UploadRegistrationService;
 import org.apache.commons.io.FilenameUtils;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.access.annotation.Secured;
@@ -27,6 +28,7 @@ public class UploadApprovedStudentsController {
 
   private final FileService fileService;
   private final EmailService emailService;
+  private final UploadRegistrationService uploadRegistrationService;
   private List<Student> students = new ArrayList<>();
   private UploadCSVForm uploadCSVForm = new UploadCSVForm();
   private AccountCreator accountCreator;
@@ -43,10 +45,12 @@ public class UploadApprovedStudentsController {
    * @param emailService Service for sending emails
    */
   public UploadApprovedStudentsController(FileService fileService,
-                                          EmailService emailService) {
+                                          EmailService emailService,
+                                          UploadRegistrationService uploadRegistrationService) {
     accountCreator = new AccountCreator();
     this.fileService = fileService;
     this.emailService = emailService;
+    this.uploadRegistrationService = uploadRegistrationService;
   }
 
 
@@ -105,11 +109,15 @@ public class UploadApprovedStudentsController {
   @Secured("ROLE_orga")
   public String sendMail() {
     boolean noErrorsOcurredWhileSendingMessages = true;
+    boolean noErrorsOcurredWhileSavingReceipts = true;
     for (Student student : students) {
       File file = fileService.createFile(student, uploadCSVForm.getSubject(), uploadCSVForm.getSemester());
       try {
         emailService.sendMail(student, uploadCSVForm.getSubject(), file);
         fileService.storeReceipt(student, file);
+        if (!uploadRegistrationService.test(student, uploadCSVForm.getSubject())) {
+          noErrorsOcurredWhileSavingReceipts = false;
+        }
       } catch (MessagingException e) {
         createDangerMessageMultipleStudents(noErrorsOcurredWhileSendingMessages, student);
         noErrorsOcurredWhileSendingMessages = false;
@@ -122,8 +130,10 @@ public class UploadApprovedStudentsController {
     }
     if (noErrorsOcurredWhileSendingMessages) {
       setSuccessMessage("Alle Emails wurden erfolgreich versendet.");
+      setDangerMessageForSavingMinIO(noErrorsOcurredWhileSavingReceipts);
     } else {
       setWarningMessage("Es wurden nicht alle Emails korrekt versendet.");
+      setDangerMessageForSavingMinIO(noErrorsOcurredWhileSavingReceipts);
     }
     return "redirect:/zulassung2/upload-approved-students";
   }
@@ -143,6 +153,7 @@ public class UploadApprovedStudentsController {
     try {
       emailService.sendMail(selectedStudent, uploadCSVForm.getSubject(), file);
       fileService.storeReceipt(selectedStudent, file);
+      setDangerMessageForMinIOsingle(selectedStudent);
       createSuccessMethodSingleStudent(selectedStudent);
     } catch (MessagingException e) {
       createDangerMethodSingleStudent(selectedStudent);
@@ -166,17 +177,63 @@ public class UploadApprovedStudentsController {
     }
   }
 
-
   private void createSuccessMethodSingleStudent(Student selectedStudent) {
-    setSuccessMessage("Email an " + selectedStudent.getForeName() + " "
-        + selectedStudent.getName()
-        + " wurde erfolgreich versendet.");
+    if (successMessage == null) {
+      setSuccessMessage("Email an " + selectedStudent.getForeName() + " "
+          + selectedStudent.getName()
+          + " wurde erfolgreich versendet.");
+    } else {
+      setSuccessMessage(successMessage.concat(" Email an " + selectedStudent.getForeName() + " "
+          + selectedStudent.getName()
+          + " wurde erfolgreich versendet."));
+    }
   }
 
   private void createDangerMethodSingleStudent(Student selectedStudent) {
-    setDangerMessage("Email an " + selectedStudent.getForeName()
-        + " " + selectedStudent.getName()
-        + " konnte nicht versendet werden!");
+    if (dangerMessage == null) {
+      setDangerMessage("Email an " + selectedStudent.getForeName()
+          + " " + selectedStudent.getName()
+          + " konnte nicht versendet werden!");
+    } else {
+      setDangerMessage(dangerMessage.concat(" Email an " + selectedStudent.getForeName()
+          + " " + selectedStudent.getName()
+          + " konnte nicht versendet werden!"));
+    }
+  }
+
+  private void setDangerMessageForSavingMinIO(boolean noErrorsOcurredWhileSavingReceipts) {
+    if (noErrorsOcurredWhileSavingReceipts && successMessage == null) {
+      setWarningMessage(warningMessage.concat(" Quittungen, bei denen der Mailversand erfolgreich war,"
+          + " wurden erfolgreich gespeichert."));
+    } else if (noErrorsOcurredWhileSavingReceipts) {
+      setSuccessMessage(successMessage.concat(" Alle Quittungen"
+          + " wurden erfolgreich gespeichert."));
+    } else if (dangerMessage == null) {
+      setDangerMessage("Die Nachweise konnten nicht gespeichert werden."
+          + " Möglicherweise ist MinIO nicht verfügbar.");
+    } else {
+      setDangerMessage("Die Nachweise konnten nicht gespeichert werden."
+          + " Möglicherweise ist MinIO nicht verfügbar. --- " + dangerMessage);
+    }
+  }
+
+  private void setDangerMessageForMinIOsingle(Student selectedStudent) {
+    if (!uploadRegistrationService.test(selectedStudent, uploadCSVForm.getSubject())) {
+      setDangerMessage("Zulassung von "
+          + selectedStudent.getForeName()
+          + " " + selectedStudent.getName()
+          + " zur Veranstaltung "
+          + uploadCSVForm.getSubject()
+          + " konnte nicht gespeichert werden."
+          + " Möglicherweise ist MinIO nicht verfügbar.");
+    } else {
+      setSuccessMessage("Zulassung von "
+          + selectedStudent.getForeName()
+          + " " + selectedStudent.getName()
+          + " zur Veranstaltung "
+          + uploadCSVForm.getSubject()
+          + " wurde erfolgreich gespeichert.");
+    }
   }
 
   /**

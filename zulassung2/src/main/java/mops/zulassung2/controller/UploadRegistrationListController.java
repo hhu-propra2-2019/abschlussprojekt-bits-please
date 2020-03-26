@@ -116,7 +116,8 @@ public class UploadRegistrationListController {
           + " Bitte lassen Sie den Betroffenen über untenstehendes Formular eine Nachricht zukommen.");
     } else {
       setDangerMessage("Es konnte für keinen Angemeldeten eine gültige Zulassung gefunden werden."
-          + " Haben Sie die korrekte Anmeldeliste hochgeladen?");
+          + " Haben Sie die korrekte Anmeldeliste hochgeladen?"
+          + " Möglicherweise ist MinIO nicht verfügbar.");
     }
     return "redirect:/zulassung2/upload-registrationlist";
   }
