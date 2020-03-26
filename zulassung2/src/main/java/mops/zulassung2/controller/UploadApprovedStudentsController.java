@@ -28,7 +28,7 @@ public class UploadApprovedStudentsController {
 
   private final FileService fileService;
   private final EmailService emailService;
-  private final MinIoService minIOService;
+  private final MinIoService minIoService;
   private List<Student> students = new ArrayList<>();
   private UploadCSVForm uploadCSVForm = new UploadCSVForm();
   private AccountCreator accountCreator;
@@ -46,11 +46,11 @@ public class UploadApprovedStudentsController {
    */
   public UploadApprovedStudentsController(FileService fileService,
                                           EmailService emailService,
-                                          MinIoService minIOService) {
+                                          MinIoService minIoService) {
     accountCreator = new AccountCreator();
     this.fileService = fileService;
     this.emailService = emailService;
-    this.minIOService = minIOService;
+    this.minIoService = minIoService;
   }
 
 
@@ -115,7 +115,7 @@ public class UploadApprovedStudentsController {
       try {
         emailService.sendMail(student, uploadCSVForm.getSubject(), file);
         fileService.storeReceipt(student, file);
-        if (!minIOService.test(student, uploadCSVForm.getSubject())) {
+        if (!minIoService.test(student, uploadCSVForm.getSubject())) {
           noErrorsOcurredWhileSavingReceipts = false;
         }
       } catch (MessagingException e) {
@@ -218,7 +218,7 @@ public class UploadApprovedStudentsController {
   }
 
   private void setDangerMessageForMinIOsingle(Student selectedStudent) {
-    if (!minIOService.test(selectedStudent, uploadCSVForm.getSubject())) {
+    if (!minIoService.test(selectedStudent, uploadCSVForm.getSubject())) {
       setDangerMessage("Zulassung von "
           + selectedStudent.getForeName()
           + " " + selectedStudent.getName()

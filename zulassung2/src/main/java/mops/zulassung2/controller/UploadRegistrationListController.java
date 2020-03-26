@@ -31,7 +31,7 @@ public class UploadRegistrationListController {
 
   private final FileService fileService;
   private final EmailService emailService;
-  private final MinIoService minIOService;
+  private final MinIoService minIoService;
   public List<Student> notAllowed = new ArrayList<>();
   public List<Student> allowed = new ArrayList<>();
   private UploadCSVForm uploadCSVForm = new UploadCSVForm();
@@ -50,9 +50,9 @@ public class UploadRegistrationListController {
    */
   public UploadRegistrationListController(FileService fileService,
                                           EmailService emailService,
-                                          MinIoService minIOService) {
+                                          MinIoService minIoService) {
     accountCreator = new AccountCreator();
-    this.minIOService = minIOService;
+    this.minIoService = minIoService;
     this.fileService = fileService;
     this.emailService = emailService;
   }
@@ -103,7 +103,7 @@ public class UploadRegistrationListController {
     notAllowed.clear();
     allowed.clear();
     for (Student student : students) {
-      if (!minIOService.test(student, form.getSubject())) {
+      if (!minIoService.test(student, form.getSubject())) {
         notAllowed.add(student);
       } else {
         allowed.add(student);
