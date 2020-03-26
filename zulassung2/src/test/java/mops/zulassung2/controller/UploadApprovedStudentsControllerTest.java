@@ -5,6 +5,7 @@ import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.model.dataobjects.UploadCSVForm;
 import mops.zulassung2.services.EmailService;
 import mops.zulassung2.services.FileService;
+import mops.zulassung2.services.MinIoService;
 import mops.zulassung2.services.SignatureService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,6 +48,8 @@ class UploadApprovedStudentsControllerTest {
   FileService fileService;
   @MockBean
   SignatureService signatureService;
+  @MockBean
+  MinIoService minIoService;
 
   @BeforeEach
   void createFile() {

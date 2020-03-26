@@ -5,8 +5,8 @@ import mops.zulassung2.model.dataobjects.AccountCreator;
 import mops.zulassung2.model.dataobjects.ReceiptDataInterface;
 import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.services.FileService;
+import mops.zulassung2.services.MinIoService;
 import mops.zulassung2.services.SignatureService;
-import mops.zulassung2.services.UploadRegistrationService;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
@@ -26,7 +26,7 @@ public class UploadReceiptsController {
 
   private final FileService fileService;
   private final SignatureService signatureService;
-  private final UploadRegistrationService uploadRegistrationService;
+  private final MinIoService minIoService;
   private List<ReceiptDataInterface> verifiedReceipts = new ArrayList<>();
   private AccountCreator accountCreator;
   private String dangerMessage;
@@ -42,11 +42,11 @@ public class UploadReceiptsController {
    */
   public UploadReceiptsController(FileService fileService,
                                   SignatureService signatureService,
-                                  UploadRegistrationService uploadRegistrationService) {
+                                  MinIoService minIoService) {
     accountCreator = new AccountCreator();
     this.fileService = fileService;
     this.signatureService = signatureService;
-    this.uploadRegistrationService = uploadRegistrationService;
+    this.minIoService = minIoService;
   }
 
   /**
@@ -94,7 +94,7 @@ public class UploadReceiptsController {
 
     fileService.storeReceipt(student, file);
 
-    if (uploadRegistrationService.test(student, receiptData.getModule())) {
+    if (minIoService.test(student, receiptData.getModule())) {
       setSuccessMessage("Zulassung von "
           + receiptData.getForeName()
           + " " + receiptData.getName()
@@ -132,7 +132,7 @@ public class UploadReceiptsController {
             receiptData.getForeName());
 
         fileService.storeReceipt(student, file);
-        if (!uploadRegistrationService.test(student, receiptData.getModule())) {
+        if (!minIoService.test(student, receiptData.getModule())) {
           success = false;
         }
       }

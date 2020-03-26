@@ -5,7 +5,7 @@ import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.model.dataobjects.UploadCSVForm;
 import mops.zulassung2.services.EmailService;
 import mops.zulassung2.services.FileService;
-import mops.zulassung2.services.UploadRegistrationService;
+import mops.zulassung2.services.MinIoService;
 import org.apache.commons.io.FilenameUtils;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.access.annotation.Secured;
@@ -31,7 +31,7 @@ public class UploadRegistrationListController {
 
   private final FileService fileService;
   private final EmailService emailService;
-  private final UploadRegistrationService uploadRegistrationService;
+  private final MinIoService minIOService;
   public List<Student> notAllowed = new ArrayList<>();
   public List<Student> allowed = new ArrayList<>();
   private UploadCSVForm uploadCSVForm = new UploadCSVForm();
@@ -50,9 +50,9 @@ public class UploadRegistrationListController {
    */
   public UploadRegistrationListController(FileService fileService,
                                           EmailService emailService,
-                                          UploadRegistrationService uploadRegistrationService) {
+                                          MinIoService minIOService) {
     accountCreator = new AccountCreator();
-    this.uploadRegistrationService = uploadRegistrationService;
+    this.minIOService = minIOService;
     this.fileService = fileService;
     this.emailService = emailService;
   }
@@ -103,7 +103,7 @@ public class UploadRegistrationListController {
     notAllowed.clear();
     allowed.clear();
     for (Student student : students) {
-      if (!uploadRegistrationService.test(student, form.getSubject())) {
+      if (!minIOService.test(student, form.getSubject())) {
         notAllowed.add(student);
       } else {
         allowed.add(student);

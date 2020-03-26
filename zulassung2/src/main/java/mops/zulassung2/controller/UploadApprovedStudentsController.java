@@ -5,7 +5,7 @@ import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.model.dataobjects.UploadCSVForm;
 import mops.zulassung2.services.EmailService;
 import mops.zulassung2.services.FileService;
-import mops.zulassung2.services.UploadRegistrationService;
+import mops.zulassung2.services.MinIoService;
 import org.apache.commons.io.FilenameUtils;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.access.annotation.Secured;
@@ -28,7 +28,7 @@ public class UploadApprovedStudentsController {
 
   private final FileService fileService;
   private final EmailService emailService;
-  private final UploadRegistrationService uploadRegistrationService;
+  private final MinIoService minIOService;
   private List<Student> students = new ArrayList<>();
   private UploadCSVForm uploadCSVForm = new UploadCSVForm();
   private AccountCreator accountCreator;
@@ -46,11 +46,11 @@ public class UploadApprovedStudentsController {
    */
   public UploadApprovedStudentsController(FileService fileService,
                                           EmailService emailService,
-                                          UploadRegistrationService uploadRegistrationService) {
+                                          MinIoService minIOService) {
     accountCreator = new AccountCreator();
     this.fileService = fileService;
     this.emailService = emailService;
-    this.uploadRegistrationService = uploadRegistrationService;
+    this.minIOService = minIOService;
   }
 
 
@@ -115,7 +115,7 @@ public class UploadApprovedStudentsController {
       try {
         emailService.sendMail(student, uploadCSVForm.getSubject(), file);
         fileService.storeReceipt(student, file);
-        if (!uploadRegistrationService.test(student, uploadCSVForm.getSubject())) {
+        if (!minIOService.test(student, uploadCSVForm.getSubject())) {
           noErrorsOcurredWhileSavingReceipts = false;
         }
       } catch (MessagingException e) {
@@ -218,7 +218,7 @@ public class UploadApprovedStudentsController {
   }
 
   private void setDangerMessageForMinIOsingle(Student selectedStudent) {
-    if (!uploadRegistrationService.test(selectedStudent, uploadCSVForm.getSubject())) {
+    if (!minIOService.test(selectedStudent, uploadCSVForm.getSubject())) {
       setDangerMessage("Zulassung von "
           + selectedStudent.getForeName()
           + " " + selectedStudent.getName()

@@ -2,6 +2,7 @@ package mops.zulassung2.controller;
 
 import com.c4_soft.springaddons.test.security.context.support.WithMockKeycloackAuth;
 import mops.zulassung2.services.FileService;
+import mops.zulassung2.services.MinIoService;
 import mops.zulassung2.services.SignatureService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,8 @@ class UploadReceiptsControllerTest {
   FileService fileService;
   @MockBean
   SignatureService signatureService;
+  @MockBean
+  MinIoService minIoService;
 
   @BeforeEach
   void createFile() {
