@@ -1,6 +1,8 @@
 package mops.zulassung2.services;
 
 import mops.zulassung2.model.crypto.Receipt;
+import mops.zulassung2.model.dataobjects.ReceiptData;
+import mops.zulassung2.model.dataobjects.ReceiptDataInterface;
 import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.model.fileparsing.CSVLineParser;
 import mops.zulassung2.model.fileparsing.FileParser;
@@ -134,6 +136,5 @@ public class FileServiceTests {
     assertEquals(data, content);
     Files.deleteIfExists(file.toPath());
   }
-
 
 }

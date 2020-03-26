@@ -1,10 +1,11 @@
 package mops.zulassung2.controller;
 
-import mops.zulassung2.model.OrgaUploadCSVForm;
 import mops.zulassung2.model.dataobjects.AccountCreator;
 import mops.zulassung2.model.dataobjects.Student;
+import mops.zulassung2.model.dataobjects.UploadCSVForm;
 import mops.zulassung2.services.EmailService;
 import mops.zulassung2.services.FileService;
+import mops.zulassung2.services.MinIoService;
 import org.apache.commons.io.FilenameUtils;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.access.annotation.Secured;
@@ -27,9 +28,9 @@ public class UploadApprovedStudentsController {
 
   private final FileService fileService;
   private final EmailService emailService;
-  public List<Student> students = new ArrayList<>();
-  public String currentSubject = "";
-  public String currentSemester = "";
+  private final MinIoService minIoService;
+  private List<Student> students = new ArrayList<>();
+  private UploadCSVForm uploadCSVForm = new UploadCSVForm();
   private AccountCreator accountCreator;
   private String dangerMessage;
   private String warningMessage;
@@ -44,10 +45,12 @@ public class UploadApprovedStudentsController {
    * @param emailService Service for sending emails
    */
   public UploadApprovedStudentsController(FileService fileService,
-                                          EmailService emailService) {
+                                          EmailService emailService,
+                                          MinIoService minIoService) {
     accountCreator = new AccountCreator();
     this.fileService = fileService;
     this.emailService = emailService;
+    this.minIoService = minIoService;
   }
 
 
@@ -60,13 +63,11 @@ public class UploadApprovedStudentsController {
    */
   @GetMapping("/upload-approved-students")
   @Secured("ROLE_orga")
-  public String orga(KeycloakAuthenticationToken token,
-                     Model model,
-                     @ModelAttribute("form") OrgaUploadCSVForm form) {
+  public String orga(KeycloakAuthenticationToken token, Model model) {
     resetMessages();
     model.addAttribute("account", accountCreator.createFromPrincipal(token));
     model.addAttribute("students", students);
-    model.addAttribute("form", form);
+    model.addAttribute("form", uploadCSVForm);
 
     return "upload-approved-students";
   }
@@ -81,13 +82,13 @@ public class UploadApprovedStudentsController {
 
   @PostMapping("/upload-approved-students")
   @Secured("ROLE_orga")
-  public String submit(@ModelAttribute("form") OrgaUploadCSVForm form) {
+  public String submit(@ModelAttribute("form") UploadCSVForm form) {
     if (!FilenameUtils.isExtension(form.getMultipartFile().getOriginalFilename(), "csv")) {
       setDangerMessage("Die Datei muss im .csv Format sein!");
       return "redirect:/zulassung2/upload-approved-students";
     }
-    currentSubject = form.getSubject().replaceAll("[: ]", "-");
-    currentSemester = form.getSemester().replaceAll("[: ]", "-");
+    uploadCSVForm.setSubject(form.getSubject().replaceAll("[: ]", "-"));
+    uploadCSVForm.setSemester(form.getSemester().replaceAll("[: ]", "-"));
 
     students = fileService.processCSVUpload(form.getMultipartFile());
     if (students == null) {
@@ -108,11 +109,15 @@ public class UploadApprovedStudentsController {
   @Secured("ROLE_orga")
   public String sendMail() {
     boolean noErrorsOcurredWhileSendingMessages = true;
+    boolean noErrorsOcurredWhileSavingReceipts = true;
     for (Student student : students) {
-      File file = fileService.createFile(student, currentSubject, currentSemester);
+      File file = fileService.createFile(student, uploadCSVForm.getSubject(), uploadCSVForm.getSemester());
       try {
-        emailService.sendMail(student, currentSubject, file);
+        emailService.sendMail(student, uploadCSVForm.getSubject(), file);
         fileService.storeReceipt(student, file);
+        if (!minIoService.test(student, uploadCSVForm.getSubject())) {
+          noErrorsOcurredWhileSavingReceipts = false;
+        }
       } catch (MessagingException e) {
         createDangerMessageMultipleStudents(noErrorsOcurredWhileSendingMessages, student);
         noErrorsOcurredWhileSendingMessages = false;
@@ -125,8 +130,10 @@ public class UploadApprovedStudentsController {
     }
     if (noErrorsOcurredWhileSendingMessages) {
       setSuccessMessage("Alle Emails wurden erfolgreich versendet.");
+      setDangerMessageForSavingMinIO(noErrorsOcurredWhileSavingReceipts);
     } else {
       setWarningMessage("Es wurden nicht alle Emails korrekt versendet.");
+      setDangerMessageForSavingMinIO(noErrorsOcurredWhileSavingReceipts);
     }
     return "redirect:/zulassung2/upload-approved-students";
   }
@@ -142,10 +149,11 @@ public class UploadApprovedStudentsController {
   @Secured("ROLE_orga")
   public String sendMail(@RequestParam("count") int count) {
     Student selectedStudent = students.get(count);
-    File file = fileService.createFile(selectedStudent, currentSubject, currentSemester);
+    File file = fileService.createFile(selectedStudent, uploadCSVForm.getSubject(), uploadCSVForm.getSemester());
     try {
-      emailService.sendMail(selectedStudent, currentSubject, file);
+      emailService.sendMail(selectedStudent, uploadCSVForm.getSubject(), file);
       fileService.storeReceipt(selectedStudent, file);
+      setDangerMessageForMinIOsingle(selectedStudent);
       createSuccessMethodSingleStudent(selectedStudent);
     } catch (MessagingException e) {
       createDangerMethodSingleStudent(selectedStudent);
@@ -169,17 +177,63 @@ public class UploadApprovedStudentsController {
     }
   }
 
-
   private void createSuccessMethodSingleStudent(Student selectedStudent) {
-    setSuccessMessage("Email an " + selectedStudent.getForeName() + " "
-        + selectedStudent.getName()
-        + " wurde erfolgreich versendet.");
+    if (successMessage == null) {
+      setSuccessMessage("Email an " + selectedStudent.getForeName() + " "
+          + selectedStudent.getName()
+          + " wurde erfolgreich versendet.");
+    } else {
+      setSuccessMessage(successMessage.concat(" Email an " + selectedStudent.getForeName() + " "
+          + selectedStudent.getName()
+          + " wurde erfolgreich versendet."));
+    }
   }
 
   private void createDangerMethodSingleStudent(Student selectedStudent) {
-    setDangerMessage("Email an " + selectedStudent.getForeName()
-        + " " + selectedStudent.getName()
-        + " konnte nicht versendet werden!");
+    if (dangerMessage == null) {
+      setDangerMessage("Email an " + selectedStudent.getForeName()
+          + " " + selectedStudent.getName()
+          + " konnte nicht versendet werden!");
+    } else {
+      setDangerMessage(dangerMessage.concat(" Email an " + selectedStudent.getForeName()
+          + " " + selectedStudent.getName()
+          + " konnte nicht versendet werden!"));
+    }
+  }
+
+  private void setDangerMessageForSavingMinIO(boolean noErrorsOcurredWhileSavingReceipts) {
+    if (noErrorsOcurredWhileSavingReceipts && successMessage == null) {
+      setWarningMessage(warningMessage.concat(" Quittungen, bei denen der Mailversand erfolgreich war,"
+          + " wurden erfolgreich gespeichert."));
+    } else if (noErrorsOcurredWhileSavingReceipts) {
+      setSuccessMessage(successMessage.concat(" Alle Quittungen"
+          + " wurden erfolgreich gespeichert."));
+    } else if (dangerMessage == null) {
+      setDangerMessage("Die Nachweise konnten nicht gespeichert werden."
+          + " Möglicherweise ist MinIO nicht verfügbar.");
+    } else {
+      setDangerMessage("Die Nachweise konnten nicht gespeichert werden."
+          + " Möglicherweise ist MinIO nicht verfügbar. --- " + dangerMessage);
+    }
+  }
+
+  private void setDangerMessageForMinIOsingle(Student selectedStudent) {
+    if (!minIoService.test(selectedStudent, uploadCSVForm.getSubject())) {
+      setDangerMessage("Zulassung von "
+          + selectedStudent.getForeName()
+          + " " + selectedStudent.getName()
+          + " zur Veranstaltung "
+          + uploadCSVForm.getSubject()
+          + " konnte nicht gespeichert werden."
+          + " Möglicherweise ist MinIO nicht verfügbar.");
+    } else {
+      setSuccessMessage("Zulassung von "
+          + selectedStudent.getForeName()
+          + " " + selectedStudent.getName()
+          + " zur Veranstaltung "
+          + uploadCSVForm.getSubject()
+          + " wurde erfolgreich gespeichert.");
+    }
   }
 
   /**
@@ -231,15 +285,5 @@ public class UploadApprovedStudentsController {
   @ModelAttribute("success")
   String getSuccess() {
     return successMessage;
-  }
-
-  @ModelAttribute("subject")
-  String getCurrentSubject() {
-    return currentSubject;
-  }
-
-  @ModelAttribute("semester")
-  String getCurrentSemester() {
-    return currentSemester;
   }
 }

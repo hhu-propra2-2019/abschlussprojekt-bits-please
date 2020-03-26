@@ -2,9 +2,10 @@ package mops.zulassung2.controller;
 
 import mops.zulassung2.model.crypto.Receipt;
 import mops.zulassung2.model.dataobjects.AccountCreator;
+import mops.zulassung2.model.dataobjects.ReceiptDataInterface;
 import mops.zulassung2.model.dataobjects.Student;
 import mops.zulassung2.services.FileService;
-import mops.zulassung2.services.ReceiptDataInterface;
+import mops.zulassung2.services.MinIoService;
 import mops.zulassung2.services.SignatureService;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.access.annotation.Secured;
@@ -25,6 +26,7 @@ public class UploadReceiptsController {
 
   private final FileService fileService;
   private final SignatureService signatureService;
+  private final MinIoService minIoService;
   private List<ReceiptDataInterface> verifiedReceipts = new ArrayList<>();
   private AccountCreator accountCreator;
   private String dangerMessage;
@@ -39,10 +41,12 @@ public class UploadReceiptsController {
    * @param signatureService Service for signing files
    */
   public UploadReceiptsController(FileService fileService,
-                                  SignatureService signatureService) {
+                                  SignatureService signatureService,
+                                  MinIoService minIoService) {
     accountCreator = new AccountCreator();
     this.fileService = fileService;
     this.signatureService = signatureService;
+    this.minIoService = minIoService;
   }
 
   /**
@@ -89,13 +93,23 @@ public class UploadReceiptsController {
         receiptData.getForeName());
 
     fileService.storeReceipt(student, file);
-    //TODO: Fehlermeldungen von MinIO anzeigen
-    setSuccessMessage("Zulassung von "
-        + receiptData.getForeName()
-        + " " + receiptData.getName()
-        + " zur Veranstaltung "
-        + receiptData.getModule()
-        + " wurde erfolgreich gespeichert.");
+
+    if (minIoService.test(student, receiptData.getModule())) {
+      setSuccessMessage("Zulassung von "
+          + receiptData.getForeName()
+          + " " + receiptData.getName()
+          + " zur Veranstaltung "
+          + receiptData.getModule()
+          + " wurde erfolgreich gespeichert.");
+    } else {
+      setDangerMessage("Zulassung von "
+          + receiptData.getForeName()
+          + " " + receiptData.getName()
+          + " zur Veranstaltung "
+          + receiptData.getModule()
+          + " konnte nicht gespeichert werden."
+          + " Möglicherweise ist MinIO nicht verfügbar.");
+    }
     return "redirect:/zulassung2/upload-receipt";
   }
 
@@ -107,6 +121,7 @@ public class UploadReceiptsController {
   @PostMapping("/submit-receipt")
   @Secured("ROLE_orga")
   public String submitReceipts() {
+    boolean success = true;
     for (ReceiptDataInterface receiptData : verifiedReceipts) {
       if (receiptData.isValid()) {
         File file = fileService.createFileFromSubmittedReceipt(receiptData);
@@ -116,11 +131,18 @@ public class UploadReceiptsController {
             receiptData.getName(),
             receiptData.getForeName());
 
-        //TODO: Fehlermeldungen von MinIO anzeigen
         fileService.storeReceipt(student, file);
+        if (!minIoService.test(student, receiptData.getModule())) {
+          success = false;
+        }
       }
     }
-    setSuccessMessage("Alle gültigen Nachweise wurden erfolgreich gespeichert.");
+    if (success) {
+      setSuccessMessage("Alle gültigen Nachweise wurden erfolgreich gespeichert.");
+    } else {
+      setDangerMessage("Die Nachweise konnten nicht gespeichert werden."
+          + " Möglicherweise ist MinIO nicht verfügbar.");
+    }
     return "redirect:/zulassung2/upload-receipt";
   }
 

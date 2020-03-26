@@ -29,14 +29,8 @@
             <label class="lead" for="subjectControlInput">Fach:</label>
             <input class="form-control form-control-sm" id="subjectControlInput" name="subject"
                    placeholder="Name des Fachs"
-                   required th:value="${subject}" type="text">
-            <br>
-            <label class="lead" for="deadLineInput">Abgabefrist:</label>
-            <input class="form-control" id="deadLineInput" name="deadline" placeholder="JJJJ-MM-DDTHH:MM" required
-                   th:value="${deadline}" type="datetime-local">
+                   required th:value="${form.subject}" type="text">
             <hr>
-
-
             <button class="btn btn-primary" type="submit">Hochladen</button>
         </form>
     </div>
@@ -51,8 +45,21 @@
     </div>
 
     <div class="table-responsive" th:if="${notallowed!=null and not notallowed.isEmpty()}">
-        <p class="lead">Nicht zugelassene Teilnehmer zur Veranstaltung <span th:text="${subject}">Subject</span></p>
-
+        <form class="inline-form" method="POST"
+              th:action="@{/zulassung2/upload-registrationlist/set-deadline}">
+            <label class="lead" for="deadLineInput">Legen Sie eine Abgabefrist für die fehlenden Zulassungen
+                fest:</label>
+            <input class="form-control" id="deadLineInput" name="deadline" placeholder="JJJJ-MM-DDTHH:MM" required
+                   th:value="${form.deadline}" type="datetime-local">
+            <br>
+            <button class="btn btn-primary" type="submit">
+                Übernehmen
+            </button>
+        </form>
+        <hr>
+        <p class="lead">
+            Nicht zugelassene Teilnehmer zur Veranstaltung <span th:text="${form.subject}">Subject</span>:
+        </p>
         <div class="scrollable">
 
             <table class="table">
@@ -60,8 +67,8 @@
                 <tr>
                     <th>Nr.</th>
                     <th>Matrikelnummer</th>
-                    <th>Vorname</th>
                     <th>Nachname</th>
+                    <th>Vorname</th>
                     <th>E-Mail</th>
                     <th>Individuell versenden</th>
                 </tr>
@@ -74,11 +81,11 @@
                     <td th:text="${notAllowedStudent.foreName}">Brunhilde</td>
                     <td th:text="${notAllowedStudent.email}">brundhilde.meier@mops.de</td>
                     <td>
-                        <form class="inline-form"
-                              method="POST"
+                        <form class="inline-form" method="POST"
                               th:action="@{/zulassung2/sendmailreglist/individual(count=${iterationStatus.index})}">
                             <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
-                            <button class="btn btn-primary" type="submit">Warnungsnachricht senden
+                            <button class="btn btn-primary" type="submit">
+                                Zulassungsnachweis anfordern
                             </button>
                         </form>
                     </td>
@@ -88,7 +95,8 @@
         <form action="/zulassung2/sendmailreglist" class="inline-form" method="POST">
             <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
             <br>
-            <button class="btn btn-primary" type="submit">Warnungsnachricht an alle Betroffenen senden
+            <button class="btn btn-primary" type="submit">
+                Zulassungsnachweise von allen Betroffenen anfordern
             </button>
         </form>
         <br>
@@ -97,7 +105,7 @@
     <hr th:if="${allowed!=null and not allowed.isEmpty() and notallowed!=null and not notallowed.isEmpty()}">
 
     <div class="table-responsive" th:if="${allowed!=null and not allowed.isEmpty()}">
-        <p class="lead">Zugelassene Teilnehmer zur Veranstaltung <span th:text="${subject}">Subject</span></p>
+        <p class="lead">Zugelassene Teilnehmer zur Veranstaltung <span th:text="${form.subject}">Subject</span>:</p>
         <br>
         <div class="scrollable">
             <table class="table">
