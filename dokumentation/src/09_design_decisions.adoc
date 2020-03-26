@@ -21,3 +21,16 @@ Verschiedene Möglichkeiten:
 * ausführlicher in Form einzelner Unterkapitel je Entscheidung
 * ADR (http://thinkrelevance.com/blog/2011/11/15/documenting-architecture-decisions[Architecture Decision Record]) für jede wichtige Entscheidung
 ****
+
+****
+.Verschlüsselung:
+* Das Zulassungstoken, dass die Studenten erhalten muss mit einer Verschlüsselungsmethode verschlüsselt werden. Dafür entschieden wir uns für die Hashfunktion
+sha256 mit RSA, da diese als praktisch nicht entschlüsselbar gilt.
+
+.Speicherung der Quittungen:
+* Die Quittungen werden aus Datenschutzrechtlichen Gründen lediglich für einen begrenzten Zeitraum, aktuell von 3 Jahren abgespeichert.
+Innerhalb dieses Zeitraums können die Quittungen vom Server heruntergeladen werden. Für die Speicherung haben wir uns für MinIO entschieden.
+
+.Datenbank:
+* Wir haben uns absichtlich gegen eine Datenbank entschieden, da dies aus Datenschutzrechtlichen Gründen eventuell schwierig durchzusetzen ist.
+****
