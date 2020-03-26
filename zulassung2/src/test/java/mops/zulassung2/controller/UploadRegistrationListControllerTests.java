@@ -2,6 +2,7 @@ package mops.zulassung2.controller;
 
 import com.c4_soft.springaddons.test.security.context.support.WithMockKeycloackAuth;
 import mops.zulassung2.model.dataobjects.Student;
+import mops.zulassung2.model.dataobjects.UploadCSVForm;
 import mops.zulassung2.services.EmailService;
 import mops.zulassung2.services.FileService;
 import mops.zulassung2.services.MinIoService;
@@ -49,6 +50,17 @@ public class UploadRegistrationListControllerTests {
   MinIoService minIoService;
   @MockBean
   EmailService emailService;
+  @BeforeEach
+  void createFile() {
+    mockCsvFile = new MockMultipartFile(
+        "file",
+        "file.csv",
+        "text/csv",
+        "Test Data".getBytes(StandardCharsets.UTF_8));
+  }
+  public List<Student> notAllowed = new ArrayList<>();
+  public List<Student> allowed = new ArrayList<>();
+
 
   @Test
   @WithMockKeycloackAuth("orga")
@@ -56,6 +68,8 @@ public class UploadRegistrationListControllerTests {
     mvc.perform(get("/zulassung2/upload-registrationlist"))
         .andExpect(status().isOk());
   }
+
+
   @Test
   void orgaListAsUnauthorizedIsRedirected() throws Exception {
     mvc.perform(get("/zulassung2/upload-registrationlist"))
@@ -75,5 +89,43 @@ public class UploadRegistrationListControllerTests {
     mvc.perform(post("/zulassung2/sendmailreglist")
         .with(csrf().useInvalidToken()))
         .andExpect(status().isForbidden());
+  }
+  @Test
+  @WithMockKeycloackAuth("studentin")
+  void orgaListAsStudentIsRefused() throws Exception {
+    // Arrange
+    MockHttpSession mockHttpSession = new MockHttpSession();
+    List<Student> students = new ArrayList<>();
+    students.add(mock(Student.class));
+    when(fileService.processCSVUpload(mockCsvFile)).thenReturn(students);
+
+    // Act and Assert
+    mvc.perform(get("/zulassung2/upload-registrationlist"))
+        .andExpect(status().isForbidden());
+    mvc.perform(post("/zulassung2/sendmailreglist")
+        .with(csrf()))
+        .andExpect(status().isForbidden());
+    mvc.perform(post("/zulassung2/sendmailreglist/individual")
+        .param("count", "0")
+        .session(mockHttpSession)
+        .with(csrf()))
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
+  @WithMockKeycloackAuth("orga")
+  void testSubmitCsvFile() throws Exception {
+    // Arrange
+    UploadCSVForm form = new UploadCSVForm();
+    form.setMultipartFile(mockCsvFile);
+    form.setSubject("Propra2");
+    form.setSemester("WS1920");
+    // Act and Assert
+    mvc.perform(multipart("/zulassung2/upload-registrationlist")
+        .file(mockCsvFile)
+        .flashAttr("form", form)
+        .with(csrf()))
+        .andExpect(redirectedUrl("/zulassung2/upload-registrationlist"));
+
   }
 }
