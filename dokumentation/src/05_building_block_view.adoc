@@ -1,192 +1,67 @@
-[[section-building-block-view]]
-== Bausteinsicht
+== Abschnitt 5 Building Block View
 
-[role="arc42help"]
-****
-.Inhalt
-Diese Sicht zeigt die statische Zerlegung des Systems in Bausteine sowie deren Beziehungen.
-Beispiele für Bausteine sind unter anderem:
+[cols="1,1" options="header"]
 
-* Module
-* Komponenten
-* Subsysteme
-* Klassen
-* Interfaces
-* Pakete
-* Bibliotheken
-* Frameworks
-* Schichten
-* Partitionen
-* Tiers
-* Funktionen
-* Makros
-* Operationen
-* Datenstrukturen
-* ...
-
-Diese Sicht sollte in jeder Architekturdokumentation vorhanden sein.
-In der Analogie zum Hausbau bildet die Bausteinsicht den _Grundrissplan_.
-
-.Motivation
-Behalten Sie den Überblick über den Quellcode, indem Sie die statische Struktur des Systems durch Abstraktion verständlich machen.
-
-Damit ermöglichen Sie Kommunikation auf abstrakterer Ebene, ohne zu viele Implementierungsdetails offenlegen zu müssen.
-
-.Form
-Die Bausteinsicht ist eine hierarchische Sammlung von Blackboxen und Whiteboxen (siehe Abbildung unten) und deren Beschreibungen.
-
-image:05_building_blocks-DE.png["Baustein Sichten"]
-
-*Ebene 1* ist die Whitebox-Beschreibung des Gesamtsystems, zusammen mit Blackbox-Beschreibungen der darin enthaltenen Bausteine.
-
-*Ebene 2* zoomt in einige Bausteine der Ebene 1 hinein.
-Sie enthält somit die Whitebox-Beschreibungen ausgewählter Bausteine der Ebene 1, jeweils zusammen mit Blackbox-Beschreibungen darin enthaltener Bausteine.
-
-*Ebene 3* zoomt in einige Bausteine der Ebene 2 hinein, usw.
-****
-
-=== Whitebox Gesamtsystem
-
-[role="arc42help"]
-****
-An dieser Stelle beschreiben Sie die Zerlegung des Gesamtsystems anhand des nachfolgenden Whitebox-Templates.
-Dieses enthält:
-
-* Ein Übersichtsdiagramm
-* die Begründung dieser Zerlegung
-* Blackbox-Beschreibungen der hier enthaltenen Bausteine.
-Dafür haben Sie verschiedene Optionen:
-
-** in _einer_ Tabelle, gibt einen kurzen und pragmatischen Überblick über die enthaltenen Bausteine sowie deren Schnittstellen.
-** als Liste von Blackbox-Beschreibungen der Bausteine, gemäß dem Blackbox-Template (siehe unten).
-Diese Liste können Sie, je nach Werkzeug, etwa in Form von Unterkapiteln (Text), Unter-Seiten (Wiki) oder geschachtelten Elementen (Modellierungswerkzeug) darstellen.
-
-* (optional:) wichtige Schnittstellen, die nicht bereits im Blackbox-Template eines der Bausteine erläutert werden, aber für das Verständnis der Whitebox von zentraler Bedeutung sind.
-Aufgrund der vielfältigen Möglichkeiten oder Ausprägungen von Schnittstellen geben wir hierzu kein weiteres Template vor.
-Im schlimmsten Fall müssen Sie Syntax, Semantik, Protokolle, Fehlerverhalten, Restriktionen, Versionen, Qualitätseigenschaften, notwendige Kompatibilitäten und vieles mehr spezifizieren oder beschreiben.
-Im besten Fall kommen Sie mit Beispielen oder einfachen Signaturen zurecht.
-****
-
-_**<Übersichtsdiagramm>**_
-
-Begründung:: _<Erläuternder Text>_
-
-Enthaltene Bausteine:: _<Beschreibung der enthaltenen Bausteine (Blackboxen)>_
-
-Wichtige Schnittstellen:: _<Beschreibung wichtiger Schnittstellen>_
-
-[role="arc42help"]
-****
-Hier folgen jetzt Erläuterungen zu Blackboxen der Ebene 1.
-
-Falls Sie die tabellarische Beschreibung wählen, so werden Blackboxen darin nur mit Name und Verantwortung nach folgendem Muster beschrieben:
-
-[cols="1,2" options="header"]
+==== Application-Services
 |===
-| **Name** | **Verantwortung**
-| _<Blackbox 1>_ | _<Text>_
-| _<Blackbox 2>_ | _<Text>_
+| Subsystem | Kurzbeschreibung
+| FileService | Der FileService erstellt die CSV-Datei die eine Liste von Studenten übergeben bekommt.
+| EmailService | Dieser Service ermöglicht es Studenten ihre Zulassungen zu senden. Außerdem können auch
+Studenten darüber informiert werden das Ihre Zulassung nicht gefunden werden konnte und diese bitte somit bis zu einer bestimmten Frist
+diese nachreichen sollen.
+| SignatureService | Dieser Service ist dafür Verantwortlich später die Quittung mit der Signatur zu versehen.
+Somit wird der Dateiname festgelegt, sowie auch die erste Zeile der Datei.
+| MinIoService | Dieser Bereich enthält eine Methode mit der später überprüft werden kann ob der Student eine Quittung in
+Modul "X" im "File-Storage-System" besitzt.
 |===
 
-Falls Sie die ausführliche Liste von Blackbox-Beschreibungen wählen, beschreiben Sie jede wichtige Blackbox in einem eigenen Blackbox-Template.
-Dessen Überschrift ist jeweils der Namen dieser Blackbox.
-****
+==== View
+|===
+| Subsystem | Kurzbeschreibung
+| Zulassung2Controller | Dieser Controller ist für die "Übersicht" verantwortlich, denn
+hierdurch wird durch Keycloak überprüft welche Ansicht der Nutzer beim Start haben soll. Als Student wird man nämlich hier nur eine Funktion des Systems zur Verfügung bekommen.
+Diese Funktion ist das Validieren von Quittungen. Ausführlicher  werde ich diese Funktionen in den nächsten Punkten erörtern.
+| UploadRegistrationListController | Auf dieser Weboberfläche kann man zum Beispiel eine Liste hochladen im CSV-Format die eine Liste von Studenten enthält
+die sich zur Klausur angemeldet haben. Wenn ein Student in dieser Liste enthalten sein sollte, der nicht die Zulassung besitzt, so kann man eine E-Mail abschicken die diesen Studenten darüber informiert, so dass er schnellstmöglich seine Zulassung nachreichen kann. Die Abgabefrist kann in diesem Formular auch mitgegeben werden um Unklarheiten zu vermeiden.
+Zusätzlich wird dadrunter eine Tabelle angezeigt die Auskunft über Studenten gibt die die Zulassung erworben haben.
+| UploadApprovedStudentsController | Hier kann man eine Liste von Studenten hochladen die die Zulassung erworben haben aber noch nicht erhalten haben. Man lädt dafür die CSV-Datei hoch und kann dann entweder direkt an alle Studenten die Zulassung für das jeweilige Modul (im Semester X) senden, oder auch vereinzelt. (für Spezialfälle)
+| UploadReceiptsController | Damit später Studenten nachträglich ihre Quittung nachreichen können, gibt es diese Oberfläche wo Sie selbst Ihre
+Quittung validieren lassen können, oder der Organisator selbst.
+| MyErrorControllerController | Mithilfe dieses Controllers werden später Fehler ausgegeben. So wurden in diesem Controller bestimmte Randfälle
+definiert um diese Später abzufangen.
+|===
 
-==== <Name Blackbox 1>
+=== Aufgabe 5.2 Tokensystem
+Die Tokens bzw. Quittungen werden durch dieses System generiert. Dafür haben wir ein symmetrisches Schlüsserverfahren verwendet mit der
+Enkodierung "Base64" und die Hash-Funktion "char-256".
+Die Quittung wird im ".txt" Format gespeichert und enthält in der ersten Zeile Personenbezogene information, somit lässt es sich einfacher nachvollziehen zu welchem Studenten eine bestimmte Quittung gehört.
 
-[role="arc42help"]
-****
-Beschreiben Sie die <Blackbox 1> anhand des folgenden Blackbox-Templates:
+=== Aufgabe 5.3 Organisatoren
+Organisatoren können mithilfe dieses Systems unkompliziert überprüfen welche Studenten aus der Anmeldeliste
+die Zulassung erreicht haben. Wenn Studenten sich angemeldet haben die diese nicht haben so kann er mit einem "Klick" eine E-Mail
+an diese Studenten versenden damit diese ihre Quittung nachreichen. Dafür wird natürlich das jeweilige Modul und das Semester und die dazugehörige
+Frist mit eingegeben.
+Außerdem kann er auch selbst Quittungen validieren oder auch selbst erstellen und an die jeweiligen Studenten abschicken.
+All dies geschieht benutzerfreundlich und unkompliziert.
 
-* Zweck/Verantwortung
-* Schnittstelle(n), sofern diese nicht als eigenständige Beschreibungen herausgezogen sind.
-Hierzu gehören eventuell auch Qualitäts- und Leistungsmerkmale dieser Schnittstelle.
-* (Optional) Qualitäts-/Leistungsmerkmale der Blackbox, beispielsweise Verfügbarkeit, Laufzeitverhalten o. Ä.
-* (Optional) Ablageort/Datei(en)
-* (Optional) Erfüllte Anforderungen, falls Sie Traceability zu Anforderungen benötigen.
-* (Optional) Offene Punkte/Probleme/Risiken
-****
+=== Aufgabe 5.4 Studenten
+Wenn der Student eine E-Mail empfängt der ihn darüber informiert seine Quittung nachzureichen da diese im System nicht gefunden wurde, so kann
+er mithilfe dieses Systems seine Quittung nachreichen. Diese bekommt er zuvor per Mail gesendet, die Verantwortung für die Quittung übernimmt
+somit der Student.
 
-_<Zweck/Verantwortung>_
-
-_<Schnittstelle(n)>_
-
-_<(Optional) Qualitäts-/Leistungsmerkmale>_
-
-_<(Optional) Ablageort/Datei(en)>_
-
-_<(Optional) Erfüllte Anforderungen>_
-
-_<(optional) Offene Punkte/Probleme/Risiken>_
-
-==== <Name Blackbox 2>
-
-_<Blackbox-Template>_
-
-==== <Name Blackbox n>
-
-_<Blackbox-Template>_
+=== Aufgabe 5.5 E-Mail-Service
+Dieser Service ist dafür verantwortlich Studenten gegebenfalls zu benachrichtigen das sie die Zulassung erworben haben, im Anhang befindet sich
+dann natürlich auch der jeweilige Token dafür.
+Außerdem kann mithilfe dieses Systems auch E-Mails verschickt werden die den Studenten auffordern seine Quittung nachzureichen da diese aus einem Grund "X" nicht vorliegt.
 
 
-==== <Name Schnittstelle 1>
 
-...
+=== Qualität-/ Leistungsmerkmale
+Bei unserem Projekt haben wir stark auf "Dependency Inversion" geachtet, so dass wir möglichst keine Abhängigkeiten haben. Außerdem
+haben wir auch bei der Entwicklung der Benutzer-Oberfläche stark auf Benutzer Freundlichkeit geachtet, denn somit wird gewährleistet das unser
+System von jeder Person einfach und optimal genutzt werden kann.
 
-==== <Name Schnittstelle m>
+=== Ablageort / Datei(en)
+Dafür haben wir unser "File-Storage-Service" minIo benutzt wo die Quittungen für einen gewissen Zeitraum speichern.
 
-=== Ebene 2
 
-[role="arc42help"]
-****
-Beschreiben Sie den inneren Aufbau (einiger) Bausteine aus Ebene 1 als Whitebox.
-
-Welche Bausteine Ihres Systems Sie hier beschreiben, müssen Sie selbst entscheiden.
-Bitte stellen Sie dabei Relevanz vor Vollständigkeit.
-Skizzieren Sie wichtige, überraschende, riskante, komplexe oder besonders volatile Bausteine.
-Normale, einfache oder standardisierte Teile sollten Sie weglassen.
-****
-
-==== Whitebox _<Baustein 1>_
-
-[role="arc42help"]
-****
-...zeigt das Innenleben von _Baustein 1_.
-****
-
-_<Whitebox-Template>_
-
-==== Whitebox _<Baustein 2>_
-
-_<Whitebox-Template>_
-
-...
-
-==== Whitebox _<Baustein m>_
-
-_<Whitebox-Template>_
-
-=== Ebene 3
-
-[role="arc42help"]
-****
-Beschreiben Sie den inneren Aufbau (einiger) Bausteine aus Ebene 2 als Whitebox.
-
-Bei tieferen Gliederungen der Architektur kopieren Sie diesen Teil von arc42 für die weiteren Ebenen.
-****
-
-==== Whitebox <_Baustein x.1_>
-
-[role="arc42help"]
-****
-...zeigt das Innenleben von _Baustein x.1_.
-****
-
-_<Whitebox-Template>_
-
-==== Whitebox <_Baustein x.2_>
-
-_<Whitebox-Template>_
-
-==== Whitebox <_Baustein y.1_>
-
-_<Whitebox-Template>_
