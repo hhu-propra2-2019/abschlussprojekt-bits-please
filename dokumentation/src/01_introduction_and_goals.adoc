@@ -26,21 +26,7 @@
 [cols="1,2" options="header"]
 |===
 |Qualitätsziel | Motivation und Erläuterung
-| Innerhalb kurzer Zeit (4 Wochen) eine stabile, funktionierende Webanwendung zu realisieren. | Da alle im Programmierteam realtiv unerfahrene Programmierer sind und wir nur einen sehr begrenzten Zeitraum zur realisierung haben ist effektives Zeit- und Ressourcenmanagement eine wesentlicher Erfolgsfaktor
-| Sichere, stabile kryptographische Verschlüsselung der Datei. | Selbsterklärend.
-| Exzellente User Experience | Eine angenehme user exeprience ist ...
+| Innerhalb kurzer Zeit (4 Wochen) eine stabile, funktionierende Webanwendung zu realisieren. | Da alle im Programmierteam relativ unerfahrene Programmierer sind und wir nur einen sehr begrenzten Zeitraum zur Realisierung haben ist effektives Zeit- und Ressourcenmanagement eine wesentlicher Erfolgsfaktor für das Projekt.
+| Sichere, stabile kryptographische Verschlüsselung der Datei. | Siehe hierzu vor allem das Kapitel 7 Risiken und technische Schulden.
+| Exzellente User Experience | Die Interaktion mit dem System erfolgt primär duch den Upload und Downlaod von Dateien. Das User Interface sollte vor allem übersichtlich und klar strukturiert sein.
 |===
-
-=== Stakeholder
-
-[cols="1,1" options="header"]
-|===
-|Rolle | Interesse, Bezug
-| Entwicklungsteam | ....
-| Lehrstuhl für Softwaretechnik | ...
-| Die Entwicklungsteam der anderen Teilsysteme | ...
-|===
-
-==== Visualisierung der Prozesse
-
-image::images/process_flowchart_anmeldungen2.jpg[]

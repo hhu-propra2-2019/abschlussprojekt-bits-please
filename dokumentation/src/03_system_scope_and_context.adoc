@@ -1,10 +1,18 @@
 [[section-system-scope-and-context]]
 == Kontextabgrenzung
 
+=== Fachlicher Kontext
 
 Die Nutzer des Systems sind Organisatoren (Dozenten und Mitarbeiter des Lehrstuhls) sowie Studierende.
-Die Eingabe von Daten erfolgt manuell oder per hochladen von Dateien über die UI. Die Ausgabe erfolgt über den Bildschirm oder als Export von Dateien.
-Interaktion mit Fremdsystemen gibt es nicht.
+Die Eingabe von Daten erfolgt manuell oder per Hochladen von Dateien über das User Interface. Die Ausgabe erfolgt über den Bildschirm oder als Export von Dateien.
+Siehe auch "Kapitel 6 Laufzeitsicht" für eine Diagrammdarstellung.
+
+=== Technischer Kontext
+
+*Email Client (Fremdsystem):* Für das Versenden der EMails haben wir folgende Adresse angelegt: mops.zulassung2@magenta.de.
+Die Einbindung erfolgt über Bibliotheken und die Parameter (passwort, port, host, usw...) werden in der application-properties.yml definiert.
+Es kann aber auch jeder andere Email Client verwendet werden. Hierfür muss lediglich die application-properties.yml angepasst werden.
+
 
 [role="arc42help"]
 ****
