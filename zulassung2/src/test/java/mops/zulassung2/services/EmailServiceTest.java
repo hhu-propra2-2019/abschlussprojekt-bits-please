@@ -36,7 +36,7 @@ class EmailServiceTest {
   @Test
   void sendMailWithAttachmentAndValidAdress() {
     //Arrange
-    Student student = new Student("272490", "snami100@uni-duesseldorf.de", "Amin", "Snur");
+    Student student = new Student("2444111", "hapet100@hhu.de", "Peter", "Hans");
     File file = mock(File.class);
     when(file.getName()).thenReturn("Testfile");
 
@@ -55,7 +55,7 @@ class EmailServiceTest {
   void sendMailWithAttachmentAndInvalidAdresses() {
     //Arrange
     Student studentWithoutDot =
-        new Student("272490", "snami100@uni-duesseldorfde", "Amin", "Snur");
+        new Student("2444111", "hapet100@hhude", "Peter", "Hans");
     Student studentWithoutAt =
         new Student("123456", "meibe104uni-duesseldorf.de", "Beck", "Meinhard");
     File file = mock(File.class);
@@ -73,7 +73,7 @@ class EmailServiceTest {
   @Test
   void sendSimpleMailWithValidAdress() {
     //Arrange
-    Student student = new Student("272490", "snami100@uni-duesseldorf.de", "Amin", "Snur");
+    Student student = new Student("2444111", "hapet100@hhu.de", "Peter", "Hans");
 
     //Act
     try {
@@ -90,7 +90,7 @@ class EmailServiceTest {
   void sendSimpleMailWithInvalidAdresses() {
     //Arrange
     Student studentWithoutDot =
-        new Student("272490", "snami100@uni-duesseldorfde", "Amin", "Snur");
+        new Student("2444111", "hapet100@hhude", "Peter", "Hans");
     Student studentWithoutAt =
         new Student("123456", "meibe104uni-duesseldorf.de", "Beck", "Meinhard");
 
