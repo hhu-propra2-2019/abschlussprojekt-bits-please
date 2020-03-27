@@ -135,7 +135,7 @@ public class UploadRegistrationListController {
   @PostMapping("/sendmailreglist")
   @Secured("ROLE_orga")
   public String sendWarningMail() {
-    if (uploadCSVForm.getDeadline() == null) {
+    if (uploadCSVForm.getDeadline().equals("Noch nicht festgelegt")) {
       setDangerMessage("Bitte legen Sie zunächst eine Abgabefrist fest.");
       return "redirect:/zulassung2/upload-registrationlist";
     }
@@ -174,7 +174,7 @@ public class UploadRegistrationListController {
   @PostMapping("/sendmailreglist/individual")
   @Secured("ROLE_orga")
   public String sendWarningMail(@RequestParam("count") int count) {
-    if (uploadCSVForm.getDeadline() == null) {
+    if (uploadCSVForm.getDeadline().equals("Noch nicht festgelegt")) {
       setDangerMessage("Bitte legen Sie zunächst eine Abgabefrist fest.");
       return "redirect:/zulassung2/upload-registrationlist";
     }
