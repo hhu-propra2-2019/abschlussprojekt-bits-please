@@ -5,35 +5,10 @@
 
 *Einschätzung:* Sehr Hoch
 
-*Erläuterung:* Da das System mit Kryptographie arbeitet besteht immer das Risiko dass der private key geleakt wird.
-Das System ist zum aktuellen Stand darauf ausgelegt, dass nur ein private key benutzt wird der unverändert bleibt.
-Sollte dieser öffentlich werden, sind alle von diesem System ausgestellten Zertifikate als ungültig zu betrachten.
+*Erläuterung:* Da das System mit Kryptographie arbeitet, besteht immer das Risiko, dass der private key geleakt wird.
+Das System ist zum aktuellen Stand darauf ausgelegt, dass nur ein private key benutzt wird, der unverändert bleibt.
+Sollte dieser öffentlich werden, sind alle von diesem System ausgestellten Zertifikate, die nicht mehr in MinIO gespeichert sind als ungültig zu betrachten.
 Es ist dann unmöglich festzustellen, welche Studenten tatsächlich eine gültige Zulassung erhalten haben.
 
-*Mitigation:* Statt eines einzigen private/public key pairs sollte das System für jede Veranstaltung ein eigenes pair erstellen und nur den public key in einem key-value-store speichern. Bei der Authentifizierung kann der richtige key zB über den Namen der Veranstaltung und das Semester identifiziert werden.
-
-[role="arc42help"]
-*Risiko:* Unsichere Umgehung mit Dateien und Emails.
-
-*Einschätzung:* sehrt hoch
-
-*Erläuterung:* weil das ganze System mit Dateien und E-mails arbeitet ,besteht immer das Risiko , dass System abstürtz,besonders der File-Service ,den von fast allen Klassen benutzt wurde.
-
-*Mitigation:*
-Wir haben die alle Aufgaben aufgeteilt und jede drinne Methode wurde getestet.Außerdem haben wir die Formen der Dateien kontrolliert , um System sicherzustellen
-
-
-****
-.Inhalt
-Eine nach Prioritäten geordnete Liste der erkannten Architekturrisiken und/oder technischen Schulden.
-
-.Motivation
-"Risikomanagement ist Projektmanagement für Erwachsene."
--- Tim Lister, Atlantic Systems Guild
-
-Unter diesem Motto sollten Sie Architekturrisiken und/oder technische Schulden gezielt ermitteln, bewerten und Ihren Management-Stakeholdern (z.B. Projektleitung, Product-Owner) transparent machen.
-
-.Form
-Liste oder Tabelle von Risiken und/oder technischen Schulden, eventuell mit vorgeschlagenen Maßnahmen zur Risikovermeidung, Risikominimierung oder dem Abbau der technischen Schulden.
-****
-
+*Lösung:* Statt eines einzigen private/public key pairs sollte das System für jede Veranstaltung ein eigenes pair erstellen und nur den public key in einem key-value-store speichern.
+Bei der Authentifizierung kann der richtige key z.B. über den Namen der Veranstaltung und das Semester identifiziert werden.
