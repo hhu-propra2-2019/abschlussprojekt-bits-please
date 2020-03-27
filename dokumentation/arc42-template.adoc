@@ -71,19 +71,15 @@ include::src/06_runtime_view.adoc[]
 
 <<<<
 // 7. Verteilungssicht
-include::src/07_deployment_view.adoc[]
 
 <<<<
 // 8. Querschnittliche Konzepte
-include::src/08_concepts.adoc[]
 
 <<<<
 // 9. Entscheidungen
-include::src/09_design_decisions.adoc[]
 
 <<<<
 // 10. Qualität...
-include::src/10_quality_scenarios.adoc[]
 
 <<<<
 // 11. Risiken

@@ -1,25 +1,24 @@
 [[section-runtime-view]]
 == Laufzeitsicht
 
-=== _Anmeldeliste Hochladen_
-* `Diese Ansicht ist nur für Organisatoren zugänglich.
+=== Anmeldeliste Hochladen
+* Diese Ansicht ist nur für Organisatoren zugänglich.
 * Der Organisator kann hier eine CSV Datei hochladen die eine Liste mit allen Studenten enthält die in einem Modul zur Prüfung angemeldet sind.
 * Vor dem Hochladen muss das Fach sowie die Abgabefrist für das Nachreichen einer Klausurzulassung gesetzt werden.
 * Während des Hochladens wird überprüft für welche Studenten aus der Datei eine gültige Quittung im MinIO storage service exisitert.
 * Auf dem Bildschirm werden zwei Listen angezeigt: zugelassene Studenten (Quittung wurde gefunden) und nicht zugelassene Studenten (es wurde keine Quittung gefunden).
 * Weiterhin kann eine Warnungsnachricht an individuelle Studenten oder an alle gesendet werden, dass eine gültige Quittung nachgereicht werden muss (siehe unten, Quittungen validieren).
 
-=== _Zulassungsliste hochladen
-* Diese Ansicht ist nur Irganisatoren zugänglich.
+=== Zulassungsliste hochladen
+* Diese Ansicht ist nur für Organisatoren zugänglich.
 * Der Organisator kann hier eine CSV Datei hochladen die alle Studenten enthält welche eine Klausurzulassung erworben haben.
 * Vor dem Hochladen muss das Fach und das Semester in dem die Zulassung erworben wurde angegeben werden.
 * Nach dem Hochladen wird die Liste auf dem Bildschirm angezeigt.
-* Nun kann den Studenten jeweils einzeln oder an alle Studenten gleichzeitig eine Email mit dem Zulassungsnachweis (Quittung) als Anahng gesendet werden.
+* Nun kann den Studenten jeweils einzeln oder an alle Studenten gleichzeitig eine Email mit dem Zulassungsnachweis (Quittung) als Anhang gesendet werden.
 * Gleichzeitig mit dem Senden werden die Quittungen im MinIO storage service gespeichert.
 
-
 === Quittungen validieren
-* Diese Ansicht ist Organisatoren und Studenten zugänglich.
+* Diese Ansicht ist für Organisatoren und Studenten zugänglich.
 * Hier kann vom Organisator oder Studenten eine Quittung hochgeladen werden. Diese Quittung wird vom System überprüft und es wird auf dem Bildschirm angezeigt ob der die Quittung gültig ist.
 * Eine gültige Quittung bedeutet, dass der Student für dieses Fach eine gültige Klausurzulassung erworben hat.
 
