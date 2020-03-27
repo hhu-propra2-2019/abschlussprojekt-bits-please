@@ -1,55 +1,74 @@
 <!DOCTYPE html>
 <html lang="en"
-      xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{base :: html(content=~{:: mycontent})}" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
-
+      th:replace="~{base :: html(content=~{:: mycontent})}"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
-  <title>Index</title>
-</head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Organisation</title>
 
+</head>
 <body>
-<div id="content" th:fragment="mycontent">
-  <h1 class="text-center">
-    Klausurzulassung
-  </h1>
-  <div>
-    <table class="table">
-      <thead>
-      <tr>
-        <th>Beschreibung</th>
-        <th>Link</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr>
-        <td>
-          Explizit über Ant-Matcher (in SecurityConfig) freigegebene Route.
-        </td>
-        <td>
-          <a th:href="@{/actuator}">Monitoring Informationen</a>
-        </td>
-      </tr>
-      <tr sec:authorize="hasRole('orga')">
-        <td>
-          Route exklusiv für User mit der Rolle "orga"
-        </td>
-        <td>
-          <a th:href="@{/zulassung2/orga}">Orga Route</a>
-        </td>
-      </tr>
-      <tr sec:authorize="hasRole('studentin')">
-        <td>
-          Route exklusiv für User mit der Rolle "studentin"
-        </td>
-        <td>
-          <a th:href="@{/zulassung2/studi}">StudentIn Route</a>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
+
+<div class="jumbotron" id="content" th:fragment="mycontent">
+    <link href="../static/css/stylesheet.css" rel="stylesheet" th:href="@{/css/stylesheet.css}">
+    <h1 class="display-4">Übersicht</h1>
+    <div class="lead">Hier haben Sie eine Übersicht aller Funktionen des Systems.</div>
+    <br>
+    <div class="card-deck" style="width: 50%">
+
+        <div class="card" sec:authorize="hasRole('orga')" style="width:50%; height: 480px;">
+            <img alt="Card image cap" class="card-img-top" src="../static/pictures/orga-picture.png"
+                 th:src="@{/pictures/orga-picture.png}">
+            <div class="card-body">
+                <h5 class="card-title">Anmeldeliste</h5>
+                <p class="card-text">Hier können Sie eine Anmeldeliste für eine Klausur hochladen, um die Zulassungen
+                    automatisch zu prüfen.</p>
+
+                <a class="btn btn-primary fixedbutton" href="/zulassung2/upload-registrationlist">Dorthin</a>
+            </div>
+        </div>
+
+        <div class="card" sec:authorize="hasRole('orga')" style="width:50%; height: 480px;">
+            <img alt="Card image cap" class="card-img-top" src="../static/pictures/tickpaper.png"
+                 th:src="@{/pictures/tickpaper.png}">
+            <div class="card-body">
+                <h5 class="card-title">Zulassungsliste</h5>
+                <p class="card-text">Hier können Sie die Liste Zugelassener Teilnehmer hochladen, um die Quittungen zu
+                    erzeugen.</p>
+
+                <a class="btn btn-primary fixedbutton" href="/zulassung2/upload-approved-students">Dorthin</a>
+            </div>
+        </div>
+
+        <div class="card" sec:authorize="hasRole('ROLE_orga')"
+             style="width:50%; height: 480px;">
+            <img alt="Card image cap" class="card-img-top" src="../static/pictures/pen.png"
+                 th:src="@{/pictures/pen.png}">
+            <div class="card-body">
+                <h5 class="card-title">Quittung validieren</h5>
+                <p class="card-text">Hier können Sie Zulassungsnachweise manuell validieren lassen und speichern.</p>
+
+                <a class="btn btn-primary fixedbutton" href="/zulassung2/upload-receipt">Dorthin</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-deck" sec:authorize="hasRole('studentin')" style="width: 17%">
+        <div class="card" sec:authorize="hasRole('ROLE_orga') or hasRole('ROLE_studentin')"
+             style="width:17%; height: 480px;">
+            <img alt="Card image cap" class="card-img-top" src="../static/pictures/pen.png"
+                 th:src="@{/pictures/pen.png}">
+            <div class="card-body">
+                <h5 class="card-title">Quittung validieren</h5>
+                <p class="card-text">Hier können Sie Ihre Zulassungsnachweise einreichen.</p>
+
+                <a class="btn btn-primary fixedbutton" href="/zulassung2/upload-receipt">Dorthin</a>
+            </div>
+        </div>
+    </div>
+
 </div>
 </body>
 </html>

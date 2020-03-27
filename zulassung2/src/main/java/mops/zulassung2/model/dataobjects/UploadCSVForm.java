@@ -1,15 +1,15 @@
-package mops.zulassung2.model;
+package mops.zulassung2.model.dataobjects;
 
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
-public class OrgaUploadCSVForm {
+public class UploadCSVForm {
 
   private MultipartFile multipartFile;
   private String subject;
   private String semester;
-  private String deadline;
+  private String deadline = "Noch nicht festgelegt";
 
 
 }

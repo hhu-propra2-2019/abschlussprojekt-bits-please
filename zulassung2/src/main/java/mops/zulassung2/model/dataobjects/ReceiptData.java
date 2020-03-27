@@ -1,8 +1,7 @@
-package mops.zulassung2.services;
+package mops.zulassung2.model.dataobjects;
 
 import lombok.Getter;
 import lombok.Setter;
-import mops.zulassung2.model.dataobjects.Student;
 
 @Getter
 public class ReceiptData implements ReceiptDataInterface {

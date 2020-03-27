@@ -13,7 +13,7 @@
 <div class="jumbotron" id="content" th:fragment="mycontent">
     <link href="../static/css/stylesheet.css" rel="stylesheet" th:href="@{/css/stylesheet.css}">
     <img alt="Organisator" class="rounded float-right"
-         src="../static/pictures/orga-picture.png" th:src="@{/pictures/orga-picture.png}" width="10%">
+         src="../static/pictures/tickpaper.png" th:src="@{/pictures/tickpaper.png}" width="10%">
     <h1 class="display-4">Zulassungsliste</h1>
     <div class="lead">Hier können Sie die Liste der zugelassenen Teilnehmer hochladen.</div>
     <div class="form-group" id="mops-upload-csv">
@@ -29,11 +29,11 @@
             <label class="lead" for="subjectControlInput">Fach:</label>
             <input class="form-control form-control-sm" id="subjectControlInput" name="subject"
                    placeholder="Name des Fachs"
-                   required th:value="${subject}" type="text">
+                   required th:value="${form.subject}" type="text">
             <label class="lead" for="semesterControlInput">Semester:</label>
             <input class="form-control form-control-sm" id="semesterControlInput" name="semester"
                    placeholder="z.B. 2019WiSe"
-                   required th:value="${semester}" type="text">
+                   required th:value="${form.semester}" type="text">
             <hr>
             <button class="btn btn-primary" type="submit">Hochladen</button>
         </form>
@@ -49,9 +49,9 @@
     </div>
 
     <div class="table-responsive" th:if="${students!=null and not students.isEmpty()}">
-        <div class="lead">Zugelassene Teilnehmer zur Veranstaltung <span th:text="${subject}">Subject</span> im
+        <div class="lead">Zugelassene Teilnehmer zur Veranstaltung <span th:text="${form.subject}">Subject</span> im
             <span
-                    th:text="${semester}">Semester</span></div>
+                    th:text="${form.semester}">Semester</span></div>
         <br>
         <div class="scrollable">
             <table class="table">
@@ -59,8 +59,8 @@
                 <tr>
                     <th>Nr.</th>
                     <th>Matrikelnummer</th>
-                    <th>Vorname</th>
                     <th>Nachname</th>
+                    <th>Vorname</th>
                     <th>E-Mail</th>
                     <th>Individuell versenden</th>
                 </tr>

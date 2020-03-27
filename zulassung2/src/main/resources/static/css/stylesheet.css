@@ -13,3 +13,7 @@
     display: inline;
 }
 
+.fixedbutton {
+    position: absolute;
+    bottom: 20px;
+}

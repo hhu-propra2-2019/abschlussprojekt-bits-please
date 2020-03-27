@@ -1,4 +1,4 @@
-package mops.zulassung2.services;
+package mops.zulassung2.model.dataobjects;
 
 public interface ReceiptDataInterface {
   String create();

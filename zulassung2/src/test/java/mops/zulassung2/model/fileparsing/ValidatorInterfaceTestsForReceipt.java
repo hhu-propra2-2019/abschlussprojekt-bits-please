@@ -1,8 +1,8 @@
 package mops.zulassung2.model.fileparsing;
 
+import mops.zulassung2.model.dataobjects.ReceiptData;
+import mops.zulassung2.model.dataobjects.ReceiptDataInterface;
 import mops.zulassung2.model.dataobjects.Student;
-import mops.zulassung2.services.ReceiptData;
-import mops.zulassung2.services.ReceiptDataInterface;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
