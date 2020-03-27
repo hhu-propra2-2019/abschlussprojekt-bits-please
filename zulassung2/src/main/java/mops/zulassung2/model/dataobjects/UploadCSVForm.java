@@ -9,7 +9,7 @@ public class UploadCSVForm {
   private MultipartFile multipartFile;
   private String subject;
   private String semester;
-  private String deadline;
+  private String deadline = "Noch nicht festgelegt";
 
 
 }

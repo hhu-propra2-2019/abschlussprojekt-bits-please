@@ -50,15 +50,17 @@
             <label class="lead" for="deadLineInput">Legen Sie eine Abgabefrist für die fehlenden Zulassungen
                 fest:</label>
             <input class="form-control" id="deadLineInput" name="deadline" placeholder="JJJJ-MM-DDTHH:MM" required
-                   th:value="${form.deadline}" type="datetime-local">
+                   type="datetime-local">
             <br>
             <button class="btn btn-primary" type="submit">
                 Übernehmen
             </button>
         </form>
         <hr>
-        <p class="lead">
-            Nicht zugelassene Teilnehmer zur Veranstaltung <span th:text="${form.subject}">Subject</span>:
+        <p class="lead" style="text-align:left; float:left;">Nicht zugelassene Teilnehmer zur Veranstaltung <span
+                th:text="${form.subject}">Subject</span>:</p>
+        <p class="lead" style="text-align:right;">Gewählte Abgabefrist:
+            <span th:text="${form.deadline}">Deadline</span>
         </p>
         <div class="scrollable">
 
