@@ -124,7 +124,7 @@ public class MinIoRepository implements MinIoRepositoryInterface {
   /**
    * Lists all buckets.
    *
-   * @return
+   * @return list of buckets
    */
   public List<Bucket> listBuckets() {
     try {
@@ -143,7 +143,7 @@ public class MinIoRepository implements MinIoRepositoryInterface {
    * Lists all objects.
    *
    * @param bucketName bucket name whose objects need to be queried
-   * @return
+   * @return list of objects
    */
   public Iterable<Result<Item>> listObjects(String bucketName) {
     try {
@@ -181,7 +181,7 @@ public class MinIoRepository implements MinIoRepositoryInterface {
    * Get the name of an object.
    *
    * @param object object whose name needs to be fetched
-   * @return
+   * @return name of object
    */
   public String getObjectName(Result<Item> object) {
     try {
