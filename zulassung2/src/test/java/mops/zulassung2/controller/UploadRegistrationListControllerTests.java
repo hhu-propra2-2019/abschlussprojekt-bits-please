@@ -21,7 +21,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,22 +33,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(UploadApprovedStudentsController.class)
+@WebMvcTest(UploadRegistrationListController.class)
 @ComponentScan(basePackageClasses = {KeycloakSecurityComponents.class,
     KeycloakSpringBootConfigResolver.class})
-class UploadApprovedStudentsControllerTest {
+
+public class UploadRegistrationListControllerTests {
 
   MockMultipartFile mockCsvFile;
   @Autowired
   MockMvc mvc;
-  @MockBean
-  EmailService emailService;
   @MockBean
   FileService fileService;
   @MockBean
   SignatureService signatureService;
   @MockBean
   MinIoService minIoService;
+  @MockBean
+  EmailService emailService;
 
   @BeforeEach
   void createFile() {
@@ -62,11 +62,10 @@ class UploadApprovedStudentsControllerTest {
 
   @Test
   @WithMockKeycloackAuth("orga")
-  void uploadCSVAsOrgaIsOk() throws Exception {
-    mvc.perform(get("/zulassung2/upload-approved-students"))
+  void uploadListAsOrgaIsOk() throws Exception {
+    mvc.perform(get("/zulassung2/upload-registrationlist"))
         .andExpect(status().isOk());
   }
-
 
   @Test
   @WithMockKeycloackAuth("orga")
@@ -74,14 +73,15 @@ class UploadApprovedStudentsControllerTest {
     // Arrange
     UploadCSVForm form = new UploadCSVForm();
     form.setMultipartFile(mockCsvFile);
-    form.setSubject("Propra");
+    form.setSubject("Propra2");
     form.setSemester("WS1920");
     // Act and Assert
-    mvc.perform(multipart("/zulassung2/upload-approved-students")
+    mvc.perform(multipart("/zulassung2/upload-registrationlist")
         .file(mockCsvFile)
         .flashAttr("form", form)
         .with(csrf()))
-        .andExpect(redirectedUrl("/zulassung2/upload-approved-students"));
+        .andExpect(redirectedUrl("/zulassung2/upload-registrationlist"));
+
   }
 
   @Test
@@ -90,35 +90,36 @@ class UploadApprovedStudentsControllerTest {
     // Arrange
     UploadCSVForm form = new UploadCSVForm();
     form.setMultipartFile(mockCsvFile);
-    form.setSubject("Propra");
+    form.setSubject("Propra2");
     form.setSemester("WS1920");
     // Act and Assert
-    mvc.perform(multipart("/zulassung2/upload-approved-students")
+    mvc.perform(multipart("/zulassung2/upload-registrationlist")
         .file(mockCsvFile)
         .flashAttr("form", form)
         .with(csrf().useInvalidToken()))
         .andExpect(status().isForbidden());
+
   }
 
   @Test
   @WithMockKeycloackAuth("orga")
-  void testSendMailsToAllStudents() throws Exception {
-    mvc.perform(post("/zulassung2/sendmail")
+  void testSendWarningMailsToAllStudents() throws Exception {
+    mvc.perform(post("/zulassung2/sendmailreglist")
         .with(csrf()))
-        .andExpect(redirectedUrl("/zulassung2/upload-approved-students"));
+        .andExpect(redirectedUrl("/zulassung2/upload-registrationlist"));
   }
 
   @Test
   @WithMockKeycloackAuth("orga")
-  void testSendMailsWithInvalidCsrfToken() throws Exception {
-    mvc.perform(post("/zulassung2/sendmail")
+  void testSendWarningMailsWithInvalidCsrfToken() throws Exception {
+    mvc.perform(post("/zulassung2/sendmailreglist")
         .with(csrf().useInvalidToken()))
         .andExpect(status().isForbidden());
   }
 
   @Test
   @WithMockKeycloackAuth("orga")
-  void testSendMailToIndividualStudent() throws Exception {
+  void testSendWarningMailsIndividual() throws Exception {
     // Arrange
     MockHttpSession mockHttpSession = new MockHttpSession();
 
@@ -126,30 +127,29 @@ class UploadApprovedStudentsControllerTest {
     form.setMultipartFile(mockCsvFile);
     form.setSubject("Propra");
     form.setSemester("WS1920");
+    form.setDeadline("Deadline");
 
     List<Student> students = new ArrayList<>();
     students.add(mock(Student.class));
-    File file = new File("Test.txt");
-    when(fileService.createFile(students.get(0), "Propra", "WS1920")).thenReturn(file);
     when(fileService.processCSVUpload(mockCsvFile)).thenReturn(students);
 
-    mvc.perform(multipart("/zulassung2/upload-approved-students")
+    mvc.perform(multipart("/zulassung2/upload-registrationlist")
         .file(mockCsvFile)
         .flashAttr("form", form)
         .session(mockHttpSession)
         .with(csrf()));
 
     // Act and Assert
-    mvc.perform(post("/zulassung2/sendmail/individual")
+    mvc.perform(post("/zulassung2/sendmailreglist/individual")
         .param("count", "0")
         .session(mockHttpSession)
         .with(csrf()))
-        .andExpect(redirectedUrl("/zulassung2/upload-approved-students"));
+        .andExpect(redirectedUrl("/zulassung2/upload-registrationlist"));
   }
 
   @Test
   @WithMockKeycloackAuth("orga")
-  void testSendMailToIndividualStudentWithInvalidCsrf() throws Exception {
+  void testSendWarningMailsIndividualWithInvalidCsrf() throws Exception {
     // Arrange
     MockHttpSession mockHttpSession = new MockHttpSession();
 
@@ -157,52 +157,95 @@ class UploadApprovedStudentsControllerTest {
     form.setMultipartFile(mockCsvFile);
     form.setSubject("Propra");
     form.setSemester("WS1920");
+    form.setDeadline("Deadline");
 
     List<Student> students = new ArrayList<>();
     students.add(mock(Student.class));
-    File file = new File("Test.txt");
-    when(fileService.createFile(students.get(0), "Propra", "WS1920")).thenReturn(file);
     when(fileService.processCSVUpload(mockCsvFile)).thenReturn(students);
 
-    mvc.perform(multipart("/zulassung2/upload-approved-students")
+    mvc.perform(multipart("/zulassung2/upload-registrationlist")
         .file(mockCsvFile)
         .flashAttr("form", form)
         .session(mockHttpSession)
         .with(csrf()));
 
     // Act and Assert
-    mvc.perform(post("/zulassung2/sendmail/individual")
+    mvc.perform(post("/zulassung2/sendmailreglist/individual")
         .param("count", "0")
         .session(mockHttpSession)
+        .with(csrf().useInvalidToken()))
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
+  @WithMockKeycloackAuth("orga")
+  void testExportAllowed() throws Exception {
+    mvc.perform(post("/zulassung2/export-allowed")
+        .with(csrf()))
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  @WithMockKeycloackAuth("orga")
+  void testExportAllowedWithInvalidCrsf() throws Exception {
+    mvc.perform(post("/zulassung2/export-allowed")
+        .with(csrf().useInvalidToken()))
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
+  @WithMockKeycloackAuth("orga")
+  void testSetDeadline() throws Exception {
+    //Arrange
+    UploadCSVForm form = new UploadCSVForm();
+    form.setDeadline("Deadline");
+
+    //Act & Assert
+    mvc.perform(post("/zulassung2/upload-registrationlist/set-deadline")
+        .flashAttr("form", form)
+        .with(csrf()))
+        .andExpect(redirectedUrl("/zulassung2/upload-registrationlist"));
+  }
+
+  @Test
+  @WithMockKeycloackAuth("orga")
+  void testSetDeadlineWithInvalidCrsf() throws Exception {
+    //Arrange
+    UploadCSVForm form = new UploadCSVForm();
+    form.setDeadline("Deadline");
+
+    //Act & Assert
+    mvc.perform(post("/zulassung2/upload-registrationlist/set-deadline")
+        .flashAttr("form", form)
         .with(csrf().useInvalidToken()))
         .andExpect(status().isForbidden());
   }
 
   @Test
   @WithMockKeycloackAuth("studentin")
-  void uploadCSVAsStudentIsRefused() throws Exception {
+  void studentIsRefused() throws Exception {
     // Arrange
-    UploadCSVForm form = new UploadCSVForm();
-    form.setMultipartFile(mockCsvFile);
-    form.setSubject("Propra");
-    form.setSemester("WS1920");
     List<Student> students = new ArrayList<>();
     students.add(mock(Student.class));
     when(fileService.processCSVUpload(mockCsvFile)).thenReturn(students);
 
     // Act and Assert
-    mvc.perform(get("/zulassung2/upload-approved-students"))
+    mvc.perform(get("/zulassung2/upload-registrationlist"))
         .andExpect(status().isForbidden());
-    mvc.perform(multipart("/zulassung2/upload-approved-students")
-        .file(mockCsvFile)
-        .flashAttr("form", form)
+    mvc.perform(multipart("/zulassung2/upload-registrationlist")
+        .file(mockCsvFile))
+        .andExpect(status().isForbidden());
+    mvc.perform(post("/zulassung2/sendmailreglist")
         .with(csrf()))
         .andExpect(status().isForbidden());
-    mvc.perform(post("/zulassung2/sendmail")
-        .with(csrf()))
-        .andExpect(status().isForbidden());
-    mvc.perform(post("/zulassung2/sendmail/individual")
+    mvc.perform(post("/zulassung2/sendmailreglist/individual")
         .param("count", "0")
+        .with(csrf()))
+        .andExpect(status().isForbidden());
+    mvc.perform(post("/zulassung2/export-allowed")
+        .with(csrf()))
+        .andExpect(status().isForbidden());
+    mvc.perform(post("/zulassung2/upload-registrationlist/set-deadline")
         .with(csrf()))
         .andExpect(status().isForbidden());
   }
@@ -210,27 +253,28 @@ class UploadApprovedStudentsControllerTest {
   @Test
   void unauthorizedIsRedirected() throws Exception {
     //Arrange
-    UploadCSVForm form = new UploadCSVForm();
-    form.setMultipartFile(mockCsvFile);
-    form.setSubject("Propra");
-    form.setSemester("WS1920");
     List<Student> students = new ArrayList<>();
     students.add(mock(Student.class));
     when(fileService.processCSVUpload(mockCsvFile)).thenReturn(students);
 
     //Act & Assert
-    mvc.perform(get("/zulassung2/upload-approved-students"))
+    mvc.perform(get("/zulassung2/upload-registrationlist"))
         .andExpect(redirectedUrl("/sso/login"));
-    mvc.perform(multipart("/zulassung2/upload-approved-students")
+    mvc.perform(multipart("/zulassung2/upload-registrationlist")
         .file(mockCsvFile)
-        .flashAttr("form", form)
         .with(csrf()))
         .andExpect(redirectedUrl("/sso/login"));
-    mvc.perform(post("/zulassung2/sendmail")
+    mvc.perform(post("/zulassung2/sendmailreglist")
         .with(csrf()))
         .andExpect(redirectedUrl("/sso/login"));
-    mvc.perform(post("/zulassung2/sendmail/individual")
+    mvc.perform(post("/zulassung2/sendmailreglist/individual")
         .param("count", "0")
+        .with(csrf()))
+        .andExpect(redirectedUrl("/sso/login"));
+    mvc.perform(post("/zulassung2/export-allowed")
+        .with(csrf()))
+        .andExpect(redirectedUrl("/sso/login"));
+    mvc.perform(post("/zulassung2/upload-registrationlist/set-deadline")
         .with(csrf()))
         .andExpect(redirectedUrl("/sso/login"));
   }
