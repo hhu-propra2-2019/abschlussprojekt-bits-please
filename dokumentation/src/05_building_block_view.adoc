@@ -31,12 +31,12 @@ Quittung validieren lassen können, oder der Organisator selbst.
 definiert um diese Später abzufangen.
 |===
 
-=== Aufgabe 5.2 Tokensystem
+=== Tokensystem
 Die Tokens bzw. Quittungen werden durch dieses System generiert. Dafür haben wir ein symmetrisches Schlüsserverfahren verwendet mit der
 Enkodierung "Base64" und die Hash-Funktion "char-256".
 Die Quittung wird im ".txt" Format gespeichert und enthält in der ersten Zeile Personenbezogene information, somit lässt es sich einfacher nachvollziehen zu welchem Studenten eine bestimmte Quittung gehört.
 
-=== Aufgabe 5.3 Organisatoren
+=== Organisatoren
 Organisatoren können mithilfe dieses Systems unkompliziert überprüfen welche Studenten aus der Anmeldeliste
 die Zulassung erreicht haben. Wenn Studenten sich angemeldet haben die diese nicht haben so kann er mit einem "Klick" eine E-Mail
 an diese Studenten versenden damit diese ihre Quittung nachreichen. Dafür wird natürlich das jeweilige Modul und das Semester und die dazugehörige
@@ -44,17 +44,15 @@ Frist mit eingegeben.
 Außerdem kann er auch selbst Quittungen validieren oder auch selbst erstellen und an die jeweiligen Studenten abschicken.
 All dies geschieht benutzerfreundlich und unkompliziert.
 
-=== Aufgabe 5.4 Studenten
+=== Studenten
 Wenn der Student eine E-Mail empfängt der ihn darüber informiert seine Quittung nachzureichen da diese im System nicht gefunden wurde, so kann
 er mithilfe dieses Systems seine Quittung nachreichen. Diese bekommt er zuvor per Mail gesendet, die Verantwortung für die Quittung übernimmt
 somit der Student.
 
-=== Aufgabe 5.5 E-Mail-Service
+=== E-Mail-Service
 Dieser Service ist dafür verantwortlich Studenten gegebenfalls zu benachrichtigen das sie die Zulassung erworben haben, im Anhang befindet sich
 dann natürlich auch der jeweilige Token dafür.
 Außerdem kann mithilfe dieses Systems auch E-Mails verschickt werden die den Studenten auffordern seine Quittung nachzureichen da diese aus einem Grund "X" nicht vorliegt.
-
-
 
 === Qualität-/ Leistungsmerkmale
 Bei unserem Projekt haben wir stark auf "Dependency Inversion" geachtet, so dass wir möglichst keine Abhängigkeiten haben. Außerdem

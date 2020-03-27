@@ -70,21 +70,5 @@ include::src/05_building_block_view.adoc[]
 include::src/06_runtime_view.adoc[]
 
 <<<<
-// 7. Verteilungssicht
-
-<<<<
-// 8. Querschnittliche Konzepte
-
-<<<<
-// 9. Entscheidungen
-
-<<<<
-// 10. Qualität...
-
-<<<<
-// 11. Risiken
-include::src/11_technical_risks.adoc[]
-
-<<<<
-// 12. Glossar
-include::src/12_glossary.adoc[]
+// 7. Risiken
+include::src/07_technical_risks.adoc[]
