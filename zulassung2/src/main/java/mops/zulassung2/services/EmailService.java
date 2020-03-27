@@ -1,8 +1,5 @@
 package mops.zulassung2.services;
 
-import mops.zulassung2.model.crypto.Receipt;
-import mops.zulassung2.model.dataobjects.ReceiptData;
-import mops.zulassung2.model.dataobjects.ReceiptDataInterface;
 import mops.zulassung2.model.dataobjects.Student;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,30 +10,23 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Service
 public class EmailService {
 
 
   private final JavaMailSender emailSender;
-  private final SignatureService signatureService;
 
   @Value("${email_body_text}")
-  private String emailBodyText;
+  private String emailBodyText = "Beim Erstellen der Nachricht ist ein Fehler aufgetreten.";
   @Value("${warning_email_body_text}")
-  private String warningEmailBodyText;
-  @Value("receipt_storage_duration")
-  private String receiptStorageDuration;
+  private String warningEmailBodyText = "Beim Erstellen der Nachricht ist ein Fehler aufgetreten.";
+  @Value("${receipt_storage_duration}")
+  private String receiptStorageDuration = "";
 
 
-  public EmailService(JavaMailSender emailSender, SignatureService signatureService) {
+  public EmailService(JavaMailSender emailSender) {
     this.emailSender = emailSender;
-    this.signatureService = signatureService;
   }
 
   private static boolean isValidEmailAddress(String email) {
@@ -44,41 +34,7 @@ public class EmailService {
     return validator.isValid(email);
   }
 
-  /**
-   * Diese Methode wird vom OrganisatorController (Methode: sendMail) aufgerufen.
-   * *
-   * Diese Methode erstellt benutzerdefinierte Files und ruft sendMessage auf.
-   */
-
-  public File createFile(Student student, String currentSubject, String currentSemester) {
-    ReceiptDataInterface receiptDataInterface = new ReceiptData(student, currentSubject, currentSemester);
-    String studentData = receiptDataInterface.create();
-    Receipt receipt = signatureService.sign(studentData);
-    File userFile = new File(System.getProperty("user.dir")
-        + "token_" + receiptDataInterface.getModule()
-        + "_" + receiptDataInterface.getName() + ".txt");
-    FileWriter writer;
-
-    try {
-      writer = new FileWriter(userFile, StandardCharsets.UTF_8);
-      writer.write(studentData + "\n");
-      writer.write(receipt.getSignature());
-      writer.close();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return userFile;
-  }
-
-  /**
-   * Sends an email with attachment (File).
-   *
-   * @param receiver receiver of the mail
-   * @param subject  subject of the mail
-   * @param attach   file to be attached
-   * @param filename name of the attached file
-   */
-  public void sendMessage(String receiver, String subject, String text, File attach, String filename)
+  private void sendMessage(String receiver, String subject, String text, File attach, String filename)
       throws MessagingException {
     MimeMessage message = emailSender.createMimeMessage();
     MimeMessageHelper helper = new MimeMessageHelper(message, true);
@@ -119,8 +75,8 @@ public class EmailService {
    * Sends an email without attachment.
    *
    * @param receiver receiver of the mail
-   * @param subject subject of the mail
-   * @param text    Is setting up the Text for the mail
+   * @param subject  subject of the mail
+   * @param text     Is setting up the Text for the mail
    */
   public void sendSimpleMessage(String receiver, String subject, String text)
       throws MessagingException {
@@ -150,20 +106,10 @@ public class EmailService {
   }
 
   private String createWarningEmailBodyText(Student student, String currentSubject, String currentDeadLine) {
-
-    if (currentDeadLine.lastIndexOf(":") > 15) {
-      currentDeadLine = currentDeadLine.substring(0, currentDeadLine.lastIndexOf(":"));
-    }
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-    LocalDateTime dateTime = LocalDateTime.parse(currentDeadLine, formatter);
-
-    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy' um 'HH:mm' Uhr'");
-    String formattedDateTime = dateTime.format(dateTimeFormatter);
-
     String customizedWarningEmailBodyText = warningEmailBodyText;
     customizedWarningEmailBodyText = customizedWarningEmailBodyText.replace(":name", student.getName());
     customizedWarningEmailBodyText = customizedWarningEmailBodyText.replace(":modul", currentSubject);
-    customizedWarningEmailBodyText = customizedWarningEmailBodyText.replace(":abgabefrist", formattedDateTime);
+    customizedWarningEmailBodyText = customizedWarningEmailBodyText.replace(":abgabefrist", currentDeadLine);
     customizedWarningEmailBodyText = customizedWarningEmailBodyText.replace(":break", "\n");
     return customizedWarningEmailBodyText;
   }

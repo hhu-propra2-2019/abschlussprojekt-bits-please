@@ -19,6 +19,9 @@ import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.file.Files;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -232,8 +235,21 @@ public class UploadRegistrationListController {
   @PostMapping("/upload-registrationlist/set-deadline")
   @Secured("ROLE_orga")
   public String setDeadline(@ModelAttribute("form") UploadCSVForm form) {
-    uploadCSVForm.setDeadline(form.getDeadline());
-    setSuccessMessage("Abgabefrist wurde gespeichert.");
+
+    try {
+      if (form.getDeadline().lastIndexOf(":") > 15) {
+        form.setDeadline(form.getDeadline().substring(0, form.getDeadline().lastIndexOf(":")));
+      }
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+      LocalDateTime dateTime = LocalDateTime.parse(form.getDeadline(), formatter);
+
+      DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy' um 'HH:mm' Uhr'");
+      uploadCSVForm.setDeadline(dateTime.format(dateTimeFormatter));
+
+      setSuccessMessage("Abgabefrist wurde gespeichert.");
+    } catch (DateTimeParseException e) {
+      setDangerMessage("Bitte geben Sie das Datum in folgendem Format ein: YYYY-MM-DDTHH:MM");
+    }
     return "redirect:/zulassung2/upload-registrationlist";
   }
 

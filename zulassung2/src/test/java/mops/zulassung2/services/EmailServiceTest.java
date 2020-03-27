@@ -1,74 +1,105 @@
 package mops.zulassung2.services;
 
 import mops.zulassung2.model.dataobjects.Student;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.javamail.JavaMailSender;
 
 import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import java.io.File;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class EmailServiceTest {
 
-  static EmailService emailServiceMock = mock(EmailService.class);
-  static EmailService emailService;
-  static SignatureService signatureService = mock(SignatureService.class);
-  private Student douglas = new Student("2729350", "dobla101@hhu.de", "blank", "douglas");
+  @InjectMocks
+  EmailService emailService;
+  @Mock
+  JavaMailSender javaMailSender;
+  @Mock
+  MimeMessage mimeMessage;
+  String subject;
 
-  @BeforeAll
-  static void setUp() {
-    JavaMailSender javaMailSender = mock(JavaMailSender.class);
-    emailService = new EmailService(javaMailSender, signatureService);
+  @BeforeEach
+  void setup() {
+    when(javaMailSender.createMimeMessage()).thenReturn(mimeMessage);
+    subject = "Informatik";
   }
 
   @Test
-  void sendMessage() {
-    //Arrange
-    String to = "snami100@uni-duesseldorf.de";
-    String subject = "Informatik";
-    String text = "Test, sendMessage";
-    File attach = mock(File.class);
-    String filename = "Dateiname";
-
-    //Act
-    try {
-      emailServiceMock.sendMessage(to, subject, text, attach, filename);
-    } catch (MessagingException e) {
-      e.printStackTrace();
-    }
-
-    //Assert
-    try {
-      verify(emailServiceMock).sendMessage(to, subject, text, attach, filename);
-    } catch (MessagingException e) {
-      e.printStackTrace();
-    }
-  }
-
-  @Test
-  void sendMail() {
+  void sendMailWithAttachmentAndValidAdress() {
     //Arrange
     Student student = new Student("272490", "snami100@uni-duesseldorf.de", "Amin", "Snur");
-    String subject = "Informatik";
     File file = mock(File.class);
+    when(file.getName()).thenReturn("Testfile");
 
     //Act
     try {
-      emailServiceMock.sendMail(student, subject, file);
+      emailService.sendMail(student, subject, file);
     } catch (MessagingException e) {
       e.printStackTrace();
     }
 
     //Assert
+    verify(javaMailSender).send(mimeMessage);
+  }
+
+  @Test
+  void sendMailWithAttachmentAndInvalidAdresses() {
+    //Arrange
+    Student studentWithoutDot =
+        new Student("272490", "snami100@uni-duesseldorfde", "Amin", "Snur");
+    Student studentWithoutAt =
+        new Student("123456", "meibe104uni-duesseldorf.de", "Beck", "Meinhard");
+    File file = mock(File.class);
+    when(file.getName()).thenReturn("Testfile");
+
+    //Act & Assert
+    assertThatThrownBy(() -> {
+      emailService.sendMail(studentWithoutDot, subject, file);
+    }).isInstanceOf(MessagingException.class);
+    assertThatThrownBy(() -> {
+      emailService.sendMail(studentWithoutAt, subject, file);
+    }).isInstanceOf(MessagingException.class);
+  }
+
+  @Test
+  void sendSimpleMailWithValidAdress() {
+    //Arrange
+    Student student = new Student("272490", "snami100@uni-duesseldorf.de", "Amin", "Snur");
+
+    //Act
     try {
-      verify(emailServiceMock).sendMail(student, subject, file);
+      emailService.sendWarningMail(student, subject, "2030-01-01T00:00");
     } catch (MessagingException e) {
       e.printStackTrace();
     }
+
+    //Assert
+    verify(javaMailSender).send(mimeMessage);
   }
 
+  @Test
+  void sendSimpleMailWithInvalidAdresses() {
+    //Arrange
+    Student studentWithoutDot =
+        new Student("272490", "snami100@uni-duesseldorfde", "Amin", "Snur");
+    Student studentWithoutAt =
+        new Student("123456", "meibe104uni-duesseldorf.de", "Beck", "Meinhard");
 
+    //Act & Assert
+    assertThatThrownBy(() -> {
+      emailService.sendWarningMail(studentWithoutDot, subject, "03.02.2030 um 20:15 Uhr");
+    }).isInstanceOf(MessagingException.class);
+    assertThatThrownBy(() -> {
+      emailService.sendWarningMail(studentWithoutAt, subject, "03.04.2030 um 20:15 Uhr");
+    }).isInstanceOf(MessagingException.class);
+  }
 }
