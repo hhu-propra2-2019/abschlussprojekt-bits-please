@@ -16,6 +16,7 @@
     <h1 class="display-4">Übersicht</h1>
     <div class="lead">Hier haben Sie eine Übersicht aller Funktionen des Systems.</div>
     <br>
+
     <div class="card-deck" style="width: 50%">
 
         <div class="card" sec:authorize="hasRole('orga')" style="width:50%; height: 480px;">
@@ -44,8 +45,8 @@
 
         <div class="card" sec:authorize="hasRole('ROLE_orga')"
              style="width:50%; height: 480px;">
-            <img alt="Card image cap" class="card-img-top" src="../static/pictures/pen.png"
-                 th:src="@{/pictures/pen.png}">
+            <img alt="Card image cap" class="card-img-top" height="220px"
+                 src="../static/pictures/pen.png" th:src="@{/pictures/pen.png}" width="200px">
             <div class="card-body">
                 <h5 class="card-title">Quittung validieren</h5>
                 <p class="card-text">Hier können Sie Zulassungsnachweise manuell validieren lassen und speichern.</p>
@@ -57,7 +58,7 @@
 
     <div class="card-deck" sec:authorize="hasRole('studentin')" style="width: 17%">
         <div class="card" sec:authorize="hasRole('ROLE_orga') or hasRole('ROLE_studentin')"
-             style="width:17%; height: 480px;">
+             style="width: 50%; height: 380px;">
             <img alt="Card image cap" class="card-img-top" src="../static/pictures/pen.png"
                  th:src="@{/pictures/pen.png}">
             <div class="card-body">
