@@ -13,6 +13,16 @@ Es ist dann unmöglich festzustellen, welche Studenten tatsächlich eine gültig
 *Mitigation:* Statt eines einzigen private/public key pairs sollte das System für jede Veranstaltung ein eigenes pair erstellen und nur den public key in einem key-value-store speichern. Bei der Authentifizierung kann der richtige key zB über den Namen der Veranstaltung und das Semester identifiziert werden.
 
 [role="arc42help"]
+*Risiko:* Unsichere Umgehung mit Dateien und Emails.
+
+*Einschätzung:* sehrt hoch
+
+*Erläuterung:* weil das ganze System mit Dateien und E-mails arbeitet ,besteht immer das Risiko , dass System abstürtz,besonders der File-Service ,den von fast allen Klassen benutzt wurde.
+
+*Mitigation:*
+Wir haben die alle Aufgaben aufgeteilt und jede drinne Methode wurde getestet.Außerdem haben wir die Formen der Dateien kontrolliert , um System sicherzustellen
+
+
 ****
 .Inhalt
 Eine nach Prioritäten geordnete Liste der erkannten Architekturrisiken und/oder technischen Schulden.
