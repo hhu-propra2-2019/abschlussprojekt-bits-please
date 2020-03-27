@@ -1,48 +1,28 @@
 [[section-runtime-view]]
 == Laufzeitsicht
 
-[role="arc42help"]
-****
-.Inhalt
-Diese Sicht erklärt konkrete Abläufe und Beziehungen zwischen Bausteinen in Form von Szenarien aus den folgenden Bereichen:
+=== _Anmeldeliste Hochladen_
+* `Diese Ansicht ist nur für Organisatoren zugänglich.
+* Der Organisator kann hier eine CSV Datei hochladen die eine Liste mit allen Studenten enthält die in einem Modul zur Prüfung angemeldet sind.
+* Vor dem Hochladen muss das Fach sowie die Abgabefrist für das Nachreichen einer Klausurzulassung gesetzt werden.
+* Während des Hochladens wird überprüft für welche Studenten aus der Datei eine gültige Quittung im MinIO storage service exisitert.
+* Auf dem Bildschirm werden zwei Listen angezeigt: zugelassene Studenten (Quittung wurde gefunden) und nicht zugelassene Studenten (es wurde keine Quittung gefunden).
+* Weiterhin kann eine Warnungsnachricht an individuelle Studenten oder an alle gesendet werden, dass eine gültige Quittung nachgereicht werden muss (siehe unten, Quittungen validieren).
 
-*  Wichtige Abläufe oder _Features_:
-Wie führen die Bausteine der Architektur die wichtigsten Abläufe durch?
-*  Interaktionen an kritischen externen Schnittstellen:
-Wie arbeiten Bausteine mit Nutzern und Nachbarsystemen zusammen?
-* Betrieb und Administration: Inbetriebnahme, Start, Stop.
-* Fehler- und Ausnahmeszenarien
+=== _Zulassungsliste hochladen
+* Diese Ansicht ist nur Irganisatoren zugänglich.
+* Der Organisator kann hier eine CSV Datei hochladen die alle Studenten enthält welche eine Klausurzulassung erworben haben.
+* Vor dem Hochladen muss das Fach und das Semester in dem die Zulassung erworben wurde angegeben werden.
+* Nach dem Hochladen wird die Liste auf dem Bildschirm angezeigt.
+* Nun kann den Studenten jeweils einzeln oder an alle Studenten gleichzeitig eine Email mit dem Zulassungsnachweis (Quittung) als Anahng gesendet werden.
+* Gleichzeitig mit dem Senden werden die Quittungen im MinIO storage service gespeichert.
 
-Anmerkung:
-Das Kriterium für die Auswahl der möglichen Szenarien (d.h. Abläufe) des Systems ist deren Architekturrelevanz.
-Es geht nicht darum, möglichst viele Abläufe darzustellen, sondern eine angemessene Auswahl zu dokumentieren.
 
-.Motivation
-Sie sollten verstehen, wie (Instanzen von) Bausteine(n) Ihres Systems ihre jeweiligen Aufgaben erfüllen und zur Laufzeit miteinander kommunizieren.
+=== Quittungen validieren
+* Diese Ansicht ist Organisatoren und Studenten zugänglich.
+* Hier kann vom Organisator oder Studenten eine Quittung hochgeladen werden. Diese Quittung wird vom System überprüft und es wird auf dem Bildschirm angezeigt ob der die Quittung gültig ist.
+* Eine gültige Quittung bedeutet, dass der Student für dieses Fach eine gültige Klausurzulassung erworben hat.
 
-Nutzen Sie diese Szenarien in der Dokumentation hauptsächlich für eine verständlichere Kommunikation mit denjenigen Stakeholdern, die die statischen Modelle (z.B. Bausteinsicht, Verteilungssicht) weniger verständlich finden.
+=== Laufzeitdiagramm
 
-.Form
-Für die Beschreibung von Szenarien gibt es zahlreiche Ausdrucksmöglichkeiten.
-Nutzen Sie beispielsweise:
-
-* Nummerierte Schrittfolgen oder Aufzählungen in Umgangssprache
-* Aktivitäts- oder Flussdiagramme
-* Sequenzdiagramme
-* BPMN (Geschäftsprozessmodell und -notation) oder EPKs (Ereignis-Prozessketten)
-* Zustandsautomaten
-* ...
-****
-
-=== _<Bezeichnung Laufzeitszenario 1>_
-
-*  <hier Laufzeitdiagramm oder Ablaufbeschreibung einfügen>
-*  <hier Besonderheiten bei dem Zusammenspiel der Bausteine in diesem Szenario erläutern>
-
-=== _<Bezeichnung Laufzeitszenario 2>_
-
-...
-
-=== _<Bezeichnung Laufzeitszenario n>_
-
-...
+image::../images/process_flowchart_anmeldungen2.jpg[]
