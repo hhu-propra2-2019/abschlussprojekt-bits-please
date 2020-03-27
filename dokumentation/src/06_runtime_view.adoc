@@ -36,10 +36,10 @@ Nutzen Sie beispielsweise:
 
 === _<Bezeichnung Laufzeitszenario 1>_
 .Anmeldeliste hochladen:
-* Der Organisator kann hier eine CSV Datei, die eine Liste mit allen Studenten  enthält die in einem Modul angemeldet sind, hochladen und das Fach sowie die Abgabefrist bestimmen.
+* Der Organisator kann hier eine CSV Datei hochladen die eine Liste mit allen Studenten enthält die in einem Modul zur Prüfung angemeldet sind und das Fach sowie die Abgabefrist für das Nachreichen einer Klausurzulassung bestimmen.
 * Nach dem Hochladen wird überprüft welche Studenten aus der Datei eine gültige Zulassung besitzen.
 * Die Studenten werden dann nach zugelassen und nicht zugelassen aufgeteilt.
-* Weiterhin kann eine Warnungsnachricht an individuelle Studenten oder an alle gesendet werden, sollten diese keine gültige Zulassung haben
+* Weiterhin kann eine Warnungsnachricht an individuelle Studenten oder an alle gesendet werden, sollten diese keine gültige Zulassung haben.
 
 *  <hier Laufzeitdiagramm oder Ablaufbeschreibung einfügen>
 *  <hier Besonderheiten bei dem Zusammenspiel der Bausteine in diesem Szenario erläutern>
