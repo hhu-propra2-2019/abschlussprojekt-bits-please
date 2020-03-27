@@ -1,7 +1,6 @@
 [[section-system-scope-and-context]]
 == Kontextabgrenzung
 
-image::../images/process_flowchart_anmeldungen2.jpg[]
 
 Die Nutzer des Systems sind Organisatoren (Dozenten und Mitarbeiter des Lehrstuhls) sowie Studierende.
 Die Eingabe von Daten erfolgt manuell oder per hochladen von Dateien über die UI. Die Ausgabe erfolgt über den Bildschirm oder als Export von Dateien.
