@@ -26,14 +26,14 @@ import static org.mockito.Mockito.when;
 public class FileServiceTests {
 
   static SignatureService signatureService = mock(SignatureService.class);
-  private Student douglas = new Student("2729350", "dobla101@hhu.de", "blank", "douglas");
+  private Student hans = new Student("2444111", "hapet100@hhu.de", "peter", "hans");
 
   private FileService fileService;
   private Validator validator;
   private CSVLineParser csvLineParser;
   private ReceiptData receiptData;
-  private Student louis = new Student("2835749", "loalf100@uni-duesseldorf.de", "alfares", "louis");
-  private Student markus = new Student("2757144", "masie@hhu.de", "siewert", "markus");
+  private Student max = new Student("2779911", "mamus100@hhu.de", "mustermann", "max");
+  private Student paul = new Student("2779912", "pareh100@hhu.de", "reha", "paul");
   private String header = "matriculationnumber,email,name,forename\n";
   private String student1Data = "2727912,tigeu100@hhu.de,geuer,tim\n";
   private String student2Data = "2757144,masie@hhu.de,siewert,markus\n";
@@ -46,8 +46,8 @@ public class FileServiceTests {
     validator = new Validator();
     csvLineParser = new CSVLineParser();
     List<Student> students = new ArrayList<>();
-    students.add(louis);
-    students.add(markus);
+    students.add(max);
+    students.add(paul);
     String data = header + student1Data + student2Data;
     byte[] bytes = data.getBytes(StandardCharsets.UTF_8);
     FileParser csvParser = new FileParser(validator, csvLineParser);
@@ -67,8 +67,8 @@ public class FileServiceTests {
     fileService = new FileService(mock(SignatureService.class));
     validator = new Validator();
     List<Student> students = new ArrayList<>();
-    students.add(louis);
-    students.add(markus);
+    students.add(max);
+    students.add(paul);
     String data = header + student1Data + student2Data;
     byte[] bytes = data.getBytes(StandardCharsets.UTF_8);
     FileParser txtParser = new FileParser(validator);
@@ -113,10 +113,10 @@ public class FileServiceTests {
     // Arrange
     fileService = new FileService(signatureService);
     ReceiptDataInterface receiptDataInterface = mock(ReceiptDataInterface.class);
-    String data = "matriculationnumber:" + douglas.getMatriculationNumber()
-        + " email:" + douglas.getEmail()
-        + " name:" + douglas.getName()
-        + " forename:" + douglas.getForeName()
+    String data = "matriculationnumber:" + hans.getMatriculationNumber()
+        + " email:" + hans.getEmail()
+        + " name:" + hans.getName()
+        + " forename:" + hans.getForeName()
         + " module:" + "informatik"
         + " semester:" + "2019SoSe"
         + "\n"
@@ -129,7 +129,7 @@ public class FileServiceTests {
     when(signatureService.sign(anyString())).thenReturn(receipt1);
 
     // Act
-    File file = fileService.createFile(douglas, "informatik", "2019SoSe");
+    File file = fileService.createFile(hans, "informatik", "2019SoSe");
     String content = Files.readString(file.toPath());
 
     // Assert

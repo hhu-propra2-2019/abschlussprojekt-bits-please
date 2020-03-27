@@ -22,6 +22,11 @@
 <header>
     <nav class="navigation navigation-secondary" is="mops-navigation" th:fragment="navigation">
         <ul>
+            <li sec:authorize="hasRole('ROLE_orga') or hasRole('ROLE_studentin')">
+                <a th:href="@{/zulassung2}">
+                    Übersicht
+                </a>
+            </li>
             <li sec:authorize="hasRole('orga')">
                 <a th:href="@{/zulassung2/upload-registrationlist}">
                     Anmeldeliste hochladen
