@@ -1,11 +1,11 @@
 == Abschnitt 5 Building Block View
 
-[cols="1,1" options="header"]
 
 ==== Application-Services
+[cols="1,2" options="header"]
 |===
 | Subsystem | Kurzbeschreibung
-| FileService | Der FileService erstellt die CSV-Datei, die eine Liste von Studenten übergeben bekommt.
+| FileService | Der FileService erstellt die CSV-Datei, die eine Liste von Studenten übergeben bekommt und speichert die Datei im MinIO.
 | EmailService | Dieser Service ermöglicht es, Studenten ihre Zulassungen zu senden. Außerdem können auch
 Studenten darüber informiert werden, dass Ihre Zulassung nicht gefunden werden konnte und diese bitte bis zu einer bestimmten Frist
 nachreichen sollen.
@@ -16,6 +16,7 @@ Modul "X" im "File-Storage-System" besitzt.
 |===
 
 ==== View
+[cols="1,2" options="header"]
 |===
 | Subsystem | Kurzbeschreibung
 | Zulassung2Controller | Dieser Controller ist für die "Übersicht" verantwortlich, denn
@@ -27,7 +28,7 @@ Zusätzlich wird darunter eine Tabelle angezeigt, die Auskunft über Studenten g
 | UploadApprovedStudentsController | Hier kann man eine Liste von Studenten hochladen, die die Zulassung erworben haben, aber noch nicht erhalten haben. Man lädt dafür die CSV-Datei hoch und kann dann entweder direkt an alle Studenten die Zulassung für das jeweilige Modul (im Semester X) senden, oder auch vereinzelt. (für Spezialfälle)
 | UploadReceiptsController | Damit später Studenten nachträglich ihre Quittung nachreichen können, gibt es diese Oberfläche, wo Sie selbst oder der Organisator Ihre
 Quittung validieren lassen können.
-| MyErrorControllerController | Mithilfe dieses Controllers werden später Fehler ausgegeben. So wurden in diesem Controller bestimmte Randfälle
+| MyErrorController | Mithilfe dieses Controllers werden später Fehler ausgegeben. So wurden in diesem Controller bestimmte Randfälle
 definiert, um diese später abzufangen.
 |===
 
@@ -50,9 +51,8 @@ er mithilfe dieses Systems seine Quittung nachreichen. Diese bekommt er zuvor pe
 somit der Student.
 
 === E-Mail-Service
-Dieser Service ist dafür verantwortlich, Studenten gegebenfalls zu benachrichtigen, dass sie die Zulassung erworben haben, im Anhang befindet sich
-dann natürlich auch der jeweilige Token dafür.
-Außerdem können mithilfe dieses Systems auch E-Mails verschickt werden, die den Studenten auffordern, seine Quittung nachzureichen, da diese aus einem Grund "X" nicht vorliegt.
+Dieser Service ist dafür verantwortlich, Studenten gegebenfalls zu benachrichtigen, dass sie die Zulassung erworben haben, im Anhang befindet sich der jeweilige Token dafür.
+Außerdem können mithilfe dieses Systems auch E-Mails verschickt werden, die den Studenten auffordert, seine Quittung nachzureichen.
 
 === Qualität-/ Leistungsmerkmale
 Bei unserem Projekt haben wir stark auf "Dependency Inversion" geachtet, so dass wir möglichst keine Abhängigkeiten haben. Außerdem

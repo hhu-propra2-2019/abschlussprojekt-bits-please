@@ -3,7 +3,7 @@
 //
 // ====================================
 
-= image:arc42-logo.png[arc42] Template
+= MOPS - Zulassung2 - arc42 Dokumentation
 // toc-title definition MUST follow document title without blank line!
 :toc-title: Inhaltsverzeichnis
 
@@ -40,7 +40,6 @@ Sie dient der Einarbeitung in arc42 sowie dem Verständnis der Konzepte.
 Für die Dokumentation eigener System verwenden Sie besser die _plain_ Version.
 ====
 ****
-
 
 // numbering from here on
 :numbered:
