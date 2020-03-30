@@ -19,11 +19,8 @@
 
 === Quittungen validieren
 * Diese Ansicht ist für Organisatoren und Studenten zugänglich.
-* Der Organisator kann hier eine CSV Datei hochladen die alle Studenten enthält welche eine Klausurzulassung erworben haben.
-* Vor dem Hochladen muss das Fach und das Semester in dem die Zulassung erworben wurde angegeben werden.
-* Nach dem Hochladen wird die Liste auf dem Bildschirm angezeigt.
-* Nun kann den Studenten jeweils einzeln oder an alle Studenten gleichzeitig eine Email mit dem Zulassungsnachweis (Quittung) als Anahng gesendet werden.
-* Gleichzeitig mit dem Senden werden die Quittungen im MinIO storage service gespeichert.
+* Hier kann vom Organisator oder Studenten eine Quittung hochgeladen werden. Diese Quittung wird vom System überprüft und es wird auf dem Bildschirm angezeigt ob der die Quittung gültig ist.
+* Eine gültige Quittung bedeutet, dass der Student für dieses Fach eine gültige Klausurzulassung erworben hat.
 
 === Laufzeitdiagramm
 

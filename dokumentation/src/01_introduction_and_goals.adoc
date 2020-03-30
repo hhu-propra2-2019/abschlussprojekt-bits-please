@@ -4,22 +4,22 @@
 === Zugrundeliegenden Geschäftsziele:
 
 * Aktuell werden die Klausurzulassungen in den jeweiligen Fachbereichen vollständig manuell verwaltet.
-* Dies soll durch ein System ersetzt werden bei dem die Studenten eine kryptographisch signierte Datei als Nachweis der bestandenen Klausurzulassung per Email erhalten.
+* Dies soll durch ein System ersetzt werden, bei dem die Studenten eine kryptographisch signierte Datei als Nachweis der bestandenen Klausurzulassung per Email erhalten.
 * Dieser Nachweis soll durch das System aus Kulanzgründen für eine begrenzte Zeit gespeichert werden. Danach wird die Datei endgültig gelöscht.
 
 
 === Aufgabenstellung und fachliche Anforderungen
 
-* Der Input erfolgt als csv-Datei die die Namen der Studenten und den Status der Zulassung enthält.
+* Der Input erfolgt als csv-Datei, die die Namen der Studenten und den Status der Zulassung enthält.
 * Wir benötigen ein Interface zum Einlesen der csv-Datei.
 * Wir brauchen eine Schnittstelle zu einem Email-Client. Die Email soll als plain text verschickt werden. Die verschlüsselte Datei soll im txt-Format sein.
 * Wir sollen asymmetrische Verschüsselung benutzen. Die Vorgehensweise ist wie folgt:
 ** Das System generiert eine Text-Datei (plain_text.txt)
 ** Der Inhalt der Datei wird gehasht.
 ** Der gehashte Wert wird mit einem private key verschlüsselt (crypted_hash_value)
-** Das System generiert eine Email mit einem generischen Text. An diese Email wird die plaint_text.txt und der crypted_hash_value eingefügt.
-** Wenn der Student sich für die Klausur anmelden möchte muss er die plaint_text.txt und den crypted_hash_value in das System eingeben.
-** Das System hasht die plain_text.txt und entschlüsselt die crypted_hash_value mit einem private key. Das Ergebnis der beiden Operationen muss identisch sein um eine Anmeldung zuzulassen.
+** Das System generiert eine Email mit einem generischen Text. An diese Email wird die plain_text.txt mit dem crypted_hash_value eingefügt.
+** Wenn der Student sich für die Klausur anmelden möchte, muss er die plain_text.txt mit dem crypted_hash_value in das System eingeben.
+** Das System hasht die plain_text.txt und entschlüsselt die crypted_hash_value mit einem public key. Das Ergebnis der beiden Operationen muss identisch sein, um eine Anmeldung zuzulassen.
 
 === Qualitätsziele
 
