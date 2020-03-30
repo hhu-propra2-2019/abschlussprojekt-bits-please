@@ -11,26 +11,6 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 
-=== Ursprüngliche Beschreibung des Systems durch den Kunden
-
-Das System soll für Veranstaltungen die Klausurzulassung verarbeiten und zusammen mit der Anmeldeliste eine Klausurliste erzeugen können.
-
-MOPS erhält folgende Daten:
-
-* Eine Liste von Personen, die die Zulassung im Semester erworben haben. Die Liste wird manuell erstellt oder falls die Zulassungskriterien automatisch geprüft werden können automatisch generiert.
-* Die Anmeldeliste für eine Klausur. Diese wird von der zuständigen Lehrkraft im Dozierendenportal heruntergeladen und in MOPS hochgeladen.
-* Zusätzlich verwaltet MOPS Altzulassungen, die von den Studierenden bis zu einem festgelegten Stichtag eingereicht werden müssen.
-
-In der Informatik gibt es die Übereinkunft, das Klausurzulassungen bestehen bleiben, wir nennen das eine Altzulassung. Da in den Grundlagenveranstaltungen die Dozierenden wechseln, ist es nicht ganz einfach die Altzulassungen im Blick zu behalten. Ein zentrales System, das die Informationen speichert, ist aus Datenschutzgründen nicht wünschenswert. MOPS soll am Ende des Semesters die Informationen bekommen, welche Studierenden neu zugelassen wurden und für jede dieser Personen eine kryptographisch abgesicherte Quittung erstellen und der Person zukommen lassen.
-
-Eine solche Quittung beinhaltet in maschinen- und menschenlesbarem Klartext die Information in welchem Semester die Zulassung für welche Veranstaltung erreicht wurde. Die Quittung kann von Studierenden verwendet werden, um eine bestehende Altzulassung nachzuweisen. Dazu reicht die Person die Quittung bei dem System fristgerecht die Quittung ein. Die Quittung wird geprüft, ob sie für die Veranstaltung gültig ist und ob die kryptographische Signatur gültig ist.
-
-Wenn die Informationen über die Zulassungen zusammengeführt sind, soll für die Lehrenden eine Zulassungsliste ein einem (mit MS Excel/Libre Office) bearbeitbaren Format generiert werden. Die Datei muss bearbeitet werden können, da in der Regel die Studierenden auf verschiedene Hörsäle verteilt werden und für jeden Saal eine eigene Liste gedruckt wird.
-
-Eine Prüfung einer Quittung muss auch manuell durch eine Organisatorin erfolgen können. Es müssen auch manuell Altzulassungen eingetragen werden können.
-
-IMPORTANT: Es werden hier selbstverständlich keine eigene Implementierung von kryptographischen Algorithmen verwendet, sondern erprobte Bibliotheken benutzt.
-
 === Management Summary
 
 ==== Problemstatement
@@ -45,24 +25,17 @@ IMPORTANT: Es werden hier selbstverständlich keine eigene Implementierung von k
 ** Dieser Nachweis soll durch das System aus Kulanzgründen für eine begrenzte Zeit (z.B. ein Jahr) gespeichert werden. Danach wird die Datei endgültig gelöscht.
 ** Somit kann die Verantwortung für die Aufbewahrung der Nachweise auf den Studenten übertragen werden. Außerdem vermeiden die Fachbereiche eventuelle Probleme mit der Datenschutzverordnungen.
 
-* Must have features:
+* Features:
 ** Die Organisatoren sollen in einer Maske eine Datei (im .csv-Format) mit Namen und Emailadressen von Studenten hochladen können. Der Name der Veranstaltung soll manuell eingetippt werden.
 ** Das System soll signierte Dateien im .txt-Format als Nachweis für diese Veranstaltung erstellen. Dabei soll eine etablierte Library zur Verschlüsselung genutzt werden (Asymmetrische Verschlüsselung)
 ** Ein Button soll dann Emails mit den Nachweisen im Anhang an die Studenten versenden.
 ** Die Organisatoren sollen einen Nachweis in einer Maske hochladen können.
 ** Eine Nachricht auf dem Bildschirm soll dem Organisator mitteilen ob der Nachweis echt ist.
-
-* Nice to have features:
 ** Die Organisatoren sollen eine Liste von angemeldeten Studenten (aus einem anderen System z.B. Studierendenportal) hochladen können.
 ** Das System soll selbstständig suchen ob ein Nachweis gespeichert ist und den Status des Studenten auf "zugelassen" ändern.
 ** Falls nicht sollen die Studierenden per Email darüber informiert werden, dass sie einen Nachweis erbringen müssen.
 ** Die Studierenden sollen dann selbst den Nachweis in der o.g. Maske hochladen. Der Status des Studenten soll dann auf "zugelassen" geändert werden.
-** Eine Schnittstelle zum Modulhandbuch wäre sinnvoll, damit der Organisator den Namen der Veranstaltung aus einer Liste heraussuchen kann.
 
 ==== Dokumentation
 
-Eine Dokumentation im ARC42-Format ist im Repository unter /dokumentation zu finden.
-
-==== Visualisierung der Prozesse
-
-image::dokumentation/images/process_flowchart_anmeldungen2.jpg[]
+Eine Dokumentation im arc42-Format ist im Repository unter /dokumentation zu finden.
