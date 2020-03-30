@@ -129,7 +129,7 @@ public class FileServiceTests {
     when(signatureService.sign(anyString())).thenReturn(receipt1);
 
     // Act
-    File file = fileService.createFile(hans, "informatik", "2019SoSe");
+    File file = fileService.createFileFromUI(hans, "informatik", "2019SoSe");
     String content = Files.readString(file.toPath());
 
     // Assert
