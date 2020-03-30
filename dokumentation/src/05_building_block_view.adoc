@@ -5,13 +5,13 @@
 ==== Application-Services
 |===
 | Subsystem | Kurzbeschreibung
-| FileService | Der FileService erstellt die CSV-Datei die eine Liste von Studenten übergeben bekommt.
-| EmailService | Dieser Service ermöglicht es Studenten ihre Zulassungen zu senden. Außerdem können auch
-Studenten darüber informiert werden das Ihre Zulassung nicht gefunden werden konnte und diese bitte somit bis zu einer bestimmten Frist
-diese nachreichen sollen.
-| SignatureService | Dieser Service ist dafür Verantwortlich später die Quittung mit der Signatur zu versehen.
-Somit wird der Dateiname festgelegt, sowie auch die erste Zeile der Datei.
-| MinIoService | Dieser Bereich enthält eine Methode mit der später überprüft werden kann ob der Student eine Quittung in
+| FileService | Der FileService erstellt die CSV-Datei, die eine Liste von Studenten übergeben bekommt.
+| EmailService | Dieser Service ermöglicht es, Studenten ihre Zulassungen zu senden. Außerdem können auch
+Studenten darüber informiert werden, dass Ihre Zulassung nicht gefunden werden konnte und diese bitte bis zu einer bestimmten Frist
+nachreichen sollen.
+| SignatureService | Dieser Service ist dafür verantwortlich, die Quittung mit der Signatur zu versehen.
+Somit wird der Dateiname festgelegt sowie auch die erste Zeile der Datei.
+| MinIoService | Dieser Bereich enthält eine Methode, mit der später überprüft werden kann, ob der Student eine Quittung in
 Modul "X" im "File-Storage-System" besitzt.
 |===
 
@@ -19,47 +19,45 @@ Modul "X" im "File-Storage-System" besitzt.
 |===
 | Subsystem | Kurzbeschreibung
 | Zulassung2Controller | Dieser Controller ist für die "Übersicht" verantwortlich, denn
-hierdurch wird durch Keycloak überprüft welche Ansicht der Nutzer beim Start haben soll. Als Student wird man nämlich hier nur eine Funktion des Systems zur Verfügung bekommen.
+hierdurch wird durch Keycloak überprüft, welche Ansicht der Nutzer beim Start haben soll. Als Student wird man nämlich hier nur eine Funktion des Systems zur Verfügung bekommen.
 Diese Funktion ist das Validieren von Quittungen. Ausführlicher  werde ich diese Funktionen in den nächsten Punkten erörtern.
-| UploadRegistrationListController | Auf dieser Weboberfläche kann man zum Beispiel eine Liste hochladen im CSV-Format die eine Liste von Studenten enthält
-die sich zur Klausur angemeldet haben. Wenn ein Student in dieser Liste enthalten sein sollte, der nicht die Zulassung besitzt, so kann man eine E-Mail abschicken die diesen Studenten darüber informiert, so dass er schnellstmöglich seine Zulassung nachreichen kann. Die Abgabefrist kann in diesem Formular auch mitgegeben werden um Unklarheiten zu vermeiden.
-Zusätzlich wird dadrunter eine Tabelle angezeigt die Auskunft über Studenten gibt die die Zulassung erworben haben.
-| UploadApprovedStudentsController | Hier kann man eine Liste von Studenten hochladen die die Zulassung erworben haben aber noch nicht erhalten haben. Man lädt dafür die CSV-Datei hoch und kann dann entweder direkt an alle Studenten die Zulassung für das jeweilige Modul (im Semester X) senden, oder auch vereinzelt. (für Spezialfälle)
-| UploadReceiptsController | Damit später Studenten nachträglich ihre Quittung nachreichen können, gibt es diese Oberfläche wo Sie selbst Ihre
-Quittung validieren lassen können, oder der Organisator selbst.
+| UploadRegistrationListController | Auf dieser Weboberfläche kann man eine Liste im CSV-Format hochladen, die eine Liste von Studenten enthält,
+die sich zur Klausur angemeldet haben. Wenn ein Student in dieser Liste enthalten sein sollte, der nicht die Zulassung besitzt, so kann man eine E-Mail abschicken, die diesen Studenten darüber informiert, so dass er schnellstmöglich seine Zulassung nachreichen kann. Die Abgabefrist kann in diesem Formular auch mitgegeben werden, um Unklarheiten zu vermeiden.
+Zusätzlich wird darunter eine Tabelle angezeigt, die Auskunft über Studenten gibt, die die Zulassung erworben haben.
+| UploadApprovedStudentsController | Hier kann man eine Liste von Studenten hochladen, die die Zulassung erworben haben, aber noch nicht erhalten haben. Man lädt dafür die CSV-Datei hoch und kann dann entweder direkt an alle Studenten die Zulassung für das jeweilige Modul (im Semester X) senden, oder auch vereinzelt. (für Spezialfälle)
+| UploadReceiptsController | Damit später Studenten nachträglich ihre Quittung nachreichen können, gibt es diese Oberfläche, wo Sie selbst oder der Organisator Ihre
+Quittung validieren lassen können.
 | MyErrorControllerController | Mithilfe dieses Controllers werden später Fehler ausgegeben. So wurden in diesem Controller bestimmte Randfälle
-definiert um diese Später abzufangen.
+definiert, um diese später abzufangen.
 |===
 
 === Tokensystem
-Die Tokens bzw. Quittungen werden durch dieses System generiert. Dafür haben wir ein symmetrisches Schlüsserverfahren verwendet mit der
-Enkodierung "Base64" und die Hash-Funktion "char-256".
-Die Quittung wird im ".txt" Format gespeichert und enthält in der ersten Zeile Personenbezogene information, somit lässt es sich einfacher nachvollziehen zu welchem Studenten eine bestimmte Quittung gehört.
+Die Tokens bzw. Quittungen werden durch dieses System generiert. Dafür haben wir ein asymmetrisches Schlüsselverfahren verwendet mit der
+Enkodierung "Base64" und die Hash-Funktion "SHA-256".
+Die Quittung wird im ".txt" Format gespeichert und enthält in der ersten Zeile personenbezogene Informationen. Somit lässt es sich einfacher nachvollziehen, zu welchem Studenten eine bestimmte Quittung gehört.
 
 === Organisatoren
-Organisatoren können mithilfe dieses Systems unkompliziert überprüfen welche Studenten aus der Anmeldeliste
-die Zulassung erreicht haben. Wenn Studenten sich angemeldet haben die diese nicht haben so kann er mit einem "Klick" eine E-Mail
-an diese Studenten versenden damit diese ihre Quittung nachreichen. Dafür wird natürlich das jeweilige Modul und das Semester und die dazugehörige
+Organisatoren können mithilfe dieses Systems unkompliziert überprüfen, welche Studenten aus der Anmeldeliste
+die Zulassung erreicht haben. Wenn Studenten sich angemeldet haben, die diese nicht haben, so kann er mit einem "Klick" eine E-Mail
+an diese Studenten versenden, damit diese ihre Quittung nachreichen. Dafür wird natürlich das jeweilige Modul und die dazugehörige
 Frist mit eingegeben.
 Außerdem kann er auch selbst Quittungen validieren oder auch selbst erstellen und an die jeweiligen Studenten abschicken.
 All dies geschieht benutzerfreundlich und unkompliziert.
 
 === Studenten
-Wenn der Student eine E-Mail empfängt der ihn darüber informiert seine Quittung nachzureichen da diese im System nicht gefunden wurde, so kann
+Wenn der Student eine E-Mail empfängt, die ihn darüber informiert, seine Quittung nachzureichen, da diese im System nicht gefunden wurde, so kann
 er mithilfe dieses Systems seine Quittung nachreichen. Diese bekommt er zuvor per Mail gesendet, die Verantwortung für die Quittung übernimmt
 somit der Student.
 
 === E-Mail-Service
-Dieser Service ist dafür verantwortlich Studenten gegebenfalls zu benachrichtigen das sie die Zulassung erworben haben, im Anhang befindet sich
+Dieser Service ist dafür verantwortlich, Studenten gegebenfalls zu benachrichtigen, dass sie die Zulassung erworben haben, im Anhang befindet sich
 dann natürlich auch der jeweilige Token dafür.
-Außerdem kann mithilfe dieses Systems auch E-Mails verschickt werden die den Studenten auffordern seine Quittung nachzureichen da diese aus einem Grund "X" nicht vorliegt.
+Außerdem können mithilfe dieses Systems auch E-Mails verschickt werden, die den Studenten auffordern, seine Quittung nachzureichen, da diese aus einem Grund "X" nicht vorliegt.
 
 === Qualität-/ Leistungsmerkmale
 Bei unserem Projekt haben wir stark auf "Dependency Inversion" geachtet, so dass wir möglichst keine Abhängigkeiten haben. Außerdem
-haben wir auch bei der Entwicklung der Benutzer-Oberfläche stark auf Benutzer Freundlichkeit geachtet, denn somit wird gewährleistet das unser
+haben wir auch bei der Entwicklung der Benutzer-Oberfläche stark auf Benutzer Freundlichkeit geachtet, denn somit wird gewährleistet, dass unser
 System von jeder Person einfach und optimal genutzt werden kann.
 
 === Ablageort / Datei(en)
-Dafür haben wir unser "File-Storage-Service" minIo benutzt wo die Quittungen für einen gewissen Zeitraum speichern.
-
-
+Dafür haben wir unseren "File-Storage-Service" minIo benutzt, wo die Quittungen für einen gewissen Zeitraum gespeichert werden.

@@ -24,20 +24,3 @@ Diese WebApplikation entsteht als Projektarbeit im Rahmen der Veranstaltung "Sof
 | Team              | Das Team besteht aus Studenten der HHU mit sehr unterschiedlichen Kenntnissen und Erfahrungen.
 | Zeitplan          | Die Anwendung soll innerhalb von 4 Wochen fertiggestellt und ausgeliefert werden.
 |===
-
-
-
-[role="arc42help"]
-****
-.Inhalt
-Randbedingungen und Vorgaben, die ihre Freiheiten bezüglich Entwurf, Implementierung oder Ihres Entwicklungsprozesses einschränken.
-Diese Randbedingungen gelten manchmal organisations- oder firmenweit über die Grenzen einzelner Systeme hinweg.
-
-.Motivation
-Für eine tragfähige Architektur sollten Sie genau wissen, wo Ihre Freiheitsgrade bezüglich der Entwurfsentscheidungen liegen und wo Sie Randbedingungen beachten müssen.
-Sie können Randbedingungen vielleicht noch verhandeln, zunächst sind sie aber da.
-
-.Form
-Einfache Tabellen der Randbedingungen mit Erläuterungen.
-Bei Bedarf unterscheiden Sie technische, organisatorische und politische Randbedingungen oder übergreifende Konventionen (beispielsweise Programmier- oder Versionierungsrichtlinien, Dokumentations- oder Namenskonvention).
-****
