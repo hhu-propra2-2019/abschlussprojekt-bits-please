@@ -108,39 +108,40 @@ public class FileService {
   }
 
   /**
-   * creates a File from a MultiPartFile that was uploaded by user.
+   * Diese Methode wird vom UploadApprovedStudentsController (Methode: sendMail) aufgerufen und erstellt ein File aus
+   * einer Liste von Studenten und den Informationen die der Nutzer in der Maske eingegeben hat.
+   * Diese Methode wird also benutzt wenn Quittungen ERSTMALS erstellen werden.
    *
-   * @param receiptDataInterface Student Information
-   * @return redirect
-   */
-  public File createFileFromSubmittedReceipt(ReceiptDataInterface receiptDataInterface) {
-    String studentData = receiptDataInterface.create();
-    File userFile = new File(System.getProperty("user.dir")
-        + "token_" + receiptDataInterface.getModule()
-        + "_" + receiptDataInterface.getName() + ".txt");
-    FileWriter writer;
-
-    try {
-      writer = new FileWriter(userFile, StandardCharsets.UTF_8);
-      writer.write(studentData + "\n");
-      writer.write(receiptDataInterface.getSignature());
-      writer.close();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return userFile;
-  }
-
-  /**
-   * Diese Methode wird vom OrganisatorController (Methode: sendMail) aufgerufen.
-   * *
-   * Diese Methode erstellt benutzerdefinierte Files und ruft sendMessage auf.
+   * @param student         das Student Objekt mit allen Informationen zum Studenten.
+   * @param currentSemester Das Semester das der Nutzer in der Eingabemaske mitgegeben hat
+   * @param currentSubject  Die Veranstaltung die der Nutzer in der Eingabemaske eingegeben hat.
+   *                        *
+   * @return gibt ein File Objekt zurück das in einer privaten Methode getFile erstellt wird
    */
 
-  public File createFile(Student student, String currentSubject, String currentSemester) {
+  public File createFileFromUI(Student student, String currentSubject, String currentSemester) {
     ReceiptDataInterface receiptDataInterface = new ReceiptData(student, currentSubject, currentSemester);
     String studentData = receiptDataInterface.create();
     Receipt receipt = signatureService.sign(studentData);
+    return writeFileFromData(receiptDataInterface, studentData, receipt.getSignature());
+  }
+
+  /**
+   * Diese Methode wird vom UploadReceiptsController aufgerufen und erstellt ein File
+   * aus einem MultiPartFile das von einem Nutzer hochgeladen wurde.
+   * Im Unterschied zur Methode createFile wird hier keine neue Quittung erstellt sondern diese Methode
+   * wird benutzt wenn exisitierende Quittungen überprüft werden sollen.
+   *
+   * @param receiptDataInterface Student Information
+   * @return gibt ein File Objekt zurück das in einer privaten Methode getFile erstellt wird
+   */
+  public File createFileFromSubmittedReceipt(ReceiptDataInterface receiptDataInterface) {
+    String studentData = receiptDataInterface.create();
+    Receipt receipt = signatureService.sign(studentData);
+    return writeFileFromData(receiptDataInterface, studentData, receipt.getSignature());
+  }
+
+  private File writeFileFromData(ReceiptDataInterface receiptDataInterface, String studentData, String signature) {
     File userFile = new File(System.getProperty("user.dir")
         + "token_" + receiptDataInterface.getModule()
         + "_" + receiptDataInterface.getName() + ".txt");
@@ -149,12 +150,11 @@ public class FileService {
     try {
       writer = new FileWriter(userFile, StandardCharsets.UTF_8);
       writer.write(studentData + "\n");
-      writer.write(receipt.getSignature());
+      writer.write(signature);
       writer.close();
     } catch (IOException e) {
       e.printStackTrace();
     }
     return userFile;
   }
-
 }

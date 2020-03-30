@@ -111,7 +111,7 @@ public class UploadApprovedStudentsController {
     boolean noErrorsOcurredWhileSendingMessages = true;
     boolean noErrorsOcurredWhileSavingReceipts = true;
     for (Student student : students) {
-      File file = fileService.createFile(student, uploadCSVForm.getSubject(), uploadCSVForm.getSemester());
+      File file = fileService.createFileFromUI(student, uploadCSVForm.getSubject(), uploadCSVForm.getSemester());
       try {
         emailService.sendMail(student, uploadCSVForm.getSubject(), file);
         fileService.storeReceipt(student, file);
@@ -149,7 +149,7 @@ public class UploadApprovedStudentsController {
   @Secured("ROLE_orga")
   public String sendMail(@RequestParam("count") int count) {
     Student selectedStudent = students.get(count);
-    File file = fileService.createFile(selectedStudent, uploadCSVForm.getSubject(), uploadCSVForm.getSemester());
+    File file = fileService.createFileFromUI(selectedStudent, uploadCSVForm.getSubject(), uploadCSVForm.getSemester());
     try {
       emailService.sendMail(selectedStudent, uploadCSVForm.getSubject(), file);
       fileService.storeReceipt(selectedStudent, file);

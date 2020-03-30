@@ -130,7 +130,7 @@ class UploadApprovedStudentsControllerTest {
     List<Student> students = new ArrayList<>();
     students.add(mock(Student.class));
     File file = new File("Test.txt");
-    when(fileService.createFile(students.get(0), "Propra", "WS1920")).thenReturn(file);
+    when(fileService.createFileFromUI(students.get(0), "Propra", "WS1920")).thenReturn(file);
     when(fileService.processCSVUpload(mockCsvFile)).thenReturn(students);
 
     mvc.perform(multipart("/zulassung2/upload-approved-students")
@@ -161,7 +161,7 @@ class UploadApprovedStudentsControllerTest {
     List<Student> students = new ArrayList<>();
     students.add(mock(Student.class));
     File file = new File("Test.txt");
-    when(fileService.createFile(students.get(0), "Propra", "WS1920")).thenReturn(file);
+    when(fileService.createFileFromUI(students.get(0), "Propra", "WS1920")).thenReturn(file);
     when(fileService.processCSVUpload(mockCsvFile)).thenReturn(students);
 
     mvc.perform(multipart("/zulassung2/upload-approved-students")
