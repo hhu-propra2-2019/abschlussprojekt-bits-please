@@ -5,7 +5,7 @@ import java.security.PublicKey;
 
 public interface EncryptionInterface {
 
-  public byte[] encrypt(String toEncrypt, PrivateKey privateKey);
+  byte[] encrypt(String toEncrypt, PrivateKey privateKey);
 
-  public boolean decrypt(String toDecrypt, String toVerify, PublicKey publicKey);
+  boolean decrypt(String toDecrypt, String toVerify, PublicKey publicKey);
 }

@@ -31,7 +31,7 @@ class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
   @Autowired
   public void configureGlobal(AuthenticationManagerBuilder auth) {
     KeycloakAuthenticationProvider keycloakAuthenticationProvider
-            = keycloakAuthenticationProvider();
+        = keycloakAuthenticationProvider();
     keycloakAuthenticationProvider.setGrantedAuthoritiesMapper(new SimpleAuthorityMapper());
     auth.authenticationProvider(keycloakAuthenticationProvider);
   }
@@ -45,28 +45,28 @@ class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
   @Override
   protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
     return new RegisterSessionAuthenticationStrategy(
-            new SessionRegistryImpl());
+        new SessionRegistryImpl());
   }
 
   @Bean
   @Scope(scopeName = WebApplicationContext.SCOPE_REQUEST,
-          proxyMode = ScopedProxyMode.TARGET_CLASS)
+      proxyMode = ScopedProxyMode.TARGET_CLASS)
   public AccessToken getAccessToken() {
     HttpServletRequest request =
-            ((ServletRequestAttributes) RequestContextHolder
-                    .currentRequestAttributes()).getRequest();
+        ((ServletRequestAttributes) RequestContextHolder
+            .currentRequestAttributes()).getRequest();
     return ((KeycloakPrincipal) request.getUserPrincipal())
-            .getKeycloakSecurityContext().getToken();
+        .getKeycloakSecurityContext().getToken();
   }
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     super.configure(http);
     http.authorizeRequests()
-            .antMatchers("/actuator/**")
-            .hasRole("monitoring")
-            .anyRequest()
-            .permitAll();
+        .antMatchers("/actuator/**")
+        .hasRole("monitoring")
+        .anyRequest()
+        .permitAll();
   }
 
   /*
@@ -78,10 +78,10 @@ class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
    */
   @Configuration
   @EnableGlobalMethodSecurity(
-          prePostEnabled = true,
-          securedEnabled = true,
-          jsr250Enabled = true)
+      prePostEnabled = true,
+      securedEnabled = true,
+      jsr250Enabled = true)
   public static class MethodSecurityConfig
-          extends GlobalMethodSecurityConfiguration {
+      extends GlobalMethodSecurityConfiguration {
   }
 }

@@ -1,23 +1,21 @@
 [[section-solution-strategy]]
 == Lösungsstrategie
 
-[role="arc42help"]
-****
-.Inhalt
-Kurzer Überblick über die grundlegenden Entscheidungen und Lösungsansätze, die Entwurf und Implementierung des Systems prägen.
-Hierzu gehören:
+=== Grundlegende Entscheidungen
+==== Sicherung von Qualitätsanforderungen
 
-* Technologieentscheidungen
-* Entscheidungen über die Top-Level-Zerlegung des Systems, beispielsweise die Verwendung gesamthaft prägender Entwurfs- oder Architekturmuster,
-* Entscheidungen zur Erreichung der wichtigsten Qualitätsanforderungen sowie
-* relevante organisatorische Entscheidungen, beispielsweise für bestimmte Entwicklungsprozesse oder Delegation bestimmter Aufgaben an andere Stakeholder.
+Der Code soll allgemeinen Standards genügen. Dazu wird eine leicht angepasste Version der Google Standards für CheckStyle sowie SpotBugs verwendet. Wir haben uns zugunsten von CheckStyle gegen eine Verwendung von PMD entschieden, da diese auf ähnliche Regeln prüfen.
 
-.Motivation
-Diese wichtigen Entscheidungen bilden wesentliche „Eckpfeiler“ der Architektur.
-Von ihnen hängen viele weitere Entscheidungen oder Implementierungsregeln ab.
+==== Speicherung der Zulassungen
 
-.Form
-Fassen Sie die zentralen Entwurfsentscheidungen *kurz* zusammen.
-Motivieren Sie, ausgehend von Aufgabenstellung, Qualitätszielen und Randbedingungen, was Sie entschieden haben und warum Sie so entschieden haben.
-Vermeiden Sie redundante Beschreibungen und verweisen Sie eher auf weitere Ausführungen in Folgeabschnitten.
-****
+Die zentrale Leitidee der Lösungsstrategie basiert darauf, dass das System ohne Datenbank auskommen soll. Grund dafür sind datenschutzrechtliche Bedenken, falls Zulassungen über einen längeren Zeitraum gespeichert werden sollten. Aus Kulanzgründen soll eine Speicherung der Zulassungsnachweise für einen begrenzten Zeitraum angeboten werden.
+
+In der jetzigen Lösung werden den zugelassenen Teilnehmern Quittungen ausgestellt und aus genannten datenschutzrechtlichen Gründen lediglich für einen begrenzten Zeitraum, aktuell von 3 Jahren, abgespeichert. Innerhalb dieses Zeitraums können die Quittungen vom Server heruntergeladen und die Zulassungen ohne manuelles Zutun der Prüfungsanwärter validiert werden. Nach diesem Zeitraum müssen Prüfungsanwärter nach vorheriger Information durch die Prüfer ihre Zulassung in Eigenverantwortung hochladen, das heißt, die Verwaltung der persönlichen Daten obliegt nicht mehr den Institutionen der Universität.
+
+Für die Speicherung haben wir uns für MinIO entschieden, da die Dateien nicht in einer Datenbank, sondern stattdessen in einem etablierten File-Storage-System gespeichert werden sollen.
+
+==== Verschlüsselung
+Wir verwenden asymmetrische Verschlüsselung (RSA) in Kombination mit dem Hashing-Algorithmus SHA256. Wir haben uns für asymmetrische Verschlüsselung entschieden, um sicherzustellen, dass nur wir Quittungen ausstellen und verifizieren können. Die Wahl fiel auf SHA256, da es eine gängige und sichere Hashfunktion ist.
+Das Zulassungstoken, dass die Studenten erhalten muss mit einer Verschlüsselungsmethode verschlüsselt werden.
+
+Zur Erstellung eines RSA-Schlüsselpaars haben wir den KeyPairGenerator aus Java verwendet. Public- und Privatekey werden als Umgebungsvariable festgelegt.

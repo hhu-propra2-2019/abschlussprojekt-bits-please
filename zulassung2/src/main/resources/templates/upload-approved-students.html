@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en"
+      th:replace="~{base :: html(content=~{:: mycontent})}"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <title>Organisation</title>
+</head>
+
+<body>
+
+<div class="jumbotron" id="content" th:fragment="mycontent">
+    <link href="../static/css/stylesheet.css" rel="stylesheet" th:href="@{/css/stylesheet.css}">
+    <img alt="Organisator" class="rounded float-right"
+         src="../static/pictures/tickpaper.png" th:src="@{/pictures/tickpaper.png}" width="10%">
+    <h1 class="display-4">Zulassungsliste</h1>
+    <div class="lead">Hier können Sie die Liste der zugelassenen Teilnehmer hochladen.</div>
+    <div class="form-group" id="mops-upload-csv">
+        <form action="/zulassung2/upload-approved-students" class="inline-form" enctype="multipart/form-data"
+              method="POST">
+            <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
+            <div class="lead">Wählen Sie eine CSV-Datei aus:</div>
+            <div class="input-group mb-3">
+                <div class="custom-file" id="custom-filecsv">
+                    <input accept=".csv" id="csvhochladen" name="multipartFile" required type="file">
+                </div>
+            </div>
+            <label class="lead" for="subjectControlInput">Fach:</label>
+            <input class="form-control form-control-sm" id="subjectControlInput" name="subject"
+                   placeholder="Name des Fachs"
+                   required th:value="${form.subject}" type="text">
+            <label class="lead" for="semesterControlInput">Semester:</label>
+            <input class="form-control form-control-sm" id="semesterControlInput" name="semester"
+                   placeholder="z.B. 2019WiSe"
+                   required th:value="${form.semester}" type="text">
+            <hr>
+            <button class="btn btn-primary" type="submit">Hochladen</button>
+        </form>
+    </div>
+    <div class="alert alert-danger" id="danger-message" th:if="${danger} != null" th:text="${danger}">
+        Some danger message
+    </div>
+    <div class="alert alert-warning" id="warning-message" th:if="${warning} != null" th:text="${warning}">
+        Some warning message
+    </div>
+    <div class="alert alert-success" id="success-message" th:if="${success} != null" th:text="${success}">
+        Some success message
+    </div>
+
+    <div class="table-responsive" th:if="${students!=null and not students.isEmpty()}">
+        <div class="lead">Zugelassene Teilnehmer zur Veranstaltung <span th:text="${form.subject}">Subject</span> im
+            <span
+                    th:text="${form.semester}">Semester</span></div>
+        <br>
+        <div class="scrollable">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Nr.</th>
+                    <th>Matrikelnummer</th>
+                    <th>Nachname</th>
+                    <th>Vorname</th>
+                    <th>E-Mail</th>
+                    <th>Individuell versenden</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="student, iterationStatus : ${students}">
+                    <td th:text="${iterationStatus.count}">1</td>
+                    <td th:text="${student.matriculationNumber}">123456</td>
+                    <td th:text="${student.name}">Meier</td>
+                    <td th:text="${student.foreName}">Brunhilde</td>
+                    <td th:text="${student.email}">brundhilde.meier@mops.de</td>
+                    <td>
+                        <form class="inline-form"
+                              method="POST"
+                              th:action="@{/zulassung2/sendmail/individual(count=${iterationStatus.index})}">
+                            <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
+                            <button class="btn btn-primary" type="submit">Zulassungsnachweis senden
+                            </button>
+                        </form>
+                    </td>
+                </tbody>
+            </table>
+        </div>
+        <form action="/zulassung2/sendmail" class="inline-form" method="POST">
+            <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
+            <br>
+            <button class="btn btn-primary" type="submit">Zulassungsnachweise an alle Teilnehmer senden
+            </button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

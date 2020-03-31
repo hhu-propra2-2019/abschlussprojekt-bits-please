@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en"
+      th:replace="~{base :: html(content=~{:: mycontent})}"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <title>Organisation</title>
+
+</head>
+<body>
+
+<div class="jumbotron" id="content" th:fragment="mycontent">
+    <link href="../static/css/stylesheet.css" rel="stylesheet" th:href="@{/css/stylesheet.css}">
+    <img alt="pen" class="rounded float-right"
+         src="../static/pictures/pen.png" th:src="@{/pictures/pen.png}" width="13%">
+    <h1 class="display-4">Quittungen validieren</h1>
+    <form class="inline-form" enctype="multipart/form-data" method="post"
+          th:action="@{/zulassung2/upload-receipt}">
+        <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
+        <p class="lead">Laden Sie die zu prüfenden Quittungen hoch:</p>
+        <div class="input-group mb-3">
+            <div class="custom-file">
+                <input accept=".txt" id="quittunghochladen" multiple name="receipt"
+                       required type="file">
+            </div>
+        </div>
+        <hr>
+        <button class="btn btn-primary" type="submit">Quittungen überprüfen</button>
+    </form>
+    <p>
+    <div class="alert alert-danger" id="danger-message" th:if="${danger} != null" th:text="${danger}">
+        Some danger message
+    </div>
+    <div class="alert alert-warning" id="warning-message" th:if="${warning} != null" th:text="${warning}">
+        Some warning message
+    </div>
+    <div class="alert alert-success" id="success-message" th:if="${success} != null" th:text="${success}">
+        Some success message
+    </div>
+    <div class="table-responsive" th:if="${not receipts.isEmpty()}">
+        <p class="lead" sec:authorize="hasRole('orga')">Gültige Quittungen können über die entsprechende Schaltfläche im
+            System hinterlegt werden.</p>
+        <p class="lead" sec:authorize="hasRole('studentin')">Bitte reichen Sie die Zulassungen für die Klausuren, für
+            die Sie sich anmelden möchten, ein:</p>
+        <div class="scrollable">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Nr.</th>
+                    <th>Matrikelnummer</th>
+                    <th>Nachname</th>
+                    <th>Vorname</th>
+                    <th>E-Mail</th>
+                    <th>Modul</th>
+                    <th>Erworben</th>
+                    <th>Gültig</th>
+                    <th>Aktionen</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="receipt, iterationStatus : ${receipts}">
+                    <td th:text="${iterationStatus.count}">1</td>
+                    <td th:text="${receipt.matriculationNumber}">123456</td>
+                    <td th:text="${receipt.name}">Meier</td>
+                    <td th:text="${receipt.foreName}">Brunhilde</td>
+                    <td th:text="${receipt.email}">brunhilde.meier@mops.de</td>
+                    <td th:text="${receipt.module}">Mopskunde</td>
+                    <td th:text="${receipt.semester}">2010SoSe</td>
+                    <td th:if="${receipt.valid}">&#10004;</td>
+                    <td th:if="${not receipt.valid}">&#10060;</td>
+                    <td th:if="${receipt.valid}">
+                        <form class="inline-form"
+                              method="POST"
+                              th:action="@{/zulassung2/submit-receipt/individual(count=${iterationStatus.index})}">
+                            <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
+                            <button class="btn btn-primary" sec:authorize="hasRole('orga')" type="submit">
+                                Im System speichern
+                            </button>
+                            <button class="btn btn-primary" sec:authorize="hasRole('studentin')" type="submit">
+                                Zulassungsnachweis einreichen
+                            </button>
+                        </form>
+                    </td>
+                    <td th:if="${not receipt.valid}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <form class="inline-form" method="POST" sec:authorize="hasRole('orga')"
+              th:action="@{/zulassung2/submit-receipt}">
+            <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
+            <button class="btn btn-primary" type="submit">
+                Alle gültigen Nachweise im System speichern
+            </button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

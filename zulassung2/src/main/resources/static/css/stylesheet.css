@@ -1,0 +1,19 @@
+
+.smargin-bottom {
+    margin-bottom: 100px;
+}
+
+
+.scrollable {
+    max-height: 542px;
+    overflow: auto;
+}
+
+.inline-form {
+    display: inline;
+}
+
+.fixedbutton {
+    position: absolute;
+    bottom: 20px;
+}
